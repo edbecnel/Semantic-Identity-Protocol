@@ -203,6 +203,12 @@
       border-color: rgba(125, 211, 252, .44);
     }
 
+    button:disabled {
+      opacity: .38;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
     button.primary {
       background: linear-gradient(180deg, rgba(56, 189, 248, .9), rgba(14, 116, 144, .9));
       color: #04111f;
@@ -599,6 +605,131 @@
       line-height: 1.45;
       text-align: center;
     }
+
+    .shortcut-create-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .shortcut-create-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,.14);
+      outline: 0;
+      background: rgba(3, 7, 18, .46);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    .shortcut-create-input:focus {
+      border-color: rgba(125, 211, 252, .44);
+    }
+
+    .shortcut-create-hint {
+      min-height: 14px;
+      margin-top: 5px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--muted);
+    }
+
+    .shortcut-create-hint.valid { color: var(--good); }
+    .shortcut-create-hint.error { color: var(--danger); }
+
+    .shortcuts-dropdown-btn {
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border-color: rgba(103, 232, 249, .28);
+      background: rgba(103, 232, 249, .07);
+      color: var(--muted);
+    }
+
+    .shortcuts-dropdown-btn:hover {
+      border-color: rgba(103, 232, 249, .55);
+      color: var(--text);
+    }
+
+    .shortcuts-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 999px;
+      background: rgba(103, 232, 249, .28);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+      margin-left: 3px;
+    }
+
+    .shortcuts-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      min-width: 340px;
+      max-width: 100%;
+      background: rgba(8, 14, 27, .98);
+      border: 1px solid rgba(103, 232, 249, .28);
+      border-radius: 14px;
+      box-shadow: 0 18px 46px rgba(0,0,0,.45);
+      overflow: hidden;
+      z-index: 100;
+    }
+
+    .shortcuts-dropdown-item {
+      display: grid;
+      gap: 2px;
+      width: 100%;
+      text-align: left;
+      padding: 10px 13px;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid rgba(44, 59, 93, .65);
+      border-radius: 0;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .1s ease;
+    }
+
+    .shortcuts-dropdown-item:last-child { border-bottom: 0; }
+
+    .shortcuts-dropdown-item:hover {
+      transform: none;
+      background: rgba(103, 232, 249, .1);
+      border-color: rgba(44, 59, 93, .65);
+    }
+
+    .shortcuts-dropdown-alias {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: #67e8f9;
+    }
+
+    .shortcuts-dropdown-target {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .shortcuts-dropdown-empty {
+      padding: 14px 13px;
+      color: var(--muted);
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -625,7 +756,9 @@
             <div class="sip-input-row">
               <span class="prompt-mark">@</span>
               <input id="sipInput" spellcheck="false" autocomplete="off" value="@games." aria-label="SIP input" />
+              <button id="shortcutsDropdownBtn" type="button" class="shortcuts-dropdown-btn" aria-haspopup="listbox" aria-expanded="false" title="My saved shortcuts">My shortcuts <span id="shortcutsCount" class="shortcuts-count" hidden>0</span></button>
             </div>
+            <div id="shortcutsDropdown" class="shortcuts-dropdown" hidden></div>
           </div>
 
           <div id="resolutionPreview" class="resolution-preview" aria-live="polite">
@@ -744,6 +877,8 @@
     let flatSuggestions = [];
     let showMetadata = false;
     let demoTimer = null;
+    let freeformShortcutDraft = '';
+    let shortcutsDropdownOpen = false;
 
     const tree = {
       'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
@@ -1068,6 +1203,26 @@
           trust: 'Domain Verified',
           note: 'Canonical owner-qualified identity for StackWorks Damasca. Reached through the stacking synonym.'
         }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.columns-draughts': [
+        {
+          label: 'StackWorks — Columns Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columns-draughts',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Columns Draughts.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacking.columns-draughts': [
+        {
+          label: 'StackWorks — Columns Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columns-draughts',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Columns Draughts. Reached through the stacking synonym.'
+        }
       ]
     };
 
@@ -1114,8 +1269,26 @@
       return first && first !== 'games';
     }
 
+    function hasRegisteredSemantic(value) {
+      const key = currentKey(normalize(value));
+      const dkey = discoveryKey(normalize(value));
+      const nv = normalize(value);
+      return !!tree[key] || !!ownerCandidates[key] || !!boundDestinations[nv] ||
+             !!shortcutAliases[key] || !!synonymEquivalents[key] || !!broadSemanticFacets[key] ||
+             !!tree[dkey] || !!ownerCandidates[dkey] ||
+             !!shortcutAliases[dkey] || !!synonymEquivalents[dkey] || !!broadSemanticFacets[dkey];
+    }
+
     function currentKey(value) {
       return stripAt(value);
+    }
+
+    // For owner-bound SIPs, strip the owner prefix so data lookups use the
+    // discovery portion (e.g. @stackworks.games.strategy... → games.strategy...)
+    function discoveryKey(value) {
+      if (!isBoundIdentity(value)) return currentKey(value);
+      const parts = currentKey(value).split('.');
+      return parts.slice(1).join('.');
     }
 
     function addHistory(kind, detail, sip) {
@@ -1186,7 +1359,8 @@
         destination: candidate.destination,
         owner: candidate.owner,
         trust: candidate.trust,
-        note: candidate.note
+        note: candidate.note,
+        isOwnerBound: true
       };
       input.value = shortcut;
       addHistory('Personal shortcut saved', `${shortcut} now resolves for this user to ${candidate.sip}.`, `${shortcut} → ${candidate.destination}`);
@@ -1196,7 +1370,7 @@
 
     function expandPersonalShortcutBinding(binding) {
       input.value = binding.sip;
-      addHistory('Personal shortcut expanded', `Expanded ${binding.shortcut} to the saved canonical owner-qualified identity.`, input.value);
+      addHistory('Personal shortcut expanded', `Expanded ${binding.shortcut} to ${binding.isOwnerBound ? 'the canonical owner-qualified identity' : 'the full discovery path'}.`, input.value);
       input.focus();
       render();
     }
@@ -1247,7 +1421,7 @@
       const value = normalize(input.value);
       const personal = getPersonalBinding(value);
       const destination = getDestinationForValue(value);
-      const bound = (isBoundIdentity(value) && !!destination) || !!personal;
+      const bound = (isBoundIdentity(value) && !!destination) || (!!personal && personal.isOwnerBound && !!personal.destination);
 
       resolutionPreview.classList.toggle('show', bound);
 
@@ -1275,15 +1449,15 @@
       const bound = isBoundIdentity(value);
       const personal = getPersonalBinding(value);
       const destination = getDestinationForValue(value);
-      const shortcutItems = shortcutAliases[currentKey(value)] || [];
-      const facetItems = broadSemanticFacets[currentKey(value)] || [];
+      const shortcutItems = shortcutAliases[discoveryKey(value)] || [];
+      const facetItems = broadSemanticFacets[discoveryKey(value)] || [];
       const hasShortcut = shortcutItems.length > 0;
       const isOwnerShortcut = shortcutItems.some((item) => item.mode === 'owner');
       const isBroadFacet = facetItems.length > 0;
 
-      modePill.classList.toggle('bound', bound || isOwnerShortcut || !!personal);
+      modePill.classList.toggle('bound', bound || isOwnerShortcut || (!!personal && personal.isOwnerBound));
       modeLabel.textContent = personal
-        ? 'Personal shortcut binding'
+        ? (personal.isOwnerBound ? 'Personal shortcut binding' : 'Personal discovery shortcut')
         : bound || isOwnerShortcut
           ? 'Owner-bound identity'
           : hasShortcut
@@ -1302,7 +1476,9 @@
               ? 'Broad cross-cutting mechanic that may match several narrower semantic branches'
               : 'Unbound semantic exploration';
       statusResolution.textContent = personal
-        ? 'Resolve using this user’s saved shortcut binding. This does not create global ownership.'
+        ? (personal.isOwnerBound
+            ? 'Resolve directly to the owner destination via saved shortcut. This does not create global ownership.'
+            : 'Expand to the saved discovery path. No owner is committed.')
         : bound || isOwnerShortcut
           ? 'Eligible for deterministic resolution if trust/confidence thresholds are satisfied.'
           : isBroadFacet
@@ -1322,14 +1498,89 @@
       `;
     }
 
+    function normalizeShortcutInput(raw) {
+      let s = raw.trim();
+      if (!s) return '';
+      s = s.replace(/^@+/, '');
+      s = s.replace(/[\s/\\]+/g, '.');
+      s = s.replace(/[^a-zA-Z0-9.\-]/g, '');
+      s = s.replace(/\.{2,}/g, '.');
+      s = s.replace(/^\.+|\.+$/g, '');
+      s = s.toLowerCase();
+      return s ? '@' + s : '';
+    }
+
+    function validateShortcutInput(raw) {
+      if (!raw.trim()) return null;
+      const normalized = normalizeShortcutInput(raw);
+      if (!normalized) return 'Enter a valid shortcut name.';
+      const parts = normalized.slice(1).split('.');
+      if (parts.some((p) => !p)) return 'Shortcut segments cannot be empty.';
+      return null;
+    }
+
+    function saveFreeformShortcut(alias, targetSip) {
+      const destination = getDestinationForValue(targetSip);
+      personalShortcutBindings[alias] = {
+        shortcut: alias,
+        label: `Freeform shortcut → ${targetSip}`,
+        sip: targetSip,
+        destination: destination || '',
+        owner: '',
+        trust: 'Personal',
+        note: `User-defined shortcut for ${targetSip}.`,
+        isOwnerBound: isBoundIdentity(targetSip)
+      };
+      freeformShortcutDraft = '';
+      addHistory('Freeform shortcut saved', `${alias} now resolves in this session to ${targetSip}.`, `${alias} → ${destination || targetSip}`);
+      render();
+    }
+
+    function renderShortcutsDropdownBtn() {
+      const btn = document.getElementById('shortcutsDropdownBtn');
+      const countEl = document.getElementById('shortcutsCount');
+      if (!btn || !countEl) return;
+      const count = Object.keys(personalShortcutBindings).length;
+      countEl.textContent = count;
+      countEl.hidden = count === 0;
+    }
+
+    function openShortcutsDropdown() {
+      const dropdown = document.getElementById('shortcutsDropdown');
+      const btn = document.getElementById('shortcutsDropdownBtn');
+      if (!dropdown || !btn) return;
+      const bindings = Object.values(personalShortcutBindings);
+      if (!bindings.length) {
+        dropdown.innerHTML = '<div class="shortcuts-dropdown-empty">No saved shortcuts yet.</div>';
+      } else {
+        dropdown.innerHTML = bindings.map((b) => `
+          <button type="button" class="shortcuts-dropdown-item" data-shortcut="${escapeHtml(b.shortcut)}">
+            <span class="shortcuts-dropdown-alias">${escapeHtml(b.shortcut)}</span>
+            <span class="shortcuts-dropdown-target">${escapeHtml(b.sip)}</span>
+          </button>
+        `).join('');
+      }
+      dropdown.hidden = false;
+      shortcutsDropdownOpen = true;
+      btn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeShortcutsDropdown() {
+      const dropdown = document.getElementById('shortcutsDropdown');
+      const btn = document.getElementById('shortcutsDropdownBtn');
+      if (dropdown) dropdown.hidden = true;
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      shortcutsDropdownOpen = false;
+    }
+
     function renderSuggestions() {
       const value = normalize(input.value);
-      const key = currentKey(value);
+      const key = discoveryKey(value);
       const shortcutItems = shortcutAliases[key] || [];
       const synonymItems = synonymEquivalents[key] || [];
       const facetItems = broadSemanticFacets[key] || [];
       const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
-      const ownerItems = ownerCandidates[key] || [];
+      const ownerItems = isBoundIdentity(value) ? [] : (ownerCandidates[key] || []);
       const personalBinding = getPersonalBinding(value);
       flatSuggestions = [];
       activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + facetItems.length + discoveryItems.length + ownerItems.length - 1);
@@ -1347,9 +1598,9 @@
         const itemsHtml = `
           <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
             <div class="suggestion-main"><span>${escapeHtml(personalBinding.label)}</span><span class="badge personal">saved shortcut</span></div>
-            <div class="suggestion-sub">${escapeHtml(personalBinding.shortcut)} → ${escapeHtml(personalBinding.sip)} → ${escapeHtml(personalBinding.destination)}</div>
+            <div class="suggestion-sub">${escapeHtml(personalBinding.shortcut)} → ${escapeHtml(personalBinding.sip)}${personalBinding.destination ? ` → ${escapeHtml(personalBinding.destination)}` : ''}</div>
             <div class="choice-actions">
-              <button type="button" data-action="expand-personal" data-flat-index="${flatIndex}">Expand to canonical SIP</button>
+              <button type="button" data-action="expand-personal" data-flat-index="${flatIndex}">${personalBinding.isOwnerBound ? 'Expand to canonical SIP' : 'Expand to full discovery path'}</button>
               <button type="button" class="clear-shortcut" data-action="clear-personal">Clear saved shortcut</button>
             </div>
             <div class="metadata ${showMetadata ? 'show' : ''}">
@@ -1481,6 +1732,30 @@
         }
       }
 
+      if (segments(value).length >= 2 && !value.endsWith('.')) {
+        const hasSemantic = hasRegisteredSemantic(value);
+        const draftNormalized = normalizeShortcutInput(freeformShortcutDraft);
+        const draftError = validateShortcutInput(freeformShortcutDraft);
+        const hintClass = !hasSemantic
+          ? 'shortcut-create-hint error'
+          : 'shortcut-create-hint' + (!freeformShortcutDraft.trim() ? '' : draftError ? ' error' : ' valid');
+        const hintText = !hasSemantic
+          ? 'Shortcuts can only be saved for SIP paths with a registered semantic.'
+          : !freeformShortcutDraft.trim() ? '' : draftError ? draftError : `Will save as: ${draftNormalized}`;
+        const disabledAttr = hasSemantic ? '' : ' disabled';
+        html += `
+          <div class="group">
+            <div class="group-heading"><span>Create freeform shortcut for this SIP</span><span class="tag">personal</span></div>
+            <div class="shortcut-create-row">
+              <span class="prompt-mark" style="font-size:15px;line-height:1;${hasSemantic ? '' : 'opacity:.35;'}">@</span>
+              <input id="freeformShortcutInput" class="shortcut-create-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. my.shortcut" value="${escapeHtml(freeformShortcutDraft)}"${disabledAttr} aria-label="Freeform shortcut alias" />
+              <button type="button" data-action="save-freeform-shortcut"${disabledAttr}>Save shortcut</button>
+            </div>
+            <div id="shortcutCreateHint" class="${hintClass}">${escapeHtml(hintText)}</div>
+          </div>
+        `;
+      }
+
       panel.innerHTML = html;
     }
 
@@ -1508,6 +1783,7 @@
       renderStatus();
       renderResolutionPreview();
       renderSuggestions();
+      renderShortcutsDropdownBtn();
     }
 
     function runDemo() {
@@ -1595,6 +1871,35 @@
       if (index !== activeFlatIndex) updateActiveSuggestion(index);
     });
 
+    panel.addEventListener('input', (event) => {
+      if (event.target.id !== 'freeformShortcutInput') return;
+      freeformShortcutDraft = event.target.value;
+      const hint = document.getElementById('shortcutCreateHint');
+      if (!hint) return;
+      const normalized = normalizeShortcutInput(freeformShortcutDraft);
+      const error = validateShortcutInput(freeformShortcutDraft);
+      if (!freeformShortcutDraft.trim()) {
+        hint.textContent = '';
+        hint.className = 'shortcut-create-hint';
+      } else if (error) {
+        hint.textContent = error;
+        hint.className = 'shortcut-create-hint error';
+      } else {
+        hint.textContent = `Will save as: ${normalized}`;
+        hint.className = 'shortcut-create-hint valid';
+      }
+    });
+
+    panel.addEventListener('click', (event) => {
+      const btn = event.target.closest('[data-action="save-freeform-shortcut"]');
+      if (!btn) return;
+      if (btn.disabled) return;
+      const shortcutInput = document.getElementById('freeformShortcutInput');
+      const raw = shortcutInput ? shortcutInput.value : freeformShortcutDraft;
+      const normalized = normalizeShortcutInput(raw);
+      if (normalized) saveFreeformShortcut(normalized, normalize(input.value));
+    });
+
     input.addEventListener('keydown', (event) => {
       if (!flatSuggestions.length) return;
       if (event.key === 'ArrowDown') {
@@ -1675,6 +1980,35 @@
         urlPreview.select();
         copyFeedback.textContent = 'Select the URL text and press Ctrl+C to copy.';
       }
+    });
+
+    document.getElementById('shortcutsDropdownBtn').addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (shortcutsDropdownOpen) {
+        closeShortcutsDropdown();
+      } else {
+        openShortcutsDropdown();
+      }
+    });
+
+    document.getElementById('shortcutsDropdown').addEventListener('click', (event) => {
+      event.stopPropagation();
+      const item = event.target.closest('.shortcuts-dropdown-item');
+      if (!item) return;
+      const shortcut = item.dataset.shortcut;
+      if (shortcut) {
+        const binding = personalShortcutBindings[shortcut];
+        const target = binding ? binding.sip : shortcut;
+        input.value = target;
+        addHistory('Shortcut expanded from dropdown', `Expanded ${shortcut} → ${target}.`, target);
+        closeShortcutsDropdown();
+        input.focus();
+        render();
+      }
+    });
+
+    document.addEventListener('click', () => {
+      if (shortcutsDropdownOpen) closeShortcutsDropdown();
     });
 
     addHistory('Loaded', 'Initial semantic discovery root is ready.', input.value);
