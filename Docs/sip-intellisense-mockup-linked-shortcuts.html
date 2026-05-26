@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SIP IntelliSense Mockup - Linked Resolution and Shortcut SIPs</title>
+  <title>SIP IntelliSense Mockup - Linked Resolution, Shortcut SIPs, and Synonyms</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -342,6 +342,12 @@
       background: rgba(196, 181, 253, .09);
     }
 
+    .badge.synonym {
+      color: #f0abfc;
+      border-color: rgba(240, 171, 252, .34);
+      background: rgba(240, 171, 252, .09);
+    }
+
     .empty-state {
       padding: 22px 14px;
       color: var(--muted);
@@ -562,7 +568,7 @@
     <header>
       <h1>SIP Semantic IntelliSense Mockup</h1>
       <p class="subtitle">
-        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, and shortcut SIP aliases. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, or click an owner-bound result to rewrite the string into a canonical owner-qualified identity.
+        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, and semantic synonyms. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, or click an owner-bound result to rewrite the string into a canonical owner-qualified identity.
       </p>
     </header>
 
@@ -603,6 +609,7 @@
             <button id="dotBtn">Add trailing dot</button>
             <button id="shortcutDiscoveryBtn">Try @games.lasca</button>
             <button id="shortcutOwnerBtn">Try @stackworks.games.lasca</button>
+            <button id="synonymBtn">Try stacking synonym</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
           </div>
@@ -652,7 +659,7 @@
           </div>
           <div class="card-body">
             <p class="rule-box"><strong>Typing categories explores meaning.</strong><br><strong>Choosing an owner-bound result commits identity.</strong></p>
-            <p class="explanation" style="margin-top:12px;">The owner, such as <strong>stackworks</strong>, is not treated as a child category under Lasca. It appears as a separate owner-bound candidate and, when selected, rewrites the whole SIP string. Shortcut SIPs such as <code>@games.lasca</code> expand meaning; owner-bound shortcuts such as <code>@stackworks.games.lasca</code> can resolve or expand to the canonical owner-qualified SIP.</p>
+            <p class="explanation" style="margin-top:12px;">The owner, such as <strong>stackworks</strong>, is not treated as a child category under Lasca. It appears as a separate owner-bound candidate and, when selected, rewrites the whole SIP string. Shortcut SIPs such as <code>@games.lasca</code> expand meaning; owner-bound shortcuts such as <code>@stackworks.games.lasca</code> can resolve or expand to the canonical owner-qualified SIP. Synonyms such as <code>columns</code> and <code>stacking</code> can be treated as equivalent semantic path segments without changing ownership.</p>
           </div>
         </div>
 
@@ -671,7 +678,7 @@
     </section>
 
     <footer>
-      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
+      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, semantic synonyms, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
     </footer>
   </main>
 
@@ -702,11 +709,15 @@
       'games.strategy': ['abstract', 'rts', 'tbs', 'grand', 'tactical', 'moba', 'tower'],
       'games.strategy.abstract': ['capture', 'annihilation', 'territory', 'grid-control', 'connection', 'stacking', '3d-spatial', 'mancala', 'counting'],
       'games.strategy.abstract.capture': ['displacement', 'leaping'],
-      'games.strategy.abstract.capture.leaping': ['columns', 'checkers', 'dama', 'draughts'],
+      'games.strategy.abstract.capture.leaping': ['columns', 'stacking', 'checkers', 'dama', 'draughts'],
       'games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
+      'games.strategy.abstract.capture.leaping.stacking': ['lasca', 'damasca', 'columns-draughts'],
       'games.strategy.abstract.capture.leaping.columns.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.capture.leaping.stacking.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
       'games.strategy.abstract.capture.leaping.columns.damasca': ['classic', 'international', 'rules', 'online'],
-      'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online']
+      'games.strategy.abstract.capture.leaping.stacking.damasca': ['classic', 'international', 'rules', 'online'],
+      'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online'],
+      'games.strategy.abstract.capture.leaping.stacking.columns-draughts': ['rules', 'variants', 'online']
     };
 
     const shortcutAliases = {
@@ -728,6 +739,58 @@
           mode: 'owner',
           destination: 'https://stackworks.games/lasca',
           note: 'Owner-bound shortcut. Expands to the canonical StackWorks Lasca identity.'
+        }
+      ]
+    };
+
+
+    const synonymEquivalents = {
+      'games.strategy.abstract.capture.leaping.columns': [
+        {
+          label: 'Use stacking instead of columns',
+          from: '@games.strategy.abstract.capture.leaping.columns',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking',
+          note: 'Semantic synonym. In this taxonomy, columns and stacking mean the same mechanic.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacking': [
+        {
+          label: 'Use columns instead of stacking',
+          from: '@games.strategy.abstract.capture.leaping.stacking',
+          equivalent: '@games.strategy.abstract.capture.leaping.columns',
+          note: 'Semantic synonym. This returns to the canonical demo wording.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.lasca': [
+        {
+          label: 'Equivalent stacking path',
+          from: '@games.strategy.abstract.capture.leaping.columns.lasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking.lasca',
+          note: 'The Lasca discovery path can be expressed through either columns or stacking.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacking.lasca': [
+        {
+          label: 'Equivalent columns path',
+          from: '@games.strategy.abstract.capture.leaping.stacking.lasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.columns.lasca',
+          note: 'The columns path is the canonical wording used by this demo, but stacking remains equivalent.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.damasca': [
+        {
+          label: 'Equivalent stacking path',
+          from: '@games.strategy.abstract.capture.leaping.columns.damasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking.damasca',
+          note: 'The Damasca discovery path can be expressed through either columns or stacking.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacking.damasca': [
+        {
+          label: 'Equivalent columns path',
+          from: '@games.strategy.abstract.capture.leaping.stacking.damasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.columns.damasca',
+          note: 'The columns path is the canonical wording used by this demo, but stacking remains equivalent.'
         }
       ]
     };
@@ -785,6 +848,32 @@
           note: 'Owner-bound candidate for a StackWorks columns-draughts variant.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.stacking': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate reached through the stacking synonym. Canonical identity uses columns.'
+        },
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate reached through the stacking synonym. Canonical identity uses columns.'
+        },
+        {
+          label: 'StackWorks — Columns Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columns-draughts',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate reached through the stacking synonym. Canonical identity uses columns.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.columns.lasca': [
         {
           label: 'StackWorks — Lasca',
@@ -811,6 +900,32 @@
           note: 'Knowledge/reference candidate for Lasca.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.stacking.lasca': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Lasca. Reached through the stacking synonym.'
+        },
+        {
+          label: 'BoardGameGeek — Lasca',
+          sip: '@boardgamegeek.games.boardgames.lasca',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          trust: 'Candidate',
+          note: 'Reference/discovery candidate for Lasca.'
+        },
+        {
+          label: 'Wikipedia — Lasca',
+          sip: '@wikipedia.games.boardgames.lasca',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          trust: 'Candidate',
+          note: 'Knowledge/reference candidate for Lasca.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.columns.damasca': [
         {
           label: 'StackWorks — Damasca',
@@ -819,6 +934,16 @@
           destination: 'https://stackworks.games/damasca',
           trust: 'Domain Verified',
           note: 'Canonical owner-qualified identity for StackWorks Damasca.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacking.damasca': [
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Damasca. Reached through the stacking synonym.'
         }
       ]
     };
@@ -888,6 +1013,13 @@
         ? `Expanded ${alias.shortcut} to the canonical owner-qualified identity.`
         : `Expanded ${alias.shortcut} to the longer discovery path. Ownership is still unbound.`;
       addHistory(kind, detail, input.value);
+      input.focus();
+      render();
+    }
+
+    function selectSynonym(item) {
+      input.value = item.equivalent;
+      addHistory('Semantic synonym selected', `Swapped equivalent segment path: ${item.from} → ${item.equivalent}.`, input.value);
       input.focus();
       render();
     }
@@ -992,10 +1124,11 @@
       const value = normalize(input.value);
       const key = currentKey(value);
       const shortcutItems = shortcutAliases[key] || [];
+      const synonymItems = synonymEquivalents[key] || [];
       const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
       const ownerItems = ownerCandidates[key] || [];
       flatSuggestions = [];
-      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + discoveryItems.length + ownerItems.length - 1);
+      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + discoveryItems.length + ownerItems.length - 1);
 
       let html = `
         <div class="panel-top">
@@ -1020,6 +1153,23 @@
           `;
         }).join('');
         html += suggestionGroupHtml('Shortcut SIP expansion', 'alias', itemsHtml);
+      }
+
+      if (synonymItems.length) {
+        const itemsHtml = synonymItems.map((item) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'synonym', value: item });
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge synonym">synonym</span></div>
+              <div class="suggestion-sub">${escapeHtml(item.from)} ⇄ ${escapeHtml(item.equivalent)}</div>
+              <div class="metadata ${showMetadata ? 'show' : ''}">
+                ${escapeHtml(item.note)}
+              </div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Semantic synonym / equivalent path', 'equivalence', itemsHtml);
       }
 
       if (discoveryItems.length) {
@@ -1056,7 +1206,7 @@
         html += suggestionGroupHtml('Matching owner-bound identities', 'canonical candidates', itemsHtml);
       }
 
-      if (!shortcutItems.length && !discoveryItems.length && !ownerItems.length) {
+      if (!shortcutItems.length && !synonymItems.length && !discoveryItems.length && !ownerItems.length) {
         if (isBoundIdentity(value)) {
           const destination = boundDestinations[value];
           html += `
@@ -1096,6 +1246,7 @@
       const item = flatSuggestions[index];
       if (!item) return;
       if (item.type === 'shortcut') selectShortcut(item.value);
+      if (item.type === 'synonym') selectSynonym(item.value);
       if (item.type === 'discovery') completeSegment(item.value);
       if (item.type === 'owner') selectOwner(item.value);
     }
@@ -1202,6 +1353,12 @@
     document.getElementById('shortcutOwnerBtn').addEventListener('click', () => {
       input.value = '@stackworks.games.lasca';
       addHistory('Owner shortcut typed', 'Entered the owner-bound shortcut. It can open directly or expand to the canonical full SIP.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('synonymBtn').addEventListener('click', () => {
+      input.value = '@games.strategy.abstract.capture.leaping.stacking.';
+      addHistory('Synonym path typed', 'Entered the stacking synonym path. It should behave like the columns path and show the same Lasca/Damasca continuations.', input.value);
       input.focus();
       render();
     });

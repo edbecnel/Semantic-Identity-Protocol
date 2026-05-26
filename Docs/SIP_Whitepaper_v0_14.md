@@ -1447,6 +1447,285 @@ SIP therefore functions as both:
 * a semantic identity system and:
 * a federated semantic knowledge routing layer.
 
+
+# Semantic Synonyms and Equivalent Path Segments
+
+SIP should support semantic synonyms: different path segments or semantic phrases that represent the same meaning within a given context.
+
+Synonyms are related to semantic aliases, but they operate at a more granular level.
+
+A semantic alias may describe an alternate full SIP path.
+
+A semantic synonym may describe an equivalent segment or partial path inside a larger SIP expression.
+
+For example:
+
+@games.strategy.abstract.capture.leaping.columns
+
+and:
+
+@games.strategy.abstract.capture.leaping.stacking
+
+may be treated as equivalent because, in this game taxonomy, "columns" and "stacking" describe the same core mechanic.
+
+In this context:
+
+columns ⇄ stacking
+
+means:
+
+A game where captured pieces are stacked into columns, towers, or layered piece structures.
+
+## Segment-Level Synonyms
+
+Segment-level synonyms allow a SIP resolver, provider, or IntelliSense system to recognize that two terms can occupy the same semantic position in a path.
+
+Example:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+may be equivalent to:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+Both expressions describe Lasca through the same semantic structure:
+
+games → strategy → abstract → capture → leaping → stacking/columns → lasca
+
+This does not necessarily mean that every use of "columns" and "stacking" is globally identical.
+
+It means they are equivalent within this semantic context.
+
+## Context-Bound Meaning
+
+Synonyms should be context-bound rather than globally absolute.
+
+For example, "stacking" may mean one thing in abstract strategy games, another thing in software architecture, and another thing in logistics or warehousing.
+
+Therefore, synonym equivalence should usually be scoped to a semantic path or domain.
+
+Example scoped synonym rule:
+
+Within:
+
+@games.strategy.abstract.capture.leaping
+
+the segment:
+
+columns
+
+may be treated as equivalent to:
+
+stacking
+
+But outside that context, the same terms may not necessarily be equivalent.
+
+## Canonical Paths and Synonym Paths
+
+SIP may allow one path to be treated as canonical while other paths are treated as equivalent synonym paths.
+
+Example canonical path:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+Equivalent synonym path:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+The canonical path is the preferred stored or published identity.
+
+The synonym path remains valid for discovery, IntelliSense, search, and AI-assisted navigation.
+
+This allows SIP to support natural language variation without requiring every equivalent phrase to become a separate competing identity.
+
+## Synonyms Are Not Ownership Claims
+
+A synonym does not assign ownership.
+
+For example:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+may be equivalent to:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+But neither expression is owner-bound.
+
+Both remain unbound discovery paths until the user selects a specific owner-qualified identity such as:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+or:
+
+@stackworks.games.strategy.abstract.capture.leaping.stacking.lasca
+
+if the owner has also published that synonym path.
+
+The synonym relationship improves discovery and navigation.
+
+It does not determine the authoritative owner.
+
+## IntelliSense Behavior for Synonyms
+
+Semantic IntelliSense should expose synonyms clearly without confusing them with ordinary child categories or owner-bound identities.
+
+When the user types:
+
+@games.strategy.abstract.capture.leaping.
+
+IntelliSense may show:
+
+Continue semantic discovery path:
+
+columns  
+stacking  
+checkers  
+dama  
+draughts
+
+The interface may indicate that:
+
+columns
+
+and:
+
+stacking
+
+are equivalent semantic choices.
+
+For example:
+
+columns  
+Equivalent: stacking
+
+stacking  
+Equivalent: columns
+
+If the user selects:
+
+stacking
+
+then the active SIP string may become:
+
+@games.strategy.abstract.capture.leaping.stacking
+
+and the system should still offer the same next-level continuations that would have appeared under:
+
+@games.strategy.abstract.capture.leaping.columns
+
+For example:
+
+lasca  
+damasca  
+columns-draughts
+
+If the user continues to:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+the resolver may understand this as equivalent to:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+and may show the same owner-bound candidates.
+
+## Synonym Selection and Canonicalization
+
+When a user selects a synonym path, SIP-aware interfaces may either preserve the user’s chosen wording or show the canonical equivalent.
+
+Two possible UX modes are valid:
+
+1. Preserve user wording
+
+Input:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+Display remains:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+Resolver understands it as equivalent to:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+2. Canonicalize visibly
+
+Input:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+Interface shows:
+
+Equivalent canonical path:
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+In either case, the interface should make clear that the expressions are semantically equivalent in the current context.
+
+## Synonym Metadata
+
+SIP identity records, semantic manifests, or provider APIs may define synonym relationships using metadata.
+
+Example conceptual metadata:
+
+{
+ "canonical": "@games.strategy.abstract.capture.leaping.columns.lasca",
+ "synonyms": [
+   "@games.strategy.abstract.capture.leaping.stacking.lasca"
+ ],
+ "segmentSynonyms": [
+   {
+     "context": "@games.strategy.abstract.capture.leaping",
+     "canonical": "columns",
+     "equivalent": "stacking"
+   }
+ ]
+}
+
+This allows resolvers, IntelliSense systems, AI assistants, and browsers to understand equivalent semantic paths consistently.
+
+## Relationship to Shortcut SIPs
+
+Synonyms are different from shortcut SIPs.
+
+A shortcut SIP compresses a longer path.
+
+Example:
+
+@games.lasca
+
+may expand to:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+A synonym SIP expresses the same path using equivalent wording.
+
+Example:
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+may be equivalent to:
+
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+Both features improve usability, but they solve different problems.
+
+Shortcuts reduce typing.
+
+Synonyms support natural language variation.
+
+## Core Synonym Rule
+
+The core synonym rule is:
+
+Synonyms may express equivalent meaning.  
+They do not assign ownership.  
+They do not eliminate the need for canonical identity resolution.
+
+This allows SIP to support flexible human language while still preserving deterministic owner-bound resolution when a specific verified identity is selected.
+
+
 # Shortcut SIPs and Semantic Shortcut Aliases
 
 SIP recognizes that highly descriptive semantic identities may become too long for frequent manual use.
