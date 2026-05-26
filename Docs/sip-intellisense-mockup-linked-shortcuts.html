@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIP IntelliSense Mockup - Linked Resolution and Shortcut SIPs</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111c33;
+      --panel-2: #17223a;
+      --panel-3: #1f2d49;
+      --text: #e5eefc;
+      --muted: #98a8c7;
+      --line: #2c3b5d;
+      --accent: #7dd3fc;
+      --accent-2: #38bdf8;
+      --good: #86efac;
+      --warn: #fde68a;
+      --danger: #fca5a5;
+      --chip: #26385d;
+      --shadow: 0 24px 60px rgba(0, 0, 0, .35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, .18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(134, 239, 172, .12), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 34px 0 48px;
+    }
+
+    header {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: -.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 830px;
+      line-height: 1.55;
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.28fr) minmax(310px, .72fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      border: 1px solid rgba(125, 211, 252, .18);
+      background: linear-gradient(180deg, rgba(17, 28, 51, .96), rgba(15, 23, 42, .98));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .card-title {
+      display: grid;
+      gap: 4px;
+    }
+
+    .card-title strong {
+      font-size: 15px;
+      letter-spacing: .02em;
+    }
+
+    .card-title span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .sip-input-wrap {
+      position: relative;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: .02em;
+    }
+
+    .sip-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(125, 211, 252, .28);
+      background: rgba(3, 7, 18, .52);
+      border-radius: 16px;
+      padding: 9px 10px 9px 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    }
+
+    .prompt-mark {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    #sipInput {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: clamp(15px, 2.2vw, 20px);
+      padding: 9px 0;
+    }
+
+    .small-pill {
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+    }
+
+    .mode-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--warn);
+      box-shadow: 0 0 16px rgba(253, 230, 138, .7);
+    }
+
+    .small-pill.bound .mode-dot {
+      background: var(--good);
+      box-shadow: 0 0 16px rgba(134, 239, 172, .7);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid rgba(125, 211, 252, .18);
+      color: var(--text);
+      background: rgba(31, 45, 73, .9);
+      border-radius: 12px;
+      padding: 9px 11px;
+      cursor: pointer;
+      font-weight: 650;
+      font-size: 13px;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: rgba(44, 59, 93, .95);
+      border-color: rgba(125, 211, 252, .44);
+    }
+
+    button.primary {
+      background: linear-gradient(180deg, rgba(56, 189, 248, .9), rgba(14, 116, 144, .9));
+      color: #04111f;
+      border-color: rgba(125, 211, 252, .78);
+    }
+
+    .suggestion-panel {
+      margin-top: 12px;
+      border: 1px solid rgba(125, 211, 252, .22);
+      background: rgba(8, 14, 27, .96);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 18px 46px rgba(0,0,0,.32);
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 28, 51, .8);
+    }
+
+    .panel-top strong {
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: .03em;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .group {
+      padding: 12px;
+      border-bottom: 1px solid rgba(44, 59, 93, .65);
+    }
+
+    .group:last-child { border-bottom: 0; }
+
+    .group-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+
+    .group-heading .tag {
+      text-transform: none;
+      letter-spacing: normal;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+
+    .suggestion-list {
+      display: grid;
+      gap: 6px;
+    }
+
+    .suggestion {
+      display: grid;
+      gap: 4px;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: transparent;
+      text-align: left;
+    }
+
+    .suggestion:hover,
+    .suggestion.active {
+      background: rgba(125, 211, 252, .105);
+      border-color: rgba(125, 211, 252, .32);
+    }
+
+    .suggestion-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 730;
+    }
+
+    .suggestion-main code {
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+    }
+
+    .suggestion-sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+    }
+
+    .badge.discovery {
+      color: var(--warn);
+      border-color: rgba(253, 230, 138, .3);
+      background: rgba(253, 230, 138, .08);
+    }
+
+    .badge.bound {
+      color: var(--good);
+      border-color: rgba(134, 239, 172, .28);
+      background: rgba(134, 239, 172, .08);
+    }
+
+    .badge.shortcut {
+      color: #c4b5fd;
+      border-color: rgba(196, 181, 253, .34);
+      background: rgba(196, 181, 253, .09);
+    }
+
+    .empty-state {
+      padding: 22px 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .side-section {
+      display: grid;
+      gap: 14px;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .status-item {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      border-radius: 14px;
+    }
+
+    .status-item .k {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .status-item .v {
+      font-weight: 720;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
+    }
+
+    .status-item .v code {
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    .explanation {
+      color: var(--muted);
+      line-height: 1.52;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .rule-box {
+      border: 1px solid rgba(125, 211, 252, .22);
+      background: rgba(125, 211, 252, .075);
+      border-radius: 14px;
+      padding: 13px;
+      line-height: 1.48;
+    }
+
+    .rule-box strong {
+      color: var(--accent);
+    }
+
+    .history {
+      max-height: 270px;
+      overflow: auto;
+      padding-right: 4px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .history-entry {
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .history-entry code {
+      display: block;
+      margin-top: 3px;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .path-visual {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .crumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.045);
+      color: var(--text);
+      padding: 7px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .crumb.owner {
+      border-color: rgba(134, 239, 172, .32);
+      color: var(--good);
+      background: rgba(134, 239, 172, .08);
+    }
+
+    .arrow {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metadata {
+      display: none;
+      margin-top: 9px;
+      padding: 9px 10px;
+      background: rgba(3, 7, 18, .34);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 11px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.42;
+    }
+
+    .metadata.show { display: block; }
+
+
+    .resolution-preview {
+      display: none;
+      margin-top: 14px;
+      border: 1px solid rgba(134, 239, 172, .26);
+      background: rgba(134, 239, 172, .075);
+      border-radius: 16px;
+      padding: 13px;
+    }
+
+    .resolution-preview.show { display: grid; gap: 10px; }
+
+    .resolution-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--good);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .sip-link {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: clamp(14px, 2vw, 18px);
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(134, 239, 172, .26);
+      background: rgba(3, 7, 18, .36);
+    }
+
+    .sip-link:hover {
+      border-color: rgba(134, 239, 172, .54);
+      background: rgba(134, 239, 172, .12);
+      text-decoration: underline;
+    }
+
+    .url-preview-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    @media (max-width: 640px) {
+      .url-preview-row { grid-template-columns: 1fr; }
+    }
+
+    .url-copy-field {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.1);
+      outline: 0;
+      background: rgba(3, 7, 18, .46);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+    }
+
+    .copy-feedback {
+      min-height: 16px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>SIP Semantic IntelliSense Mockup</h1>
+      <p class="subtitle">
+        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, and shortcut SIP aliases. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, or click an owner-bound result to rewrite the string into a canonical owner-qualified identity.
+      </p>
+    </header>
+
+    <section class="layout">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <strong>Active SIP input</strong>
+            <span>Type a dot after a segment, or use the buttons below.</span>
+          </div>
+          <div id="modePill" class="small-pill"><span class="mode-dot"></span><span id="modeLabel">Discovery path</span></div>
+        </div>
+        <div class="card-body">
+          <div class="sip-input-wrap">
+            <label for="sipInput">SIP string</label>
+            <div class="sip-input-row">
+              <span class="prompt-mark">@</span>
+              <input id="sipInput" spellcheck="false" autocomplete="off" value="@games." aria-label="SIP input" />
+            </div>
+          </div>
+
+          <div id="resolutionPreview" class="resolution-preview" aria-live="polite">
+            <div class="resolution-heading">
+              <span>Owner-bound clickable SIP</span>
+              <span>deterministic candidate</span>
+            </div>
+            <a id="sipLink" class="sip-link" href="#" target="_blank" rel="noopener noreferrer">@stackworks.games.strategy.abstract.capture.leaping.columns.lasca</a>
+            <label for="urlPreview" style="margin:0;">Resolved URL preview</label>
+            <div class="url-preview-row">
+              <input id="urlPreview" class="url-copy-field" type="text" readonly value="" aria-label="Resolved URL preview" />
+              <button id="copyUrlBtn" type="button">Copy URL</button>
+            </div>
+            <div id="copyFeedback" class="copy-feedback">Click the SIP link to open the destination, or copy the URL below.</div>
+          </div>
+
+          <div class="actions">
+            <button id="resetBtn">Reset to @games.</button>
+            <button id="dotBtn">Add trailing dot</button>
+            <button id="shortcutDiscoveryBtn">Try @games.lasca</button>
+            <button id="shortcutOwnerBtn">Try @stackworks.games.lasca</button>
+            <button id="demoBtn" class="primary">Run guided demo</button>
+            <button id="metadataBtn">Toggle metadata</button>
+          </div>
+
+          <div id="pathVisual" class="path-visual" aria-label="Path visualization"></div>
+
+          <div id="suggestionPanel" class="suggestion-panel" role="listbox" aria-label="SIP IntelliSense suggestions"></div>
+        </div>
+      </div>
+
+      <aside class="side-section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <strong>Current interpretation</strong>
+              <span>Shows whether the string is exploratory or owner-bound.</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="status-grid">
+              <div class="status-item">
+                <div class="k">Mode</div>
+                <div id="statusMode" class="v">Discovery path</div>
+              </div>
+              <div class="status-item">
+                <div class="k">Meaning</div>
+                <div id="statusMeaning" class="v">Unbound semantic exploration</div>
+              </div>
+              <div class="status-item">
+                <div class="k">Resolution behavior</div>
+                <div id="statusResolution" class="v">Return ranked candidates; do not auto-redirect.</div>
+              </div>
+              <div class="status-item">
+                <div class="k">Destination preview</div>
+                <div id="statusDestination" class="v"><code>none yet</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <strong>Core UX rule</strong>
+              <span>The distinction the dropdown must make clear.</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="rule-box"><strong>Typing categories explores meaning.</strong><br><strong>Choosing an owner-bound result commits identity.</strong></p>
+            <p class="explanation" style="margin-top:12px;">The owner, such as <strong>stackworks</strong>, is not treated as a child category under Lasca. It appears as a separate owner-bound candidate and, when selected, rewrites the whole SIP string. Shortcut SIPs such as <code>@games.lasca</code> expand meaning; owner-bound shortcuts such as <code>@stackworks.games.lasca</code> can resolve or expand to the canonical owner-qualified SIP.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <strong>Selection history</strong>
+              <span>Tracks what the mockup did.</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="history" class="history"></div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
+    </footer>
+  </main>
+
+  <script>
+    const input = document.getElementById('sipInput');
+    const panel = document.getElementById('suggestionPanel');
+    const pathVisual = document.getElementById('pathVisual');
+    const modePill = document.getElementById('modePill');
+    const modeLabel = document.getElementById('modeLabel');
+    const statusMode = document.getElementById('statusMode');
+    const statusMeaning = document.getElementById('statusMeaning');
+    const statusResolution = document.getElementById('statusResolution');
+    const statusDestination = document.getElementById('statusDestination');
+    const historyEl = document.getElementById('history');
+    const resolutionPreview = document.getElementById('resolutionPreview');
+    const sipLink = document.getElementById('sipLink');
+    const urlPreview = document.getElementById('urlPreview');
+    const copyUrlBtn = document.getElementById('copyUrlBtn');
+    const copyFeedback = document.getElementById('copyFeedback');
+
+    let activeFlatIndex = -1;
+    let flatSuggestions = [];
+    let showMetadata = false;
+    let demoTimer = null;
+
+    const tree = {
+      'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
+      'games.strategy': ['abstract', 'rts', 'tbs', 'grand', 'tactical', 'moba', 'tower'],
+      'games.strategy.abstract': ['capture', 'annihilation', 'territory', 'grid-control', 'connection', 'stacking', '3d-spatial', 'mancala', 'counting'],
+      'games.strategy.abstract.capture': ['displacement', 'leaping'],
+      'games.strategy.abstract.capture.leaping': ['columns', 'checkers', 'dama', 'draughts'],
+      'games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
+      'games.strategy.abstract.capture.leaping.columns.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.capture.leaping.columns.damasca': ['classic', 'international', 'rules', 'online'],
+      'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online']
+    };
+
+    const shortcutAliases = {
+      'games.lasca': [
+        {
+          label: 'Lasca game classification',
+          shortcut: '@games.lasca',
+          expandsTo: '@games.strategy.abstract.capture.leaping.columns.lasca',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands meaning but does not bind an owner.'
+        }
+      ],
+      'stackworks.games.lasca': [
+        {
+          label: 'StackWorks — Lasca shortcut',
+          shortcut: '@stackworks.games.lasca',
+          expandsTo: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          mode: 'owner',
+          destination: 'https://stackworks.games/lasca',
+          note: 'Owner-bound shortcut. Expands to the canonical StackWorks Lasca identity.'
+        }
+      ]
+    };
+
+    const ownerCandidates = {
+      'games.lasca': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate discovered from the @games.lasca shortcut.'
+        },
+        {
+          label: 'BoardGameGeek — Lasca',
+          sip: '@boardgamegeek.games.boardgames.lasca',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          trust: 'Candidate',
+          note: 'Reference/discovery candidate for Lasca.'
+        },
+        {
+          label: 'Wikipedia — Lasca',
+          sip: '@wikipedia.games.boardgames.lasca',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          trust: 'Candidate',
+          note: 'Knowledge/reference candidate for Lasca.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate for the StackWorks Lasca game.'
+        },
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate for the StackWorks Damasca game.'
+        },
+        {
+          label: 'StackWorks — Columns Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columns-draughts',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate for a StackWorks columns-draughts variant.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.lasca': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Lasca.'
+        },
+        {
+          label: 'BoardGameGeek — Lasca',
+          sip: '@boardgamegeek.games.boardgames.lasca',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          trust: 'Candidate',
+          note: 'Reference/discovery candidate, not the StackWorks-owned game.'
+        },
+        {
+          label: 'Wikipedia — Lasca',
+          sip: '@wikipedia.games.boardgames.lasca',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          trust: 'Candidate',
+          note: 'Knowledge/reference candidate for Lasca.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.damasca': [
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Damasca.'
+        }
+      ]
+    };
+
+    const boundDestinations = {
+      '@stackworks.games.lasca': 'https://stackworks.games/lasca',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca': 'https://stackworks.games/lasca',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca': 'https://stackworks.games/damasca',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts': 'https://stackworks.games/columns-draughts',
+      '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
+      '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca'
+    };
+
+    function normalize(value) {
+      return value.trim().replace(/\s+/g, '').replace(/^@@+/, '@');
+    }
+
+    function stripAt(value) {
+      return normalize(value).replace(/^@/, '').replace(/\.$/, '');
+    }
+
+    function segments(value) {
+      const stripped = stripAt(value);
+      if (!stripped) return [];
+      return stripped.split('.').filter(Boolean);
+    }
+
+    function isBoundIdentity(value) {
+      const first = segments(value)[0];
+      return first && first !== 'games';
+    }
+
+    function currentKey(value) {
+      return stripAt(value);
+    }
+
+    function addHistory(kind, detail, sip) {
+      const entry = document.createElement('div');
+      entry.className = 'history-entry';
+      entry.innerHTML = `<strong>${escapeHtml(kind)}</strong><br>${escapeHtml(detail)}<code>${escapeHtml(sip)}</code>`;
+      historyEl.prepend(entry);
+      while (historyEl.children.length > 12) historyEl.removeChild(historyEl.lastChild);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function completeSegment(segment) {
+      const value = normalize(input.value);
+      const base = value.endsWith('.') ? value : value + '.';
+      input.value = base + segment;
+      addHistory('Discovery continuation selected', `Inserted segment “${segment}”. The path remains unbound.`, input.value);
+      input.focus();
+      render();
+    }
+
+    function selectShortcut(alias) {
+      input.value = alias.expandsTo;
+      const kind = alias.mode === 'owner' ? 'Owner-bound shortcut expanded' : 'Discovery shortcut expanded';
+      const detail = alias.mode === 'owner'
+        ? `Expanded ${alias.shortcut} to the canonical owner-qualified identity.`
+        : `Expanded ${alias.shortcut} to the longer discovery path. Ownership is still unbound.`;
+      addHistory(kind, detail, input.value);
+      input.focus();
+      render();
+    }
+
+    function selectOwner(candidate) {
+      input.value = candidate.sip;
+      addHistory('Owner-bound identity selected', `Selected ${candidate.label}. The full SIP string was rewritten to the canonical owner-qualified identity.`, input.value);
+      input.focus();
+      render();
+    }
+
+    function addTrailingDot() {
+      const value = normalize(input.value);
+      if (!value) input.value = '@games.';
+      else input.value = value.endsWith('.') ? value : value + '.';
+      input.focus();
+      render();
+    }
+
+    function reset() {
+      input.value = '@games.';
+      addHistory('Reset', 'Returned to the initial discovery node.', input.value);
+      input.focus();
+      render();
+    }
+
+    function renderPathVisual() {
+      const segs = segments(input.value);
+      const bound = isBoundIdentity(input.value);
+      pathVisual.innerHTML = '';
+      segs.forEach((seg, index) => {
+        if (index > 0) {
+          const arrow = document.createElement('span');
+          arrow.className = 'arrow';
+          arrow.textContent = '→';
+          pathVisual.appendChild(arrow);
+        }
+        const crumb = document.createElement('span');
+        crumb.className = 'crumb' + (bound && index === 0 ? ' owner' : '');
+        crumb.textContent = index === 0 && bound ? `owner: ${seg}` : seg;
+        pathVisual.appendChild(crumb);
+      });
+    }
+
+
+    function renderResolutionPreview() {
+      const value = normalize(input.value);
+      const destination = boundDestinations[value];
+      const bound = isBoundIdentity(value) && !!destination;
+
+      resolutionPreview.classList.toggle('show', bound);
+
+      if (bound) {
+        sipLink.textContent = value;
+        sipLink.href = destination;
+        sipLink.title = `Open ${destination}`;
+        urlPreview.value = destination;
+        copyFeedback.textContent = 'Click the SIP link to open the destination, or copy the resolved URL.';
+      } else {
+        sipLink.textContent = '';
+        sipLink.href = '#';
+        sipLink.removeAttribute('title');
+        urlPreview.value = '';
+        copyFeedback.textContent = 'No owner-bound destination selected yet.';
+      }
+    }
+
+    function renderStatus() {
+      const value = normalize(input.value);
+      const bound = isBoundIdentity(value);
+      const destination = boundDestinations[value];
+      const shortcutItems = shortcutAliases[currentKey(value)] || [];
+      const hasShortcut = shortcutItems.length > 0;
+      const isOwnerShortcut = shortcutItems.some((item) => item.mode === 'owner');
+
+      modePill.classList.toggle('bound', bound || isOwnerShortcut);
+      modeLabel.textContent = bound || isOwnerShortcut ? 'Owner-bound identity' : hasShortcut ? 'Shortcut discovery path' : 'Discovery path';
+      statusMode.textContent = bound || isOwnerShortcut ? 'Owner-bound identity' : hasShortcut ? 'Shortcut discovery path' : 'Discovery path';
+      statusMeaning.textContent = bound || isOwnerShortcut
+        ? 'Specific owner-qualified semantic identity or owner-bound shortcut'
+        : hasShortcut
+          ? 'Compact unbound shortcut that can expand to a longer discovery path'
+          : 'Unbound semantic exploration';
+      statusResolution.textContent = bound || isOwnerShortcut
+        ? 'Eligible for deterministic resolution if trust/confidence thresholds are satisfied.'
+        : 'Return ranked candidates; do not auto-redirect.';
+      statusDestination.innerHTML = destination
+        ? `<code>${escapeHtml(destination)}</code>`
+        : '<code>none yet</code>';
+    }
+
+    function suggestionGroupHtml(title, tag, itemsHtml) {
+      return `
+        <div class="group">
+          <div class="group-heading"><span>${escapeHtml(title)}</span><span class="tag">${escapeHtml(tag)}</span></div>
+          <div class="suggestion-list">${itemsHtml}</div>
+        </div>
+      `;
+    }
+
+    function renderSuggestions() {
+      const value = normalize(input.value);
+      const key = currentKey(value);
+      const shortcutItems = shortcutAliases[key] || [];
+      const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
+      const ownerItems = ownerCandidates[key] || [];
+      flatSuggestions = [];
+      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + discoveryItems.length + ownerItems.length - 1);
+
+      let html = `
+        <div class="panel-top">
+          <strong>Semantic IntelliSense</strong>
+          <span class="hint">Arrow keys + Enter work too</span>
+        </div>
+      `;
+
+      if (shortcutItems.length) {
+        const itemsHtml = shortcutItems.map((item) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'shortcut', value: item });
+          const badgeText = item.mode === 'owner' ? 'owner shortcut' : 'shortcut alias';
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge shortcut">${escapeHtml(badgeText)}</span></div>
+              <div class="suggestion-sub">${escapeHtml(item.shortcut)} → ${escapeHtml(item.expandsTo)}</div>
+              <div class="metadata ${showMetadata ? 'show' : ''}">
+                ${escapeHtml(item.note)}${item.destination ? `<br>Destination: ${escapeHtml(item.destination)}` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Shortcut SIP expansion', 'alias', itemsHtml);
+      }
+
+      if (discoveryItems.length) {
+        const itemsHtml = discoveryItems.map((item) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'discovery', value: item });
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><code>${escapeHtml(item)}</code><span class="badge discovery">continue path</span></div>
+              <div class="suggestion-sub">Insert only the next segment: ${escapeHtml(value + item)}</div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Continue semantic discovery path', 'unbound', itemsHtml);
+      }
+
+      if (ownerItems.length) {
+        const itemsHtml = ownerItems.map((item) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'owner', value: item });
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge bound">bind owner</span></div>
+              <div class="suggestion-sub">${escapeHtml(item.sip)}</div>
+              <div class="metadata ${showMetadata ? 'show' : ''}">
+                Verified owner: ${escapeHtml(item.owner)}<br>
+                Destination: ${escapeHtml(item.destination)}<br>
+                Trust level: ${escapeHtml(item.trust)}<br>
+                Meaning: ${escapeHtml(item.note)}
+              </div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Matching owner-bound identities', 'canonical candidates', itemsHtml);
+      }
+
+      if (!shortcutItems.length && !discoveryItems.length && !ownerItems.length) {
+        if (isBoundIdentity(value)) {
+          const destination = boundDestinations[value];
+          html += `
+            <div class="empty-state">
+              <strong>Owner-bound identity selected.</strong><br>
+              ${destination ? `Destination preview: <code>${escapeHtml(destination)}</code>` : 'No demo destination is registered for this exact mockup string.'}
+            </div>
+          `;
+        } else if (!value.endsWith('.')) {
+          html += `
+            <div class="empty-state">
+              Type a trailing dot to request the next semantic suggestions.<br>
+              Example: <code>${escapeHtml(value)}.</code>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="empty-state">
+              No mock suggestions exist for this path yet.<br>
+              Try resetting to <code>@games.</code> or step through the guided demo.
+            </div>
+          `;
+        }
+      }
+
+      panel.innerHTML = html;
+    }
+
+    function updateActiveSuggestion(index) {
+      activeFlatIndex = index;
+      panel.querySelectorAll('.suggestion').forEach((el) => {
+        el.classList.toggle('active', Number(el.dataset.flatIndex) === activeFlatIndex);
+      });
+    }
+
+    function chooseFlat(index) {
+      const item = flatSuggestions[index];
+      if (!item) return;
+      if (item.type === 'shortcut') selectShortcut(item.value);
+      if (item.type === 'discovery') completeSegment(item.value);
+      if (item.type === 'owner') selectOwner(item.value);
+    }
+
+    function render() {
+      input.value = normalize(input.value);
+      renderPathVisual();
+      renderStatus();
+      renderResolutionPreview();
+      renderSuggestions();
+    }
+
+    function runDemo() {
+      if (demoTimer) clearInterval(demoTimer);
+      const steps = [
+        { type: 'set', value: '@games.', note: 'Start with a broad discovery root.' },
+        { type: 'segment', value: 'strategy' },
+        { type: 'dot' },
+        { type: 'segment', value: 'abstract' },
+        { type: 'dot' },
+        { type: 'segment', value: 'capture' },
+        { type: 'dot' },
+        { type: 'segment', value: 'leaping' },
+        { type: 'dot' },
+        { type: 'segment', value: 'columns' },
+        { type: 'dot' },
+        { type: 'segment', value: 'lasca' },
+        { type: 'dot' },
+        { type: 'owner', value: ownerCandidates['games.strategy.abstract.capture.leaping.columns.lasca'][0] }
+      ];
+      let index = 0;
+
+      function applyStep(step) {
+        if (step.type === 'set') {
+          input.value = step.value;
+          addHistory('Demo step', step.note, input.value);
+          render();
+        }
+        if (step.type === 'segment') completeSegment(step.value);
+        if (step.type === 'dot') addTrailingDot();
+        if (step.type === 'owner') selectOwner(step.value);
+      }
+
+      applyStep(steps[index++]);
+      demoTimer = setInterval(() => {
+        if (index >= steps.length) {
+          clearInterval(demoTimer);
+          demoTimer = null;
+          return;
+        }
+        applyStep(steps[index++]);
+      }, 850);
+    }
+
+    input.addEventListener('input', () => {
+      activeFlatIndex = -1;
+      render();
+    });
+
+    panel.addEventListener('pointerdown', (event) => {
+      const suggestion = event.target.closest('.suggestion');
+      if (!suggestion || !panel.contains(suggestion)) return;
+      event.preventDefault();
+      chooseFlat(Number(suggestion.dataset.flatIndex));
+    });
+
+    panel.addEventListener('mousemove', (event) => {
+      const suggestion = event.target.closest('.suggestion');
+      if (!suggestion || !panel.contains(suggestion)) return;
+      const index = Number(suggestion.dataset.flatIndex);
+      if (index !== activeFlatIndex) updateActiveSuggestion(index);
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if (!flatSuggestions.length) return;
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        activeFlatIndex = (activeFlatIndex + 1) % flatSuggestions.length;
+        renderSuggestions();
+      }
+      if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        activeFlatIndex = activeFlatIndex <= 0 ? flatSuggestions.length - 1 : activeFlatIndex - 1;
+        renderSuggestions();
+      }
+      if (event.key === 'Enter' && activeFlatIndex >= 0) {
+        event.preventDefault();
+        chooseFlat(activeFlatIndex);
+      }
+      if (event.key === 'Escape') {
+        activeFlatIndex = -1;
+        panel.innerHTML = '<div class="empty-state">IntelliSense closed. Type or focus the SIP input to continue.</div>';
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', reset);
+    document.getElementById('dotBtn').addEventListener('click', addTrailingDot);
+    document.getElementById('shortcutDiscoveryBtn').addEventListener('click', () => {
+      input.value = '@games.lasca';
+      addHistory('Shortcut typed', 'Entered the unbound discovery shortcut. Select the shortcut expansion or an owner-bound candidate below.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('shortcutOwnerBtn').addEventListener('click', () => {
+      input.value = '@stackworks.games.lasca';
+      addHistory('Owner shortcut typed', 'Entered the owner-bound shortcut. It can open directly or expand to the canonical full SIP.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('demoBtn').addEventListener('click', runDemo);
+    document.getElementById('metadataBtn').addEventListener('click', () => {
+      showMetadata = !showMetadata;
+      renderSuggestions();
+    });
+
+    copyUrlBtn.addEventListener('click', async () => {
+      const url = urlPreview.value;
+      if (!url) return;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          urlPreview.focus();
+          urlPreview.select();
+          document.execCommand('copy');
+          urlPreview.setSelectionRange(0, url.length);
+        }
+        copyFeedback.textContent = 'Copied URL to clipboard.';
+        addHistory('Copied URL', 'Copied the resolved destination URL from the owner-bound preview.', url);
+      } catch (err) {
+        urlPreview.focus();
+        urlPreview.select();
+        copyFeedback.textContent = 'Select the URL text and press Ctrl+C to copy.';
+      }
+    });
+
+    addHistory('Loaded', 'Initial semantic discovery root is ready.', input.value);
+    render();
+  </script>
+</body>
+</html>
