@@ -1766,6 +1766,405 @@ Broad facets discover.
 Specific aliases canonicalize.
 Owner-bound identities resolve.
 
+# Semantic Definition Authority and Governance
+
+SIP does not require a single global authority to define every synonym, shortcut, facet, category, or semantic relationship.
+
+Instead, SIP uses a multi-authority semantic definition model.
+
+The SIP protocol defines the structure and rules for semantic relationships, but the actual semantic meaning of those relationships may come from verified owners, Semantic Identity Providers, resolvers, domain experts, communities, users, organizations, and AI-assisted semantic systems.
+
+This distinction is important because SIP is not intended to become one universal centralized taxonomy.
+
+SIP should define how semantic claims are expressed, verified, ranked, disputed, personalized, and resolved.
+
+It should not require one central party to dictate every possible semantic meaning.
+
+## Protocol-Defined Relationship Types
+
+The SIP core specification should define the formal relationship types that the ecosystem may use.
+
+Examples include:
+
+- canonical identity
+- semantic alias
+- synonym
+- equivalent path segment
+- shortcut
+- broad semantic facet
+- owner-bound identity
+- discovery path
+- broader-than relationship
+- narrower-than relationship
+- related-to relationship
+- personalized shortcut binding
+- AI-suggested semantic association
+
+These relationship types are part of the protocol grammar.
+
+They define how semantic relationships are represented and interpreted.
+
+For example, SIP may define that:
+
+- a synonym expresses equivalent meaning within a context
+- a shortcut compresses a longer semantic path
+- a broad semantic facet discovers multiple narrower paths
+- an owner-bound identity may resolve deterministically
+- a personalized shortcut applies only within a user’s trusted context
+
+The protocol defines these categories of relationship.
+
+It does not centrally define every individual semantic fact.
+
+## Owner-Defined Semantic Identities
+
+Verified owners, publishers, organizations, creators, and providers may define semantic identities inside their own owner namespace.
+
+For example, StackWorks may define:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+and may publish destination mappings such as:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca  
+→ https://stackworks.games/lasca
+
+StackWorks may also publish owner-bound aliases or shortcuts such as:
+
+@stackworks.games.lasca
+
+or:
+
+@stackworks.games.abstract.lasca
+
+Because these identities exist inside the StackWorks owner namespace, StackWorks may act as the authoritative publisher for those mappings, subject to verification, trust, and anti-impersonation requirements.
+
+However, StackWorks should not automatically control broad unbound expressions such as:
+
+@games.lasca
+
+or:
+
+@games.strategy.abstract.stacking
+
+Those expressions exist in broader semantic discovery space and should not be globally owned by one publisher.
+
+## Provider-Published Semantic Metadata
+
+Semantic Identity Providers may publish semantic metadata, identity records, aliases, categories, facets, synonyms, and relationship claims.
+
+Examples of provider-published semantic claims may include:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca  
+is related to:  
+@games.strategy.abstract.stacking
+
+or:
+
+@games.strategy.abstract.capture.leaping.columns  
+has equivalent segment:  
+@games.strategy.abstract.capture.leaping.stacking
+
+or:
+
+@games.strategy.abstract.stacking  
+matches narrower paths including:  
+@games.strategy.abstract.capture.leaping.columns  
+@games.strategy.abstract.capture.displacement.columns  
+@games.strategy.abstract.capture.rotation.columns
+
+Such claims should be treated as semantic metadata.
+
+They may be authoritative when published inside a verified owner namespace.
+
+They may be consensus-ranked when published in broader public semantic space.
+
+## Resolver-Ranked Consensus Relationships
+
+For broad public semantic concepts, no single owner should automatically define the global meaning.
+
+Examples:
+
+@games.strategy.abstract.stacking  
+@music.jazz  
+@recipes.gumbo  
+@video.minecraft
+
+These expressions may be influenced by many sources, including:
+
+- verified owner metadata
+- Semantic Identity Providers
+- community taxonomies
+- domain experts
+- trusted registries
+- resolver ranking systems
+- user behavior
+- semantic popularity
+- AI-assisted analysis
+- cross-provider consensus
+
+Resolvers should evaluate these claims using factors such as:
+
+- provider reputation
+- verification quality
+- semantic relevance
+- source credibility
+- cross-provider agreement
+- abuse resistance
+- user trust settings
+- historical accuracy
+- contextual relevance
+
+In this model, broad public semantic meaning emerges from federated metadata, domain knowledge, reputation, and consensus.
+
+It is not dictated by a single central authority.
+
+## Domain Expert and Community Contributions
+
+Certain semantic areas may benefit from domain-specific taxonomies or expert-maintained semantic maps.
+
+Examples:
+
+- board game mechanics
+- medical terminology
+- legal terminology
+- academic fields
+- software package ecosystems
+- music genres
+- culinary traditions
+- scientific classifications
+
+For example, the relationship between:
+
+@games.strategy.abstract.stacking
+
+and narrower paths such as:
+
+@games.strategy.abstract.capture.leaping.columns
+
+may be informed by game designers, game historians, rules databases, gaming communities, and board game taxonomy providers.
+
+SIP should allow these communities to publish semantic relationship claims, but resolvers should still evaluate those claims through reputation, verification, and consensus.
+
+## User-Defined Personal Semantics
+
+Users may define personal shortcuts, preferred identities, semantic favorites, and context-specific meanings.
+
+For example, a user may choose:
+
+@games.lasca
+
+to mean:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+within that user’s trusted resolver context.
+
+This creates a personal semantic binding.
+
+It does not imply that StackWorks globally owns:
+
+@games.lasca
+
+Nor does it prevent another user from binding:
+
+@games.lasca
+
+to a different Lasca-related identity.
+
+Personal semantic definitions may come from:
+
+- explicit user choice
+- saved semantic favorites
+- browser profile settings
+- organizational profile settings
+- AI-assisted semantic memory
+- trusted local resolver preferences
+
+Personal semantic definitions should remain scoped to the user, organization, device, browser profile, or resolver context in which they were created.
+
+## AI-Suggested Semantic Relationships
+
+AI systems may suggest semantic relationships, but AI suggestions should not automatically be treated as authoritative.
+
+AI may suggest that:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+is related to:
+
+@games.strategy.abstract.stacking
+
+or that:
+
+columns
+
+and:
+
+stacking
+
+may be equivalent within a particular game-mechanics context.
+
+However, such suggestions should be treated as provisional unless they are:
+
+- accepted by an owner
+- confirmed by a trusted provider
+- supported by domain expertise
+- reinforced by resolver consensus
+- approved by a user for personal use
+- verified through reliable metadata
+
+AI can assist discovery, enrichment, classification, and ranking.
+
+It should not silently create authoritative semantic truth without verification or acceptance.
+
+## Semantic Claims vs Semantic Authority
+
+SIP should distinguish between publishing a semantic claim and having semantic authority.
+
+A semantic claim says:
+
+This relationship may be meaningful.
+
+Semantic authority says:
+
+This relationship is trusted enough to affect resolution, ranking, display, or deterministic behavior.
+
+For example, any provider may claim:
+
+@games.strategy.abstract.stacking  
+is related to:  
+@games.strategy.abstract.capture.leaping.columns
+
+But a resolver may decide whether that claim is trusted based on:
+
+- who published it
+- whether it is verified
+- whether reputable sources agree
+- whether it matches user context
+- whether it conflicts with better evidence
+- whether it appears abusive or misleading
+
+This distinction allows SIP to remain open while still resisting spam, abuse, and semantic manipulation.
+
+## Authority Levels
+
+SIP semantic definitions may be understood across several authority levels.
+
+### Protocol Authority
+
+The SIP specification defines the relationship types, metadata structures, verification models, and resolver behavior.
+
+Example:
+
+A broad semantic facet discovers multiple narrower paths.
+
+### Owner Authority
+
+A verified owner defines identities, aliases, and destination mappings inside its own namespace.
+
+Example:
+
+@stackworks.games.lasca  
+→ https://stackworks.games/lasca
+
+### Provider Authority
+
+A Semantic Identity Provider publishes semantic metadata and verified records.
+
+Example:
+
+A provider publishes that Lasca belongs under abstract strategy games.
+
+### Consensus Authority
+
+Resolvers rank broad public semantic relationships based on multiple trusted sources.
+
+Example:
+
+@games.strategy.abstract.stacking
+
+matches several narrower stacking-game branches.
+
+### Personal Authority
+
+A user defines private or contextual shortcut meanings.
+
+Example:
+
+For this user:
+
+@games.lasca  
+→ @stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+### AI-Assisted Authority
+
+AI suggests relationships for review, enrichment, discovery, or personalization.
+
+Example:
+
+AI suggests that “stacking” may be a broad game mechanic facet.
+
+## Example: StackWorks and Lasca
+
+StackWorks may authoritatively define:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+and map it to:
+
+https://stackworks.games/lasca
+
+StackWorks may also define:
+
+@stackworks.games.lasca
+
+as an owner-bound shortcut.
+
+However, broader unbound expressions such as:
+
+@games.lasca
+
+or:
+
+@games.strategy.abstract.stacking
+
+should remain public semantic discovery expressions.
+
+They may return StackWorks as a highly relevant candidate, but they should not be globally owned by StackWorks.
+
+A resolver may show:
+
+StackWorks — Lasca  
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca  
+Maps to: https://stackworks.games/lasca
+
+Wikipedia — Lasca  
+@wikipedia.games.boardgames.lasca
+
+BoardGameGeek — Lasca  
+@boardgamegeek.games.boardgames.lasca
+
+The user may then select StackWorks and optionally save:
+
+@games.lasca
+
+as a personal shortcut.
+
+This gives the user convenience without creating global ownership over the shorthand.
+
+## Core Semantic Authority Rule
+
+The core rule is:
+
+The SIP protocol defines relationship types.  
+Owners define their verified identities.  
+Providers publish semantic metadata.  
+Resolvers rank and reconcile claims.  
+Users define personal preferences.  
+AI suggests relationships, but does not automatically make them authoritative.
+
+This keeps SIP open, federated, contextual, and AI-native without allowing any one organization to define the entire semantic universe.
 
 # Shortcut SIPs and Semantic Shortcut Aliases
 
@@ -1899,6 +2298,71 @@ It should not imply that StackWorks globally owns:
 @games.lasca
 
 unless the owner-bound form is explicitly used.
+
+## Resolver-Assisted Shortcut Binding
+
+Users should not be required to know a full canonical SIP identity before creating a useful personal shortcut.
+
+A user may begin with a compact shorthand expression such as:
+
+@games.lasca
+
+Before personalization, this expression behaves as an unbound shortcut discovery query.
+
+The resolver may interpret it as:
+
+Find likely SIP identities, semantic expansions, owner-bound candidates, and trusted destinations associated with games and Lasca.
+
+The resolver may then return candidate identities such as:
+
+StackWorks — Lasca  
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca  
+Maps to: https://stackworks.games/lasca
+
+Wikipedia — Lasca  
+@wikipedia.games.boardgames.lasca
+
+BoardGameGeek — Lasca  
+@boardgamegeek.games.boardgames.lasca
+
+Generic semantic expansion  
+@games.strategy.abstract.capture.leaping.columns.lasca
+
+The user may then choose the desired identity and optionally save that choice as a personal shortcut.
+
+For example, if the user selects:
+
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca
+
+and saves it as the preferred meaning of:
+
+@games.lasca
+
+then the user’s trusted resolver context may store:
+
+@games.lasca  
+→ @stackworks.games.strategy.abstract.capture.leaping.columns.lasca  
+→ https://stackworks.games/lasca
+
+This creates a personalized shortcut binding.
+
+The binding applies only within that user’s trusted context, browser profile, organization profile, or semantic memory environment.
+
+It does not imply that StackWorks globally owns:
+
+@games.lasca
+
+Nor does it prevent other users from binding:
+
+@games.lasca
+
+to a different preferred Lasca-related identity.
+
+Core rule:
+
+A shorthand SIP may begin as discovery.  
+After user selection, it may become a personal shortcut.  
+Personal shortcut binding does not create global ownership.
 
 ## Shortcut SIP Types
 
