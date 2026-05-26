@@ -2,7 +2,7 @@
 
 ## White Paper, Architecture Overview, and Documentation Roadmap
 
-Version: Draft 0.8 - Matched Recognizable Examples Revision Date: May 22, 2026 Status: Conceptual Proposal
+Version: Draft 0.9 - Semantic Path Search and Boolean Query Expressions  Revision Date: May 26, 2026  Status: Conceptual Proposal
 
 # Executive Summary
 
@@ -3362,5 +3362,168 @@ Semantic IntelliSense instead supports:
 - meaning-oriented interaction
 
 This significantly improves usability, discoverability, and semantic clarity in large-scale AI-native information ecosystems.
+
+---
+
+# Semantic Path Search
+
+SIP-aware interfaces may support a global semantic path search feature that allows users to search across the entire registered SIP identity space using one or more keywords.
+
+Unlike Semantic IntelliSense, which guides users through the semantic hierarchy step by step, semantic path search allows users to query directly across all known SIP paths without knowing the starting category.
+
+## Search-Based Navigation
+
+In addition to guided hierarchical IntelliSense, users may wish to navigate directly to a known or partially remembered SIP identity using keyword recall rather than step-by-step category traversal.
+
+Semantic path search allows users to type one or more keywords and immediately see a ranked list of matching SIP identities drawn from across:
+
+- discovery paths in the semantic tree
+- owner-bound canonical identities
+- shortcut aliases and expansions
+- personal shortcut bindings (within the user's trusted context)
+
+Example:
+
+User types:
+
+lasca
+
+Matching results may include:
+
+@games.strategy.abstract.capture.leaping.columns.lasca  (discovery)  
+@stackworks.games.strategy.abstract.capture.leaping.columns.lasca  (owner-bound)  
+@stackworks.games.lasca  (shortcut)
+
+The user may select any matching result to load it immediately as the active SIP expression.
+
+## Boolean Keyword Expressions
+
+Semantic path search should support boolean keyword expressions to allow precise multi-keyword filtering across large semantic identity spaces.
+
+The query language is intentionally simple and familiar, using operators that do not conflict with SIP path syntax.
+
+### OR Expressions
+
+Multiple keywords separated by spaces, commas, or the `|` pipe operator return results matching any one of the keywords.
+
+The following expressions are equivalent:
+
+    chess | checkers
+    chess, checkers
+    chess checkers
+
+All three return SIP identities whose path or label contains either chess or checkers.
+
+### AND Expressions
+
+Multiple keywords joined by `&` or `+` return only results matching all specified keywords.
+
+The following expressions are equivalent:
+
+    chess & columns
+    chess + columns
+
+Both return only SIP identities containing both chess and columns.
+
+### Grouped Expressions
+
+Parentheses allow combining OR and AND logic within the same query.
+
+Example:
+
+    (chess | checkers) & columns
+    (chess | checkers) + columns
+
+Both expressions return SIP identities that contain columns and at least one of chess or checkers.
+
+### Operator Precedence
+
+AND (`&`, `+`) binds more tightly than OR (`|`, `,`, space), following standard boolean algebra precedence.
+
+Example:
+
+    chess | checkers & columns
+
+is interpreted as:
+
+    chess | (checkers & columns)
+
+Parentheses may be used to override default precedence explicitly.
+
+## Search Scope
+
+Semantic path search may be applied across:
+
+- **Discovery paths** — all registered semantic path segments in the SIP discovery tree, including intermediate nodes and leaf nodes
+- **Owner-bound identities** — canonical owner-qualified SIP strings published by verified owners
+- **Shortcut aliases** — compact semantic shortcut expressions and their expansion targets
+- **Personal shortcuts** — user-saved shortcut bindings, included only within the user's trusted resolver context
+
+Search matching may be applied to both the SIP path string and any associated human-readable label or description.
+
+## Selecting Search Results
+
+When a user selects a result from the search panel, the selected SIP string becomes the active expression in the semantic input field.
+
+The interface then transitions to normal guided navigation mode with the selected SIP as the starting point.
+
+This allows users to combine keyword-driven initial discovery with guided IntelliSense-based refinement.
+
+For example:
+
+1. User searches for: lasca
+2. User selects: @games.strategy.abstract.capture.leaping.columns.lasca
+3. Active SIP field is populated with the selected path
+4. Semantic IntelliSense may then offer continuations or owner-bound candidates from that point
+
+## Relationship to Semantic IntelliSense
+
+Semantic path search and Semantic IntelliSense serve complementary navigation purposes.
+
+Semantic IntelliSense is optimized for:
+
+- step-by-step semantic exploration
+- guided hierarchical navigation
+- discovering semantic structure progressively
+- navigating from a known starting category
+
+Semantic path search is optimized for:
+
+- finding a known or partially remembered SIP path by keyword
+- querying across the entire semantic corpus at once
+- combining multiple keyword constraints to narrow a large result set
+- bypassing the semantic hierarchy when the user already has a keyword in mind
+
+Together, these navigation modes allow SIP-aware interfaces to serve both exploratory and recall-driven user intent without requiring users to begin navigation from the root of the semantic tree.
+
+## AI Integration
+
+Semantic path search may also serve as an AI-mediated interface layer.
+
+An AI assistant may translate natural language intent into a boolean search expression.
+
+Example:
+
+User says:
+
+Find abstract board games that involve stacking or columns mechanics.
+
+AI-generated search expression:
+
+    (stacking | columns) & abstract
+
+The search engine may return matching owner-bound identities, discovery paths, and shortcut aliases.
+
+The AI may then rank, explain, and present these results contextually.
+
+## Architectural Implications
+
+Semantic path search further reinforces that SIP is:
+
+- **queryable** — users and AI systems may retrieve SIP identities using structured keyword expressions
+- **AI-navigable** — boolean queries may be automatically generated from natural language intent
+- **context-aware** — personal shortcuts are included only within the user's trusted resolver context
+- **federated** — search results may aggregate identity records across multiple Semantic Identity Providers
+- **meaning-oriented** — search matches against semantic labels and human-readable descriptions as well as raw path strings
 
 ---

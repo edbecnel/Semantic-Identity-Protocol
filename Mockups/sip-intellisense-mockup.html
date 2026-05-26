@@ -641,6 +641,98 @@
     .shortcut-create-hint.valid { color: var(--good); }
     .shortcut-create-hint.error { color: var(--danger); }
 
+    .search-card { margin-bottom: 18px; }
+
+    .sip-search-input {
+      width: 100%;
+      border: 1px solid rgba(125, 211, 252, .28);
+      outline: 0;
+      background: rgba(3, 7, 18, .52);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
+    }
+
+    .sip-search-input:focus { border-color: rgba(125, 211, 252, .55); }
+
+    .search-results {
+      margin-top: 10px;
+      display: grid;
+      gap: 5px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .search-result-item {
+      display: grid;
+      gap: 3px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: rgba(255,255,255,.03);
+      transition: background .1s ease, border-color .1s ease;
+    }
+
+    .search-result-item:hover,
+    .search-result-item:focus {
+      background: rgba(125, 211, 252, .1);
+      border-color: rgba(125, 211, 252, .3);
+      outline: 0;
+    }
+
+    .search-result-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .search-result-sip {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .search-result-meta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-result-dest {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow-wrap: anywhere;
+    }
+
+    .search-empty {
+      padding: 12px 0;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .search-syntax-hint {
+      margin-top: 7px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: .7;
+    }
+
+    .search-syntax-hint code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: var(--text);
+      opacity: .85;
+    }
+
     .shortcuts-dropdown-btn {
       white-space: nowrap;
       flex-shrink: 0;
@@ -740,6 +832,20 @@
         This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, resolver-assisted shortcut binding, semantic synonyms, and broad semantic facets. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, click an owner-bound result to rewrite the string into a canonical owner-qualified identity, or save a discovered result as your personal shortcut.
       </p>
     </header>
+
+    <div class="card search-card">
+      <div class="card-header">
+        <div class="card-title">
+          <strong>Search SIPs</strong>
+          <span>Find any registered SIP path by keyword and select to load it.</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
+        <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>( )</code> for grouping</div>
+        <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
+      </div>
+    </div>
 
     <section class="layout">
       <div class="card">
@@ -879,6 +985,7 @@
     let demoTimer = null;
     let freeformShortcutDraft = '';
     let shortcutsDropdownOpen = false;
+    let sipIndex = [];
 
     const tree = {
       'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
@@ -901,7 +1008,9 @@
       'games.strategy.abstract.capture.leaping.columns.damasca': ['classic', 'international', 'rules', 'online'],
       'games.strategy.abstract.capture.leaping.stacking.damasca': ['classic', 'international', 'rules', 'online'],
       'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online'],
-      'games.strategy.abstract.capture.leaping.stacking.columns-draughts': ['rules', 'variants', 'online']
+      'games.strategy.abstract.capture.leaping.stacking.columns-draughts': ['rules', 'variants', 'online'],
+      'games.strategy.abstract.capture.displacement': ['chess'],
+      'games.strategy.abstract.capture.displacement.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles']
     };
 
     const shortcutAliases = {
@@ -1223,6 +1332,34 @@
           trust: 'Domain Verified',
           note: 'Canonical owner-qualified identity for StackWorks Columns Draughts. Reached through the stacking synonym.'
         }
+      ],
+      'games.strategy.abstract.capture.displacement.chess': [
+        {
+          label: 'StackWorks — Chess',
+          sip: '@stackworks.games.strategy.abstract.capture.displacement.chess',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/chess',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for chess under the displacement capture branch.'
+        },
+        {
+          label: 'Chess.com — Chess',
+          sip: '@chessdotcom.games.strategy.abstract.capture.displacement.chess',
+          owner: 'chess.com',
+          destination: 'https://www.chess.com/',
+          trust: 'Domain Verified',
+          note: 'Chess.com owner-bound identity for chess under the displacement capture branch.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.checkers': [
+        {
+          label: 'StackWorks — Checkers',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.checkers',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/checkers',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for checkers under the leaping capture branch.'
+        }
       ]
     };
 
@@ -1231,6 +1368,9 @@
       '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca': 'https://stackworks.games/lasca',
       '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca': 'https://stackworks.games/damasca',
       '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts': 'https://stackworks.games/columns-draughts',
+      '@stackworks.games.strategy.abstract.capture.displacement.chess': 'https://stackworks.games/chess',
+      '@chessdotcom.games.strategy.abstract.capture.displacement.chess': 'https://www.chess.com/',
+      '@stackworks.games.strategy.abstract.capture.leaping.checkers': 'https://stackworks.games/checkers',
       '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
       '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca'
     };
@@ -1777,6 +1917,160 @@
       if (item.type === 'personalBinding') expandPersonalShortcutBinding(item.value);
     }
 
+    function buildSipIndex() {
+      const map = new Map();
+      function add(sip, label, kind, destination) {
+        if (!map.has(sip)) map.set(sip, { sip, label, kind, destination: destination || '' });
+        else if (destination && !map.get(sip).destination) map.get(sip).destination = destination;
+      }
+      for (const [key, children] of Object.entries(tree)) {
+        add('@' + key, '@' + key, 'discovery', '');
+        for (const child of children) add('@' + key + '.' + child, '@' + key + '.' + child, 'discovery', '');
+      }
+      for (const candidates of Object.values(ownerCandidates)) {
+        for (const c of candidates) { if (c.sip) add(c.sip, c.label, 'owner', c.destination); }
+      }
+      for (const [sip, dest] of Object.entries(boundDestinations)) {
+        const ex = map.get(sip);
+        if (ex) ex.destination = dest; else add(sip, sip, 'bound', dest);
+      }
+      for (const aliases of Object.values(shortcutAliases)) {
+        for (const a of aliases) add(a.shortcut, a.label, a.mode === 'owner' ? 'owner-shortcut' : 'shortcut', a.destination);
+      }
+      return Array.from(map.values()).sort((a, b) => a.sip.localeCompare(b.sip));
+    }
+
+    // ── Boolean query tokeniser / parser / evaluator ─────────────────────────
+    function tokenizeQuery(query) {
+      const raw = [];
+      let i = 0;
+      while (i < query.length) {
+        if (/\s/.test(query[i])) {
+          raw.push({ type: 'SPACE' });
+          while (i < query.length && /\s/.test(query[i])) i++;
+          continue;
+        }
+        const ch = query[i];
+        if (ch === '|' || ch === ',') { raw.push({ type: 'OR' });    i++; continue; }
+        if (ch === '&' || ch === '+') { raw.push({ type: 'AND' });   i++; continue; }
+        if (ch === '(')               { raw.push({ type: 'LPAREN' }); i++; continue; }
+        if (ch === ')')               { raw.push({ type: 'RPAREN' }); i++; continue; }
+        const start = i;
+        while (i < query.length && !/[\s|,&+()[\]{}]/.test(query[i])) i++;
+        if (i > start) raw.push({ type: 'TERM', value: query.slice(start, i).toLowerCase() });
+      }
+      // Convert SPACE to implicit OR when it sits between two value tokens
+      const tokens = [];
+      for (let j = 0; j < raw.length; j++) {
+        const t = raw[j];
+        if (t.type === 'SPACE') {
+          const prev = tokens[tokens.length - 1];
+          const next = raw.slice(j + 1).find((x) => x.type !== 'SPACE');
+          if (prev && (prev.type === 'TERM' || prev.type === 'RPAREN') &&
+              next && (next.type === 'TERM' || next.type === 'LPAREN')) {
+            tokens.push({ type: 'OR' });
+          }
+        } else {
+          tokens.push(t);
+        }
+      }
+      // Drop orphaned operator tokens (leading, trailing, doubled)
+      return tokens.filter((t, i, arr) => {
+        if (t.type !== 'OR' && t.type !== 'AND') return true;
+        const prev = arr[i - 1];
+        const next = arr[i + 1];
+        if (!prev || prev.type === 'LPAREN' || prev.type === 'OR' || prev.type === 'AND') return false;
+        if (!next || next.type === 'RPAREN' || next.type === 'OR' || next.type === 'AND') return false;
+        return true;
+      });
+    }
+
+    function parseQuery(tokens) {
+      let pos = 0;
+      const peek    = () => tokens[pos] || { type: 'EOF' };
+      const consume = () => tokens[pos++];
+
+      function parseOr() {
+        let left = parseAnd();
+        while (peek().type === 'OR')  { consume(); left = { op: 'OR',  left, right: parseAnd() }; }
+        return left;
+      }
+      function parseAnd() {
+        let left = parseAtom();
+        while (peek().type === 'AND') { consume(); left = { op: 'AND', left, right: parseAtom() }; }
+        return left;
+      }
+      function parseAtom() {
+        const t = peek();
+        if (t.type === 'LPAREN') {
+          consume();
+          const expr = parseOr();
+          if (peek().type === 'RPAREN') consume();
+          return expr;
+        }
+        if (t.type === 'TERM') { consume(); return { op: 'TERM', value: t.value }; }
+        return null;
+      }
+      return parseOr();
+    }
+
+    function evalQuery(node, text) {
+      if (!node) return true;
+      if (node.op === 'TERM') return text.includes(node.value);
+      if (node.op === 'AND')  return evalQuery(node.left, text) && evalQuery(node.right, text);
+      if (node.op === 'OR')   return evalQuery(node.left, text) || evalQuery(node.right, text);
+      return true;
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
+    function searchSips(query) {
+      if (!query.trim()) return [];
+      const tokens = tokenizeQuery(query);
+      if (!tokens.length) return [];
+      const ast = parseQuery(tokens);
+      if (!ast) return [];
+      const personal = Object.values(personalShortcutBindings).map((b) => ({
+        sip: b.sip, label: b.label, kind: 'personal', destination: b.destination || ''
+      }));
+      return [...sipIndex, ...personal].filter((item) => {
+        const text = (item.sip + ' ' + item.label).toLowerCase();
+        return evalQuery(ast, text);
+      }).slice(0, 30);
+    }
+
+    function renderSearchResults(query) {
+      const resultsEl = document.getElementById('searchResults');
+      if (!query.trim()) { resultsEl.hidden = true; return; }
+      const results = searchSips(query);
+      if (!results.length) {
+        resultsEl.innerHTML = '<div class="search-empty">No matching SIPs found.</div>';
+        resultsEl.hidden = false;
+        return;
+      }
+      const kindBadge = {
+        discovery: '<span class="badge discovery">discovery</span>',
+        owner: '<span class="badge bound">owner-bound</span>',
+        'owner-shortcut': '<span class="badge shortcut">owner shortcut</span>',
+        shortcut: '<span class="badge shortcut">shortcut</span>',
+        bound: '<span class="badge bound">bound</span>',
+        personal: '<span class="badge personal">personal</span>'
+      };
+      resultsEl.innerHTML = results.map((item) => `
+        <div class="search-result-item" data-sip="${escapeHtml(item.sip)}" role="option" tabindex="0">
+          <div class="search-result-main">
+            <code class="search-result-sip">${escapeHtml(item.sip)}</code>
+            ${kindBadge[item.kind] || ''}
+          </div>
+          ${(item.label !== item.sip || item.destination) ? `
+            <div class="search-result-meta">
+              ${item.label !== item.sip ? escapeHtml(item.label) : ''}
+              ${item.destination ? `<span class="search-result-dest">${escapeHtml(item.destination)}</span>` : ''}
+            </div>` : ''}
+        </div>
+      `).join('');
+      resultsEl.hidden = false;
+    }
+
     function render() {
       input.value = normalize(input.value);
       renderPathVisual();
@@ -2009,6 +2303,48 @@
 
     document.addEventListener('click', () => {
       if (shortcutsDropdownOpen) closeShortcutsDropdown();
+    });
+
+    sipIndex = buildSipIndex();
+
+    document.getElementById('sipSearch').addEventListener('input', (event) => {
+      renderSearchResults(event.target.value);
+    });
+
+    document.getElementById('sipSearch').addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        event.target.value = '';
+        renderSearchResults('');
+        return;
+      }
+      if (event.key === 'ArrowDown') {
+        const first = document.querySelector('.search-result-item');
+        if (first) { event.preventDefault(); first.focus(); }
+      }
+    });
+
+    document.getElementById('searchResults').addEventListener('keydown', (event) => {
+      const items = [...document.querySelectorAll('.search-result-item')];
+      const idx = items.indexOf(event.target);
+      if (idx < 0) return;
+      if (event.key === 'ArrowDown') { event.preventDefault(); if (idx < items.length - 1) items[idx + 1].focus(); }
+      if (event.key === 'ArrowUp')   { event.preventDefault(); if (idx > 0) items[idx - 1].focus(); else document.getElementById('sipSearch').focus(); }
+      if (event.key === 'Enter')     { event.preventDefault(); items[idx].click(); }
+      if (event.key === 'Escape')    { document.getElementById('sipSearch').value = ''; renderSearchResults(''); document.getElementById('sipSearch').focus(); }
+    });
+
+    document.getElementById('searchResults').addEventListener('click', (event) => {
+      const item = event.target.closest('.search-result-item');
+      if (!item) return;
+      const sip = item.dataset.sip;
+      if (sip) {
+        input.value = sip;
+        document.getElementById('sipSearch').value = '';
+        renderSearchResults('');
+        addHistory('Selected from search', `Loaded ${sip} from SIP search.`, sip);
+        input.focus();
+        render();
+      }
     });
 
     addHistory('Loaded', 'Initial semantic discovery root is ready.', input.value);
