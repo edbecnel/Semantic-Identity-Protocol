@@ -3450,6 +3450,32 @@ is interpreted as:
 
 Parentheses may be used to override default precedence explicitly.
 
+## Synonym-Aware Matching
+
+Semantic path search automatically expands query terms to their registered synonyms before matching.
+
+If a keyword in the search query is a known synonym for a segment that appears in a SIP string, that SIP string will be returned as a match even though the literal keyword does not appear in it.
+
+Example:
+
+The segment `stacks` is registered as a synonym for `columns` within the displacement capture context.
+
+A search for:
+
+    chess + stacks
+
+will therefore match:
+
+    @games.strategy.abstract.capture.displacement.columns.chess
+
+because `stacks` expands to its synonym `columns`, and `columns` is present in the SIP path.
+
+Synonym expansion applies per query term. Each term in a boolean expression is independently expanded before the full expression is evaluated against the candidate SIP string.
+
+Synonyms are context-defined. A synonym relationship established within one semantic branch does not automatically apply to unrelated branches where the same word carries a different meaning.
+
+This allows search to behave naturally with the semantic vocabulary users already know, without requiring them to memorize which segment wording is canonical in a given part of the SIP hierarchy.
+
 ## Search Scope
 
 Semantic path search may be applied across:

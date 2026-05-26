@@ -986,6 +986,7 @@
     let freeformShortcutDraft = '';
     let shortcutsDropdownOpen = false;
     let sipIndex = [];
+    let synonymMap = new Map();
 
     const tree = {
       'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
@@ -1009,7 +1010,11 @@
       'games.strategy.abstract.capture.leaping.stacking.damasca': ['classic', 'international', 'rules', 'online'],
       'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online'],
       'games.strategy.abstract.capture.leaping.stacking.columns-draughts': ['rules', 'variants', 'online'],
-      'games.strategy.abstract.capture.displacement': ['chess'],
+      'games.strategy.abstract.capture.displacement': ['chess', 'columns', 'stacks'],
+      'games.strategy.abstract.capture.displacement.columns': ['chess'],
+      'games.strategy.abstract.capture.displacement.columns.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
+      'games.strategy.abstract.capture.displacement.stacks': ['chess'],
+      'games.strategy.abstract.capture.displacement.stacks.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
       'games.strategy.abstract.capture.displacement.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles']
     };
 
@@ -1084,6 +1089,38 @@
           from: '@games.strategy.abstract.capture.leaping.stacking.damasca',
           equivalent: '@games.strategy.abstract.capture.leaping.columns.damasca',
           note: 'The columns path is the canonical wording used by this demo, but stacking remains equivalent.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.columns': [
+        {
+          label: 'Use stacks instead of columns',
+          from: '@games.strategy.abstract.capture.displacement.columns',
+          equivalent: '@games.strategy.abstract.capture.displacement.stacks',
+          note: 'Semantic synonym. In this displacement capture context, columns and stacks describe the same mechanic.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.stacks': [
+        {
+          label: 'Use columns instead of stacks',
+          from: '@games.strategy.abstract.capture.displacement.stacks',
+          equivalent: '@games.strategy.abstract.capture.displacement.columns',
+          note: 'Columns is the canonical wording in this displacement capture context, but stacks remains equivalent.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.columns.chess': [
+        {
+          label: 'Equivalent stacks path',
+          from: '@games.strategy.abstract.capture.displacement.columns.chess',
+          equivalent: '@games.strategy.abstract.capture.displacement.stacks.chess',
+          note: 'Chess under displacement columns can also be reached through the stacks synonym path.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.stacks.chess': [
+        {
+          label: 'Equivalent columns path',
+          from: '@games.strategy.abstract.capture.displacement.stacks.chess',
+          equivalent: '@games.strategy.abstract.capture.displacement.columns.chess',
+          note: 'Columns is the canonical wording for this displacement chess variant.'
         }
       ]
     };
@@ -1360,6 +1397,16 @@
           trust: 'Domain Verified',
           note: 'StackWorks owner-bound identity for checkers under the leaping capture branch.'
         }
+      ],
+      'games.strategy.abstract.capture.displacement.columns.chess': [
+        {
+          label: 'StackWorks — Columns Chess',
+          sip: '@stackworks.games.strategy.abstract.capture.displacement.columns.chess',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columnsChess',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for columns chess under the displacement capture branch.'
+        }
       ]
     };
 
@@ -1371,6 +1418,7 @@
       '@stackworks.games.strategy.abstract.capture.displacement.chess': 'https://stackworks.games/chess',
       '@chessdotcom.games.strategy.abstract.capture.displacement.chess': 'https://www.chess.com/',
       '@stackworks.games.strategy.abstract.capture.leaping.checkers': 'https://stackworks.games/checkers',
+      '@stackworks.games.strategy.abstract.capture.displacement.columns.chess': 'https://stackworks.games/columnsChess',
       '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
       '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca'
     };
@@ -2014,11 +2062,37 @@
       return parseOr();
     }
 
+    function buildSynonymMap() {
+      const map = new Map();
+      function link(a, b) {
+        if (!map.has(a)) map.set(a, new Set());
+        if (!map.has(b)) map.set(b, new Set());
+        map.get(a).add(b);
+        map.get(b).add(a);
+      }
+      for (const entries of Object.values(synonymEquivalents)) {
+        for (const entry of entries) {
+          const fromSegs  = entry.from.replace(/^@/, '').split('.');
+          const equivSegs = entry.equivalent.replace(/^@/, '').split('.');
+          const len = Math.min(fromSegs.length, equivSegs.length);
+          for (let i = 0; i < len; i++) {
+            if (fromSegs[i] !== equivSegs[i]) link(fromSegs[i], equivSegs[i]);
+          }
+        }
+      }
+      return map;
+    }
+
     function evalQuery(node, text) {
       if (!node) return true;
-      if (node.op === 'TERM') return text.includes(node.value);
-      if (node.op === 'AND')  return evalQuery(node.left, text) && evalQuery(node.right, text);
-      if (node.op === 'OR')   return evalQuery(node.left, text) || evalQuery(node.right, text);
+      if (node.op === 'TERM') {
+        if (text.includes(node.value)) return true;
+        const syns = synonymMap.get(node.value);
+        if (syns) { for (const s of syns) { if (text.includes(s)) return true; } }
+        return false;
+      }
+      if (node.op === 'AND') return evalQuery(node.left, text) && evalQuery(node.right, text);
+      if (node.op === 'OR')  return evalQuery(node.left, text) || evalQuery(node.right, text);
       return true;
     }
     // ─────────────────────────────────────────────────────────────────────────
@@ -2306,6 +2380,7 @@
     });
 
     sipIndex = buildSipIndex();
+    synonymMap = buildSynonymMap();
 
     document.getElementById('sipSearch').addEventListener('input', (event) => {
       renderSearchResults(event.target.value);
