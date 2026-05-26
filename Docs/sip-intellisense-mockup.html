@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SIP IntelliSense Mockup - Linked Resolution, Shortcut SIPs, and Synonyms</title>
+  <title>SIP IntelliSense Mockup - Linked Resolution, Shortcuts, Synonyms, Broad Facets, and Shortcut Binding</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -348,6 +348,44 @@
       background: rgba(240, 171, 252, .09);
     }
 
+    .badge.facet {
+      color: #fdba74;
+      border-color: rgba(253, 186, 116, .36);
+      background: rgba(253, 186, 116, .09);
+    }
+
+    .badge.personal {
+      color: #67e8f9;
+      border-color: rgba(103, 232, 249, .36);
+      background: rgba(103, 232, 249, .09);
+    }
+
+    .choice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 7px;
+    }
+
+    .choice-actions button {
+      padding: 6px 8px;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .choice-actions .save-shortcut {
+      border-color: rgba(103, 232, 249, .42);
+      background: rgba(103, 232, 249, .12);
+      color: var(--text);
+    }
+
+    .choice-actions .clear-shortcut {
+      border-color: rgba(252, 165, 165, .34);
+      background: rgba(252, 165, 165, .09);
+      color: var(--danger);
+    }
+
     .empty-state {
       padding: 22px 14px;
       color: var(--muted);
@@ -568,7 +606,7 @@
     <header>
       <h1>SIP Semantic IntelliSense Mockup</h1>
       <p class="subtitle">
-        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, and semantic synonyms. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, or click an owner-bound result to rewrite the string into a canonical owner-qualified identity.
+        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, resolver-assisted shortcut binding, semantic synonyms, and broad semantic facets. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, click an owner-bound result to rewrite the string into a canonical owner-qualified identity, or save a discovered result as your personal shortcut.
       </p>
     </header>
 
@@ -608,8 +646,11 @@
             <button id="resetBtn">Reset to @games.</button>
             <button id="dotBtn">Add trailing dot</button>
             <button id="shortcutDiscoveryBtn">Try @games.lasca</button>
+            <button id="shortcutBindingBtn">Try shortcut binding setup</button>
+            <button id="clearBindingBtn">Clear saved shortcut</button>
             <button id="shortcutOwnerBtn">Try @stackworks.games.lasca</button>
-            <button id="synonymBtn">Try stacking synonym</button>
+            <button id="broadFacetBtn">Try broad stacking facet</button>
+            <button id="synonymBtn">Try leaping stacking synonym</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
           </div>
@@ -659,7 +700,7 @@
           </div>
           <div class="card-body">
             <p class="rule-box"><strong>Typing categories explores meaning.</strong><br><strong>Choosing an owner-bound result commits identity.</strong></p>
-            <p class="explanation" style="margin-top:12px;">The owner, such as <strong>stackworks</strong>, is not treated as a child category under Lasca. It appears as a separate owner-bound candidate and, when selected, rewrites the whole SIP string. Shortcut SIPs such as <code>@games.lasca</code> expand meaning; owner-bound shortcuts such as <code>@stackworks.games.lasca</code> can resolve or expand to the canonical owner-qualified SIP. Synonyms such as <code>columns</code> and <code>stacking</code> can be treated as equivalent semantic path segments without changing ownership.</p>
+            <p class="explanation" style="margin-top:12px;">The owner, such as <strong>stackworks</strong>, is not treated as a child category under Lasca. It appears as a separate owner-bound candidate and, when selected, rewrites the whole SIP string. Shortcut SIPs such as <code>@games.lasca</code> begin as discovery queries; the resolver can show likely registered identities, and the user can save one as a personal shortcut. Owner-bound shortcuts such as <code>@stackworks.games.lasca</code> can resolve or expand to the canonical owner-qualified SIP. Synonyms such as <code>columns</code> and <code>stacking</code> can be treated as equivalent semantic path segments within a narrow context. Broader paths such as <code>@games.strategy.abstract.stacking</code> are handled as broad semantic facets that may match multiple narrower branches rather than collapsing into one canonical path.</p>
           </div>
         </div>
 
@@ -678,7 +719,7 @@
     </section>
 
     <footer>
-      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, semantic synonyms, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
+      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
     </footer>
   </main>
 
@@ -708,6 +749,14 @@
       'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
       'games.strategy': ['abstract', 'rts', 'tbs', 'grand', 'tactical', 'moba', 'tower'],
       'games.strategy.abstract': ['capture', 'annihilation', 'territory', 'grid-control', 'connection', 'stacking', '3d-spatial', 'mancala', 'counting'],
+      'games.strategy.abstract.stacking': ['capture', 'movement', 'placement', 'tower-building', 'piece-control'],
+      'games.strategy.abstract.stacking.capture': ['leaping', 'displacement', 'rotation'],
+      'games.strategy.abstract.stacking.capture.leaping': ['columns'],
+      'games.strategy.abstract.stacking.capture.displacement': ['columns'],
+      'games.strategy.abstract.stacking.capture.rotation': ['columns'],
+      'games.strategy.abstract.stacking.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
+      'games.strategy.abstract.stacking.capture.displacement.columns': ['hypothetical-game', 'placeholder-variant'],
+      'games.strategy.abstract.stacking.capture.rotation.columns': ['hypothetical-game', 'placeholder-variant'],
       'games.strategy.abstract.capture': ['displacement', 'leaping'],
       'games.strategy.abstract.capture.leaping': ['columns', 'stacking', 'checkers', 'dama', 'draughts'],
       'games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
@@ -795,7 +844,81 @@
       ]
     };
 
+
+    const broadSemanticFacets = {
+      'games.strategy.abstract.stacking': [
+        {
+          label: 'Leaping capture with stacked columns',
+          sip: '@games.strategy.abstract.capture.leaping.columns',
+          note: 'Specific narrower branch. Lasca and Damasca are examples of this leaping/capture/columns family.'
+        },
+        {
+          label: 'Displacement capture with stacked columns',
+          sip: '@games.strategy.abstract.capture.displacement.columns',
+          note: 'Another possible narrower branch. Stacking could arise from displacement capture rather than leaping capture.'
+        },
+        {
+          label: 'Rotation capture with stacked columns',
+          sip: '@games.strategy.abstract.capture.rotation.columns',
+          note: 'Another possible narrower branch. Stacking could arise from rotation-based capture mechanics.'
+        }
+      ],
+      'games.strategy.abstract.stacking.capture': [
+        {
+          label: 'Stacking + leaping capture',
+          sip: '@games.strategy.abstract.capture.leaping.columns',
+          note: 'Narrow this broad facet to the leaping-capture columns branch.'
+        },
+        {
+          label: 'Stacking + displacement capture',
+          sip: '@games.strategy.abstract.capture.displacement.columns',
+          note: 'Narrow this broad facet to a displacement-capture columns branch.'
+        },
+        {
+          label: 'Stacking + rotation capture',
+          sip: '@games.strategy.abstract.capture.rotation.columns',
+          note: 'Narrow this broad facet to a rotation-capture columns branch.'
+        }
+      ]
+    };
+
     const ownerCandidates = {
+      'games.strategy.abstract.stacking': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Matched through the broad stacking facet. The canonical branch is capture → leaping → columns.'
+        },
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Matched through the broad stacking facet. The canonical branch is capture → leaping → columns.'
+        }
+      ],
+      'games.strategy.abstract.stacking.capture.leaping.columns': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate reached through a facet-first path. Canonical owner identity uses capture → leaping → columns.'
+        },
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Owner-bound candidate reached through a facet-first path. Canonical owner identity uses capture → leaping → columns.'
+        }
+      ],
       'games.lasca': [
         {
           label: 'StackWorks — Lasca',
@@ -957,6 +1080,21 @@
       '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca'
     };
 
+    // Runtime-only personal shortcuts for the mockup. In a real SIP resolver,
+    // this could live in a browser profile, AI assistant memory, organizational
+    // profile, or trusted local resolver context.
+    const personalShortcutBindings = {};
+
+    function getPersonalBinding(value) {
+      return personalShortcutBindings[normalize(value)] || null;
+    }
+
+    function getDestinationForValue(value) {
+      const normalized = normalize(value);
+      const personal = getPersonalBinding(normalized);
+      return personal ? personal.destination : boundDestinations[normalized];
+    }
+
     function normalize(value) {
       return value.trim().replace(/\s+/g, '').replace(/^@@+/, '@');
     }
@@ -1024,9 +1162,49 @@
       render();
     }
 
+    function selectFacetPath(item) {
+      input.value = item.sip;
+      addHistory('Broad facet narrowed', `Selected a narrower branch for the broad stacking facet: ${item.label}.`, input.value);
+      input.focus();
+      render();
+    }
+
     function selectOwner(candidate) {
       input.value = candidate.sip;
       addHistory('Owner-bound identity selected', `Selected ${candidate.label}. The full SIP string was rewritten to the canonical owner-qualified identity.`, input.value);
+      input.focus();
+      render();
+    }
+
+
+    function savePersonalShortcutBinding(candidate, shortcutValue = '@games.lasca') {
+      const shortcut = normalize(shortcutValue);
+      personalShortcutBindings[shortcut] = {
+        shortcut,
+        label: candidate.label,
+        sip: candidate.sip,
+        destination: candidate.destination,
+        owner: candidate.owner,
+        trust: candidate.trust,
+        note: candidate.note
+      };
+      input.value = shortcut;
+      addHistory('Personal shortcut saved', `${shortcut} now resolves for this user to ${candidate.sip}.`, `${shortcut} → ${candidate.destination}`);
+      input.focus();
+      render();
+    }
+
+    function expandPersonalShortcutBinding(binding) {
+      input.value = binding.sip;
+      addHistory('Personal shortcut expanded', `Expanded ${binding.shortcut} to the saved canonical owner-qualified identity.`, input.value);
+      input.focus();
+      render();
+    }
+
+    function clearPersonalShortcutBindings() {
+      const count = Object.keys(personalShortcutBindings).length;
+      Object.keys(personalShortcutBindings).forEach((key) => delete personalShortcutBindings[key]);
+      addHistory('Personal shortcuts cleared', count ? 'Removed saved personal shortcut bindings from this mockup session.' : 'No saved personal shortcut bindings existed.', input.value);
       input.focus();
       render();
     }
@@ -1067,17 +1245,22 @@
 
     function renderResolutionPreview() {
       const value = normalize(input.value);
-      const destination = boundDestinations[value];
-      const bound = isBoundIdentity(value) && !!destination;
+      const personal = getPersonalBinding(value);
+      const destination = getDestinationForValue(value);
+      const bound = (isBoundIdentity(value) && !!destination) || !!personal;
 
       resolutionPreview.classList.toggle('show', bound);
 
       if (bound) {
         sipLink.textContent = value;
         sipLink.href = destination;
-        sipLink.title = `Open ${destination}`;
+        sipLink.title = personal
+          ? `Open ${destination} via saved shortcut ${personal.shortcut} → ${personal.sip}`
+          : `Open ${destination}`;
         urlPreview.value = destination;
-        copyFeedback.textContent = 'Click the SIP link to open the destination, or copy the resolved URL.';
+        copyFeedback.textContent = personal
+          ? `Saved personal shortcut: ${personal.shortcut} → ${personal.sip}. Click the SIP link to open, or copy the resolved URL.`
+          : 'Click the SIP link to open the destination, or copy the resolved URL.';
       } else {
         sipLink.textContent = '';
         sipLink.href = '#';
@@ -1090,22 +1273,41 @@
     function renderStatus() {
       const value = normalize(input.value);
       const bound = isBoundIdentity(value);
-      const destination = boundDestinations[value];
+      const personal = getPersonalBinding(value);
+      const destination = getDestinationForValue(value);
       const shortcutItems = shortcutAliases[currentKey(value)] || [];
+      const facetItems = broadSemanticFacets[currentKey(value)] || [];
       const hasShortcut = shortcutItems.length > 0;
       const isOwnerShortcut = shortcutItems.some((item) => item.mode === 'owner');
+      const isBroadFacet = facetItems.length > 0;
 
-      modePill.classList.toggle('bound', bound || isOwnerShortcut);
-      modeLabel.textContent = bound || isOwnerShortcut ? 'Owner-bound identity' : hasShortcut ? 'Shortcut discovery path' : 'Discovery path';
-      statusMode.textContent = bound || isOwnerShortcut ? 'Owner-bound identity' : hasShortcut ? 'Shortcut discovery path' : 'Discovery path';
-      statusMeaning.textContent = bound || isOwnerShortcut
-        ? 'Specific owner-qualified semantic identity or owner-bound shortcut'
-        : hasShortcut
-          ? 'Compact unbound shortcut that can expand to a longer discovery path'
-          : 'Unbound semantic exploration';
-      statusResolution.textContent = bound || isOwnerShortcut
-        ? 'Eligible for deterministic resolution if trust/confidence thresholds are satisfied.'
-        : 'Return ranked candidates; do not auto-redirect.';
+      modePill.classList.toggle('bound', bound || isOwnerShortcut || !!personal);
+      modeLabel.textContent = personal
+        ? 'Personal shortcut binding'
+        : bound || isOwnerShortcut
+          ? 'Owner-bound identity'
+          : hasShortcut
+            ? 'Shortcut discovery path'
+            : isBroadFacet
+              ? 'Broad semantic facet'
+              : 'Discovery path';
+      statusMode.textContent = modeLabel.textContent;
+      statusMeaning.textContent = personal
+        ? `User-defined shortcut. ${personal.shortcut} resolves in this trusted context to ${personal.sip}.`
+        : bound || isOwnerShortcut
+          ? 'Specific owner-qualified semantic identity or owner-bound shortcut'
+          : hasShortcut
+            ? 'Compact unbound shortcut that can expand to a longer discovery path or be bound after user selection'
+            : isBroadFacet
+              ? 'Broad cross-cutting mechanic that may match several narrower semantic branches'
+              : 'Unbound semantic exploration';
+      statusResolution.textContent = personal
+        ? 'Resolve using this user’s saved shortcut binding. This does not create global ownership.'
+        : bound || isOwnerShortcut
+          ? 'Eligible for deterministic resolution if trust/confidence thresholds are satisfied.'
+          : isBroadFacet
+            ? 'Return possible refinements, narrower branches, and ranked owner-bound candidates; do not collapse to one path.'
+            : 'Return ranked candidates; do not auto-redirect.';
       statusDestination.innerHTML = destination
         ? `<code>${escapeHtml(destination)}</code>`
         : '<code>none yet</code>';
@@ -1125,10 +1327,12 @@
       const key = currentKey(value);
       const shortcutItems = shortcutAliases[key] || [];
       const synonymItems = synonymEquivalents[key] || [];
+      const facetItems = broadSemanticFacets[key] || [];
       const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
       const ownerItems = ownerCandidates[key] || [];
+      const personalBinding = getPersonalBinding(value);
       flatSuggestions = [];
-      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + discoveryItems.length + ownerItems.length - 1);
+      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + facetItems.length + discoveryItems.length + ownerItems.length - 1);
 
       let html = `
         <div class="panel-top">
@@ -1136,6 +1340,25 @@
           <span class="hint">Arrow keys + Enter work too</span>
         </div>
       `;
+
+      if (personalBinding) {
+        const flatIndex = flatSuggestions.length;
+        flatSuggestions.push({ type: 'personalBinding', value: personalBinding });
+        const itemsHtml = `
+          <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+            <div class="suggestion-main"><span>${escapeHtml(personalBinding.label)}</span><span class="badge personal">saved shortcut</span></div>
+            <div class="suggestion-sub">${escapeHtml(personalBinding.shortcut)} → ${escapeHtml(personalBinding.sip)} → ${escapeHtml(personalBinding.destination)}</div>
+            <div class="choice-actions">
+              <button type="button" data-action="expand-personal" data-flat-index="${flatIndex}">Expand to canonical SIP</button>
+              <button type="button" class="clear-shortcut" data-action="clear-personal">Clear saved shortcut</button>
+            </div>
+            <div class="metadata ${showMetadata ? 'show' : ''}">
+              Personal shortcut binding. Applies only in this mockup session/user context. It does not make the shortcut globally owned.
+            </div>
+          </div>
+        `;
+        html += suggestionGroupHtml('Saved personal shortcut binding', 'user context', itemsHtml);
+      }
 
       if (shortcutItems.length) {
         const itemsHtml = shortcutItems.map((item) => {
@@ -1172,6 +1395,24 @@
         html += suggestionGroupHtml('Semantic synonym / equivalent path', 'equivalence', itemsHtml);
       }
 
+
+      if (facetItems.length) {
+        const itemsHtml = facetItems.map((item) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'facetPath', value: item });
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge facet">narrower path</span></div>
+              <div class="suggestion-sub">Broad facet match → ${escapeHtml(item.sip)}</div>
+              <div class="metadata ${showMetadata ? 'show' : ''}">
+                ${escapeHtml(item.note)}
+              </div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Matching narrower semantic paths', 'broad facet', itemsHtml);
+      }
+
       if (discoveryItems.length) {
         const itemsHtml = discoveryItems.map((item) => {
           const flatIndex = flatSuggestions.length;
@@ -1187,13 +1428,21 @@
       }
 
       if (ownerItems.length) {
+        const isShortcutBindingContext = key === 'games.lasca';
         const itemsHtml = ownerItems.map((item) => {
           const flatIndex = flatSuggestions.length;
           flatSuggestions.push({ type: 'owner', value: item });
+          const actionButtons = isShortcutBindingContext
+            ? `<div class="choice-actions">
+                <button type="button" data-action="open-once" data-flat-index="${flatIndex}">Open once / use this SIP</button>
+                <button type="button" class="save-shortcut" data-action="save-shortcut" data-flat-index="${flatIndex}">Save @games.lasca as my shortcut</button>
+              </div>`
+            : '';
           return `
             <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
-              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge bound">bind owner</span></div>
+              <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge bound">${isShortcutBindingContext ? 'candidate' : 'bind owner'}</span></div>
               <div class="suggestion-sub">${escapeHtml(item.sip)}</div>
+              ${actionButtons}
               <div class="metadata ${showMetadata ? 'show' : ''}">
                 Verified owner: ${escapeHtml(item.owner)}<br>
                 Destination: ${escapeHtml(item.destination)}<br>
@@ -1203,12 +1452,12 @@
             </div>
           `;
         }).join('');
-        html += suggestionGroupHtml('Matching owner-bound identities', 'canonical candidates', itemsHtml);
+        html += suggestionGroupHtml(isShortcutBindingContext ? 'Shortcut discovery candidates' : 'Matching owner-bound identities', isShortcutBindingContext ? 'choose or save' : 'canonical candidates', itemsHtml);
       }
 
-      if (!shortcutItems.length && !synonymItems.length && !discoveryItems.length && !ownerItems.length) {
+      if (!personalBinding && !shortcutItems.length && !synonymItems.length && !facetItems.length && !discoveryItems.length && !ownerItems.length) {
         if (isBoundIdentity(value)) {
-          const destination = boundDestinations[value];
+          const destination = getDestinationForValue(value);
           html += `
             <div class="empty-state">
               <strong>Owner-bound identity selected.</strong><br>
@@ -1247,8 +1496,10 @@
       if (!item) return;
       if (item.type === 'shortcut') selectShortcut(item.value);
       if (item.type === 'synonym') selectSynonym(item.value);
+      if (item.type === 'facetPath') selectFacetPath(item.value);
       if (item.type === 'discovery') completeSegment(item.value);
       if (item.type === 'owner') selectOwner(item.value);
+      if (item.type === 'personalBinding') expandPersonalShortcutBinding(item.value);
     }
 
     function render() {
@@ -1307,9 +1558,33 @@
     });
 
     panel.addEventListener('pointerdown', (event) => {
+      const actionButton = event.target.closest('[data-action]');
       const suggestion = event.target.closest('.suggestion');
       if (!suggestion || !panel.contains(suggestion)) return;
       event.preventDefault();
+
+      if (actionButton) {
+        const action = actionButton.dataset.action;
+        const flatIndex = Number(actionButton.dataset.flatIndex ?? suggestion.dataset.flatIndex);
+        const flatItem = flatSuggestions[flatIndex];
+        if (action === 'save-shortcut' && flatItem && flatItem.type === 'owner') {
+          savePersonalShortcutBinding(flatItem.value, '@games.lasca');
+          return;
+        }
+        if (action === 'open-once') {
+          chooseFlat(flatIndex);
+          return;
+        }
+        if (action === 'expand-personal' && flatItem && flatItem.type === 'personalBinding') {
+          expandPersonalShortcutBinding(flatItem.value);
+          return;
+        }
+        if (action === 'clear-personal') {
+          clearPersonalShortcutBindings();
+          return;
+        }
+      }
+
       chooseFlat(Number(suggestion.dataset.flatIndex));
     });
 
@@ -1346,19 +1621,32 @@
     document.getElementById('dotBtn').addEventListener('click', addTrailingDot);
     document.getElementById('shortcutDiscoveryBtn').addEventListener('click', () => {
       input.value = '@games.lasca';
-      addHistory('Shortcut typed', 'Entered the unbound discovery shortcut. Select the shortcut expansion or an owner-bound candidate below.', input.value);
+      addHistory('Shortcut typed', 'Entered the unbound discovery shortcut. Select the shortcut expansion, use an owner-bound candidate once, or save a candidate as your personal shortcut.', input.value);
       input.focus();
       render();
     });
+    document.getElementById('shortcutBindingBtn').addEventListener('click', () => {
+      input.value = '@games.lasca';
+      addHistory('Shortcut binding setup', 'Resolver-assisted setup: choose a candidate below, then click “Save @games.lasca as my shortcut”.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('clearBindingBtn').addEventListener('click', clearPersonalShortcutBindings);
     document.getElementById('shortcutOwnerBtn').addEventListener('click', () => {
       input.value = '@stackworks.games.lasca';
       addHistory('Owner shortcut typed', 'Entered the owner-bound shortcut. It can open directly or expand to the canonical full SIP.', input.value);
       input.focus();
       render();
     });
+    document.getElementById('broadFacetBtn').addEventListener('click', () => {
+      input.value = '@games.strategy.abstract.stacking.';
+      addHistory('Broad facet typed', 'Entered a broad stacking facet. It should show multiple narrower branches instead of collapsing to one canonical path.', input.value);
+      input.focus();
+      render();
+    });
     document.getElementById('synonymBtn').addEventListener('click', () => {
       input.value = '@games.strategy.abstract.capture.leaping.stacking.';
-      addHistory('Synonym path typed', 'Entered the stacking synonym path. It should behave like the columns path and show the same Lasca/Damasca continuations.', input.value);
+      addHistory('Synonym path typed', 'Entered the narrow leaping/stacking synonym path. It behaves like the leaping/columns path and shows the same Lasca/Damasca continuations.', input.value);
       input.focus();
       render();
     });
