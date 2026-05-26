@@ -1725,6 +1725,47 @@ They do not eliminate the need for canonical identity resolution.
 
 This allows SIP to support flexible human language while still preserving deterministic owner-bound resolution when a specific verified identity is selected.
 
+## Broad Semantic Facets and Non-Exclusive Path Expansion
+
+Some SIP expressions represent broad semantic facets rather than strict hierarchical paths or one-to-one aliases.
+
+For example:
+
+@games.strategy.abstract.stacking
+
+does not necessarily mean:
+
+@games.strategy.abstract.capture.leaping.columns
+
+Although leaping column-capture games may involve stacking, stacking may also appear in other abstract strategy contexts, such as:
+
+@games.strategy.abstract.capture.displacement.columns
+@games.strategy.abstract.capture.rotation.columns
+@games.strategy.abstract.movement.stacking
+@games.strategy.abstract.placement.stacking
+
+Therefore, broad semantic facet paths should generally behave as discovery expressions rather than canonical aliases.
+
+The expression:
+
+@games.strategy.abstract.stacking
+
+means:
+
+Find abstract strategy games involving stacking mechanics.
+
+It does not by itself specify the exact capture method, movement method, or structural mechanic.
+
+Semantic IntelliSense may respond by showing possible refinements, narrower semantic branches, and matching owner-bound identities.
+
+A resolver should not collapse a broad semantic facet into a single canonical path unless the relationship is explicitly defined as one-to-one within a specific context.
+
+Core rule:
+
+Broad facets discover.
+Specific aliases canonicalize.
+Owner-bound identities resolve.
+
 
 # Shortcut SIPs and Semantic Shortcut Aliases
 
