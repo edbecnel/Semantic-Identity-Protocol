@@ -656,6 +656,7 @@
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.025);
     }
 
+    .sip-search-input { padding-right: 34px; }
     .sip-search-input:focus { border-color: rgba(125, 211, 252, .55); }
 
     .search-input-row {
@@ -664,7 +665,24 @@
       gap: 12px;
     }
 
-    .search-input-row .sip-search-input { flex: 1; min-width: 0; }
+    .sip-search-wrap { position: relative; flex: 1; min-width: 0; }
+
+    #sipSearchClear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      padding: 3px 5px;
+      border-radius: 50%;
+      display: none;
+    }
+    #sipSearchClear:hover { color: var(--text); background: rgba(255,255,255,.1); }
 
     .search-bound-label {
       display: flex;
@@ -871,7 +889,10 @@
       </div>
       <div class="card-body">
         <div class="search-input-row">
-          <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
+          <div class="sip-search-wrap">
+            <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
+            <button id="sipSearchClear" aria-label="Clear search" title="Clear search">&#x2715;</button>
+          </div>
           <label class="search-bound-label" title="Only show SIPs bound to a destination">
             <input type="checkbox" id="sipSearchBoundOnly" />
             Bound only
@@ -1092,6 +1113,20 @@
           from: '@games.strategy.abstract.capture.leaping.stacking',
           equivalent: '@games.strategy.abstract.capture.leaping.columns',
           note: 'Semantic synonym. This returns to the canonical demo wording.'
+        },
+        {
+          label: 'Use stacks instead of stacking',
+          from: '@games.strategy.abstract.capture.leaping.stacking',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacks',
+          note: 'Semantic synonym. In this leaping capture context, stacking and stacks describe the same mechanic.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacks': [
+        {
+          label: 'Use stacking instead of stacks',
+          from: '@games.strategy.abstract.capture.leaping.stacks',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking',
+          note: 'Semantic synonym. In this leaping capture context, stacks and stacking describe the same mechanic.'
         }
       ],
       'games.strategy.abstract.capture.leaping.columns.lasca': [
@@ -1140,6 +1175,20 @@
           from: '@games.strategy.abstract.capture.displacement.stacks',
           equivalent: '@games.strategy.abstract.capture.displacement.columns',
           note: 'Columns is the canonical wording in this displacement capture context, but stacks remains equivalent.'
+        },
+        {
+          label: 'Use stacking instead of stacks',
+          from: '@games.strategy.abstract.capture.displacement.stacks',
+          equivalent: '@games.strategy.abstract.capture.displacement.stacking',
+          note: 'Semantic synonym. In this displacement capture context, stacks and stacking describe the same mechanic.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.stacking': [
+        {
+          label: 'Use stacks instead of stacking',
+          from: '@games.strategy.abstract.capture.displacement.stacking',
+          equivalent: '@games.strategy.abstract.capture.displacement.stacks',
+          note: 'Semantic synonym. In this displacement capture context, stacking and stacks describe the same mechanic.'
         }
       ],
       'games.strategy.abstract.capture.displacement.columns.chess': [
@@ -1156,6 +1205,22 @@
           from: '@games.strategy.abstract.capture.displacement.stacks.chess',
           equivalent: '@games.strategy.abstract.capture.displacement.columns.chess',
           note: 'Columns is the canonical wording for this displacement chess variant.'
+        }
+      ],
+      'games.strategy.abstract.stacks': [
+        {
+          label: 'Use stacking instead of stacks',
+          from: '@games.strategy.abstract.stacks',
+          equivalent: '@games.strategy.abstract.stacking',
+          note: 'Semantic synonym. In abstract strategy games, stacks and stacking describe the same structural mechanic.'
+        }
+      ],
+      'games.strategy.abstract.stacking': [
+        {
+          label: 'Use stacks instead of stacking',
+          from: '@games.strategy.abstract.stacking',
+          equivalent: '@games.strategy.abstract.stacks',
+          note: 'Semantic synonym. In abstract strategy games, stacking and stacks describe the same structural mechanic.'
         }
       ]
     };
@@ -1497,9 +1562,9 @@
       const dkey = discoveryKey(normalize(value));
       const nv = normalize(value);
       return !!tree[key] || !!ownerCandidates[key] || !!boundDestinations[nv] ||
-             !!shortcutAliases[key] || !!synonymEquivalents[key] || !!broadSemanticFacets[key] ||
+             !!shortcutAliases[key] || getSynonymItemsForPath(key).length > 0 || !!broadSemanticFacets[key] ||
              !!tree[dkey] || !!ownerCandidates[dkey] ||
-             !!shortcutAliases[dkey] || !!synonymEquivalents[dkey] || !!broadSemanticFacets[dkey];
+             !!shortcutAliases[dkey] || getSynonymItemsForPath(dkey).length > 0 || !!broadSemanticFacets[dkey];
     }
 
     function currentKey(value) {
@@ -1796,11 +1861,42 @@
       shortcutsDropdownOpen = false;
     }
 
+    // Returns synonym entries for the current key, including entries whose
+    // synonym prefix appears anywhere in the middle of the path. When a suffix
+    // follows the synonym prefix, from/equivalent are expanded to include it so
+    // selecting the suggestion rewrites the whole path correctly.
+    function getSynonymItemsForPath(key) {
+      if (!key) return [];
+      const segs = key.split('.');
+      const items = [];
+      for (let len = segs.length; len >= 1; len--) {
+        const prefix = segs.slice(0, len).join('.');
+        const entries = synonymEquivalents[prefix];
+        if (entries) {
+          const suffix = segs.slice(len).join('.');
+          for (const entry of entries) {
+            if (suffix) {
+              const equivBase = entry.equivalent.replace(/^@/, '').replace(/\.$/, '');
+              items.push({
+                label: entry.label,
+                from: entry.from + '.' + suffix,
+                equivalent: '@' + equivBase + '.' + suffix,
+                note: entry.note
+              });
+            } else {
+              items.push(entry);
+            }
+          }
+        }
+      }
+      return items;
+    }
+
     function renderSuggestions() {
       const value = normalize(input.value);
       const key = discoveryKey(value);
       const shortcutItems = shortcutAliases[key] || [];
-      const synonymItems = synonymEquivalents[key] || [];
+      const synonymItems = getSynonymItemsForPath(key);
       const facetItems = broadSemanticFacets[key] || [];
       const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
       const ownerItems = isBoundIdentity(value) ? [] : (ownerCandidates[key] || []);
@@ -2161,7 +2257,7 @@
 
     function renderSearchResults(query) {
       const resultsEl = document.getElementById('searchResults');
-      if (!query.trim()) { resultsEl.hidden = true; return; }
+      if (!query.trim()) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
       const boundOnly = document.getElementById('sipSearchBoundOnly').checked;
       let results = searchSips(query);
       if (boundOnly) results = results.filter((item) => item.destination !== '');
@@ -2433,6 +2529,15 @@
 
     document.getElementById('sipSearch').addEventListener('input', (event) => {
       renderSearchResults(event.target.value);
+      document.getElementById('sipSearchClear').style.display = event.target.value ? 'block' : 'none';
+    });
+
+    document.getElementById('sipSearchClear').addEventListener('click', () => {
+      const el = document.getElementById('sipSearch');
+      el.value = '';
+      renderSearchResults('');
+      document.getElementById('sipSearchClear').style.display = 'none';
+      el.focus();
     });
 
     document.getElementById('sipSearchBoundOnly').addEventListener('change', () => {
@@ -2443,6 +2548,7 @@
       if (event.key === 'Escape') {
         event.target.value = '';
         renderSearchResults('');
+        document.getElementById('sipSearchClear').style.display = 'none';
         return;
       }
       if (event.key === 'ArrowDown') {
@@ -2458,7 +2564,7 @@
       if (event.key === 'ArrowDown') { event.preventDefault(); if (idx < items.length - 1) items[idx + 1].focus(); }
       if (event.key === 'ArrowUp')   { event.preventDefault(); if (idx > 0) items[idx - 1].focus(); else document.getElementById('sipSearch').focus(); }
       if (event.key === 'Enter')     { event.preventDefault(); items[idx].click(); }
-      if (event.key === 'Escape')    { document.getElementById('sipSearch').value = ''; renderSearchResults(''); document.getElementById('sipSearch').focus(); }
+      if (event.key === 'Escape')    { document.getElementById('sipSearch').value = ''; renderSearchResults(''); document.getElementById('sipSearchClear').style.display = 'none'; document.getElementById('sipSearch').focus(); }
     });
 
     document.getElementById('searchResults').addEventListener('click', (event) => {
@@ -2469,6 +2575,7 @@
         input.value = sip;
         document.getElementById('sipSearch').value = '';
         renderSearchResults('');
+        document.getElementById('sipSearchClear').style.display = 'none';
         addHistory('Selected from search', `Loaded ${sip} from SIP search.`, sip);
         input.focus();
         render();

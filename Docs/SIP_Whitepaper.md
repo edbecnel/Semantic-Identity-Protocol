@@ -2,7 +2,7 @@
 
 ## White Paper, Architecture Overview, and Documentation Roadmap
 
-Version: Draft 0.9 - Semantic Path Search and Boolean Query Expressions  Revision Date: May 26, 2026  Status: Conceptual Proposal
+Version: Draft 0.9 - Semantic Path Search and Boolean Query Expressions  Revision Date: May 27, 2026  Status: Conceptual Proposal
 
 # Executive Summary
 
@@ -3424,6 +3424,24 @@ The following expressions are equivalent:
     chess + columns
 
 Both return only SIP identities containing both chess and columns.
+
+### NOT Expressions
+
+A keyword prefixed with `!` excludes results that match that keyword.
+
+Example:
+
+    chess !checkers
+
+Returns SIP identities containing chess but not checkers.
+
+NOT may also be applied to grouped sub-expressions:
+
+    chess !(checkers | draughts)
+
+Returns SIP identities containing chess but not checkers and not draughts.
+
+NOT binds to the immediately following term or group. A space before `!` is treated as an implicit AND, so `chess !checkers` is equivalent to `chess & !checkers`.
 
 ### Grouped Expressions
 
