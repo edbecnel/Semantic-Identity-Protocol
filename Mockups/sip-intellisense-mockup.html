@@ -1934,7 +1934,7 @@
         const itemsHtml = shortcutItems.map((item) => {
           const flatIndex = flatSuggestions.length;
           flatSuggestions.push({ type: 'shortcut', value: item });
-          const badgeText = item.mode === 'owner' ? 'owner shortcut' : 'shortcut alias';
+          const badgeText = item.mode === 'owner' ? 'owner-bound shortcut' : 'shortcut alias';
           return `
             <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
               <div class="suggestion-main"><span>${escapeHtml(item.label)}</span><span class="badge shortcut">${escapeHtml(badgeText)}</span></div>
@@ -2109,12 +2109,13 @@
       for (const candidates of Object.values(ownerCandidates)) {
         for (const c of candidates) { if (c.sip) add(c.sip, c.label, 'owner', c.destination); }
       }
-      for (const [sip, dest] of Object.entries(boundDestinations)) {
-        const ex = map.get(sip);
-        if (ex) ex.destination = dest; else add(sip, sip, 'bound', dest);
-      }
       for (const aliases of Object.values(shortcutAliases)) {
         for (const a of aliases) add(a.shortcut, a.label, a.mode === 'owner' ? 'owner-shortcut' : 'shortcut', a.destination);
+      }
+      for (const [sip, dest] of Object.entries(boundDestinations)) {
+        const ex = map.get(sip);
+        if (ex) { if (dest && !ex.destination) ex.destination = dest; }
+        else add(sip, sip, isBoundIdentity(sip) ? 'owner' : 'bound', dest);
       }
       return Array.from(map.values()).sort((a, b) => a.sip.localeCompare(b.sip));
     }
@@ -2242,10 +2243,10 @@
       const ast = parseQuery(tokens);
       if (!ast) return [];
       const personal = Object.values(personalShortcutBindings).map((b) => ({
-        sip: b.sip, label: b.label, kind: 'personal', destination: b.destination || ''
+        sip: b.shortcut, label: b.label, kind: 'personal', destination: b.destination || '', resolvedSip: b.sip
       }));
       return [...sipIndex, ...personal].filter((item) => {
-        const text = (item.sip + ' ' + item.label).toLowerCase();
+        const text = (item.sip + ' ' + item.label + ' ' + (item.resolvedSip || '')).toLowerCase();
         return evalQuery(ast, text);
       }).sort((a, b) => {
         const aBound = a.destination ? 0 : 1;
@@ -2269,7 +2270,7 @@
       const kindBadge = {
         discovery: '<span class="badge discovery">discovery</span>',
         owner: '<span class="badge bound">owner-bound</span>',
-        'owner-shortcut': '<span class="badge shortcut">owner shortcut</span>',
+        'owner-shortcut': '<span class="badge shortcut">owner-bound shortcut</span>',
         shortcut: '<span class="badge shortcut">shortcut</span>',
         bound: '<span class="badge bound">bound</span>',
         personal: '<span class="badge personal">personal</span>'
@@ -2280,9 +2281,10 @@
             <code class="search-result-sip">${escapeHtml(item.sip)}</code>
             ${kindBadge[item.kind] || ''}
           </div>
-          ${(item.label !== item.sip || item.destination) ? `
+          ${(item.label !== item.sip || item.resolvedSip || item.destination) ? `
             <div class="search-result-meta">
               ${item.label !== item.sip ? escapeHtml(item.label) : ''}
+              ${item.resolvedSip ? `<span class="search-result-dest">${escapeHtml(item.resolvedSip)}</span>` : ''}
               ${item.destination ? `<span class="search-result-dest">${escapeHtml(item.destination)}</span>` : ''}
             </div>` : ''}
         </div>
