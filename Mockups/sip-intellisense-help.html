@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f172a'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='22' font-weight='900' text-anchor='middle' fill='%237dd3fc'%3E@%3C/text%3E%3C/svg%3E">
+  <title>SIP IntelliSense Mockup — Help</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111c33;
+      --panel-3: #1f2d49;
+      --text: #e5eefc;
+      --muted: #98a8c7;
+      --line: #2c3b5d;
+      --accent: #7dd3fc;
+      --good: #86efac;
+      --warn: #fde68a;
+      --danger: #fca5a5;
+      --shadow: 0 24px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, .18), transparent 34rem),
+        radial-gradient(circle at bottom right, rgba(134, 239, 172, .12), transparent 32rem),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .page {
+      width: min(860px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 34px 0 60px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      margin-bottom: 36px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      opacity: .8;
+      transition: opacity .12s ease;
+    }
+    .back-link:hover { opacity: 1; text-decoration: underline; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0;
+      font-size: 16px;
+      max-width: 640px;
+    }
+
+    /* ── Table of contents ── */
+    .toc-card {
+      border: 1px solid rgba(125, 211, 252, .18);
+      background: linear-gradient(180deg, rgba(17, 28, 51, .96), rgba(15, 23, 42, .98));
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow);
+    }
+
+    .toc-card h2 {
+      margin: 0 0 12px;
+      font-size: 13px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .toc-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 4px 20px;
+    }
+
+    .toc-list li a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 3px 0;
+      transition: color .1s ease;
+    }
+
+    .toc-list li a:hover { color: var(--text); }
+
+    .toc-num {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      min-width: 18px;
+      opacity: .7;
+    }
+
+    /* ── Sections ── */
+    .section {
+      margin-bottom: 36px;
+      scroll-margin-top: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-num {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 700;
+      opacity: .65;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.5vw, 22px);
+      letter-spacing: -.02em;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 15px;
+      color: var(--accent);
+      letter-spacing: .01em;
+    }
+
+    p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    p strong { color: var(--text); }
+
+    ul, ol {
+      margin: 0 0 12px;
+      padding-left: 22px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    li { margin-bottom: 5px; }
+    li strong { color: var(--text); }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: 14px;
+      padding: 13px 16px;
+      margin-bottom: 14px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .callout.info {
+      border: 1px solid rgba(125, 211, 252, .25);
+      background: rgba(125, 211, 252, .07);
+      color: var(--text);
+    }
+
+    .callout.tip {
+      border: 1px solid rgba(134, 239, 172, .28);
+      background: rgba(134, 239, 172, .07);
+      color: var(--good);
+    }
+
+    .callout.rule {
+      border: 1px solid rgba(125, 211, 252, .22);
+      background: rgba(125, 211, 252, .075);
+      color: var(--text);
+    }
+
+    .callout strong { color: inherit; }
+    .callout.tip strong { color: var(--good); }
+    .callout.info strong { color: var(--accent); }
+
+    /* ── Badge samples ── */
+    .badge-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .badge-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(44, 59, 93, .55);
+      color: var(--muted);
+      vertical-align: top;
+    }
+
+    .badge-table tr:last-child td { border-bottom: 0; }
+
+    .badge-table td:first-child { width: 160px; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      white-space: nowrap;
+    }
+
+    .badge.discovery { color: var(--warn);  border-color: rgba(253,230,138,.3);  background: rgba(253,230,138,.08); }
+    .badge.bound     { color: var(--good);  border-color: rgba(134,239,172,.28); background: rgba(134,239,172,.08); }
+    .badge.shortcut  { color: #c4b5fd;     border-color: rgba(196,181,253,.34); background: rgba(196,181,253,.09); }
+    .badge.synonym   { color: #f0abfc;     border-color: rgba(240,171,252,.34); background: rgba(240,171,252,.09); }
+    .badge.facet     { color: #fdba74;     border-color: rgba(253,186,116,.36); background: rgba(253,186,116,.09); }
+    .badge.personal  { color: #67e8f9;     border-color: rgba(103,232,249,.36); background: rgba(103,232,249,.09); }
+    .badge.fav       { color: #fbbf24;     border-color: rgba(251,191,36,.34);  background: rgba(251,191,36,.09); }
+
+    /* ── Keyboard shortcut chips ── */
+    .key {
+      display: inline-block;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.07);
+      border-radius: 6px;
+      padding: 2px 7px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    /* ── Code ── */
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      color: var(--accent);
+      background: rgba(125, 211, 252, .08);
+      border-radius: 5px;
+      padding: 1px 5px;
+    }
+
+    /* ── Example rows ── */
+    .example-block {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      border-radius: 13px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      display: grid;
+      gap: 5px;
+    }
+
+    .example-query {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .example-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Glossary ── */
+    .glossary-item {
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(44, 59, 93, .55);
+      display: grid;
+      gap: 4px;
+    }
+
+    .glossary-item:last-child { border-bottom: 0; }
+
+    .glossary-term {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .glossary-def {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Scenario cards ── */
+    .scenario {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.025);
+      border-radius: 13px;
+      padding: 13px 15px;
+      margin-bottom: 9px;
+    }
+
+    .scenario-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .scenario-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+
+    <div class="page-header">
+      <a class="back-link" href="sip-intellisense-mockup.html">&#8592; Back to mockup</a>
+      <h1>SIP IntelliSense — Help</h1>
+      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, and search.</p>
+    </div>
+
+    <!-- Table of contents -->
+    <div class="toc-card">
+      <h2>Contents</h2>
+      <ul class="toc-list">
+        <li><a href="#overview"><span class="toc-num">1</span>Overview</a></li>
+        <li><a href="#sip-input"><span class="toc-num">2</span>The SIP input</a></li>
+        <li><a href="#suggestions"><span class="toc-num">3</span>Suggestion types</a></li>
+        <li><a href="#resolution"><span class="toc-num">4</span>Resolution preview</a></li>
+        <li><a href="#favorites"><span class="toc-num">5</span>Favorites</a></li>
+        <li><a href="#shortcuts"><span class="toc-num">6</span>Personal shortcuts</a></li>
+        <li><a href="#search"><span class="toc-num">7</span>Search</a></li>
+        <li><a href="#keyboard"><span class="toc-num">8</span>Keyboard &amp; navigation</a></li>
+        <li><a href="#sidebar"><span class="toc-num">9</span>Sidebar panels</a></li>
+        <li><a href="#demo-buttons"><span class="toc-num">10</span>Demo buttons</a></li>
+        <li><a href="#glossary"><span class="toc-num">11</span>Glossary</a></li>
+      </ul>
+    </div>
+
+    <!-- 1. Overview -->
+    <section class="section" id="overview">
+      <div class="section-header">
+        <span class="section-num">1</span>
+        <h2>Overview</h2>
+      </div>
+      <p>This mockup demonstrates <strong>SIP Semantic IntelliSense</strong> — an interactive resolver for <em>Semantic Identity Paths</em> (SIPs). A SIP is a dot-separated string that encodes human-readable meaning rather than a file path or URL. For example, <code>@games.strategy.abstract.capture.leaping.columns.lasca</code> uniquely identifies the Lasca board game concept through a chain of semantic categories.</p>
+      <p>The mockup is entirely self-contained. It uses no external libraries, makes no network requests, and requires no build step. Everything you interact with — paths, owners, shortcuts, synonyms — is hard-coded mock data that illustrates how a real resolver would behave.</p>
+      <div class="callout rule">
+        <strong>The central distinction:</strong> <em>Typing categories explores meaning.</em> Choosing an owner-bound result commits identity. Discovery paths return ranked candidates; owner-bound paths can resolve deterministically to a single destination.
+      </div>
+    </section>
+
+    <!-- 2. SIP input -->
+    <section class="section" id="sip-input">
+      <div class="section-header">
+        <span class="section-num">2</span>
+        <h2>The SIP input</h2>
+      </div>
+      <p>The main text field in the <strong>Active SIP input</strong> card is where you type or paste a SIP string. The <code>@</code> prefix is displayed as a fixed prompt mark to the left; you do not need to type it.</p>
+
+      <h3>Triggering suggestions</h3>
+      <p>Type a <strong>trailing dot</strong> after any segment to request the next level of semantic suggestions. For example, typing <code>games.</code> shows all child segments of the games category. You can also click the <strong>Add trailing dot</strong> button.</p>
+      <p>If the current path has a registered semantic (shortcuts, synonyms, owner candidates, or broad facets), suggestions appear even without a trailing dot once you have two or more segments.</p>
+
+      <h3>Mode indicator</h3>
+      <p>The pill in the top-right corner of the card shows the current mode:</p>
+      <ul>
+        <li><strong>Discovery path</strong> — Unbound semantic exploration. The path has meaning but no committed owner.</li>
+        <li><strong>Owner-bound identity</strong> — The first segment is an owner namespace (e.g. <code>@stackworks.…</code>). The resolver can deterministically route to a destination.</li>
+        <li><strong>Shortcut discovery path</strong> — A compact alias such as <code>@games.lasca</code> that expands to a longer discovery path.</li>
+        <li><strong>Broad semantic facet</strong> — A cross-cutting mechanic (e.g. <code>stacking</code>) that matches several narrower branches rather than a single canonical path.</li>
+        <li><strong>Personal shortcut binding</strong> — A user-saved shortcut that resolves within this session to a specific owner-bound SIP.</li>
+      </ul>
+    </section>
+
+    <!-- 3. Suggestion types -->
+    <section class="section" id="suggestions">
+      <div class="section-header">
+        <span class="section-num">3</span>
+        <h2>Suggestion types</h2>
+      </div>
+      <p>The IntelliSense panel shows up to six distinct groups, each marked with a coloured badge. Groups appear only when relevant data exists for the current path.</p>
+
+      <table class="badge-table">
+        <tbody>
+          <tr>
+            <td><span class="badge personal">saved shortcut</span></td>
+            <td><strong>Saved personal shortcut binding.</strong> Shown when the current input exactly matches a shortcut you have saved this session. Offers to expand the shortcut to its full canonical SIP, or clear it.</td>
+          </tr>
+          <tr>
+            <td><span class="badge shortcut">shortcut alias</span></td>
+            <td><strong>Shortcut SIP expansion.</strong> A predefined compact alias that expands to a longer discovery or owner-bound path. Clicking the row replaces the input with the expanded form.</td>
+          </tr>
+          <tr>
+            <td><span class="badge synonym">synonym</span></td>
+            <td><strong>Semantic synonym / equivalent path.</strong> A path segment that carries the same meaning in this context (e.g. <code>columns</code> ⇄ <code>stacking</code>). Clicking rewrites the entire string using the alternative wording.</td>
+          </tr>
+          <tr>
+            <td><span class="badge facet">narrower path</span></td>
+            <td><strong>Broad semantic facet narrowing.</strong> When the current path is a wide-meaning concept, the resolver suggests more precise sub-branches. Clicking replaces the input with the narrower path.</td>
+          </tr>
+          <tr>
+            <td><span class="badge discovery">continue path</span></td>
+            <td><strong>Semantic discovery continuation.</strong> Available when you type a trailing dot. Shows valid next-level segments. Clicking appends that single segment to the current string.</td>
+          </tr>
+          <tr>
+            <td><span class="badge bound">bind owner</span> / <span class="badge bound">candidate</span></td>
+            <td><strong>Owner-bound identities.</strong> Registered owners whose SIP overlaps with the current discovery path. In shortcut-binding context, you can <em>open once</em> or <em>save as your shortcut</em>. Outside that context, clicking rewrites the string to the canonical owner-qualified identity.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Toggle metadata</h3>
+      <p>Click the <strong>Toggle metadata</strong> button to expand or collapse extra detail beneath each suggestion — verified owner, destination URL, trust level, and explanatory notes.</p>
+
+      <h3>Create freeform shortcut</h3>
+      <p>When the current path has at least two segments and a registered semantic, a <strong>Create freeform shortcut</strong> row appears at the bottom of the panel. Type any alias (e.g. <code>my.lasca</code>) and click <strong>Save shortcut</strong> to bind it to the current SIP for this session.</p>
+    </section>
+
+    <!-- 4. Resolution preview -->
+    <section class="section" id="resolution">
+      <div class="section-header">
+        <span class="section-num">4</span>
+        <h2>Resolution preview</h2>
+      </div>
+      <p>When the current SIP resolves to a known destination — either because it is an owner-bound identity or matches a saved personal shortcut — the <strong>Owner-bound clickable SIP</strong> panel appears below the input.</p>
+      <ul>
+        <li>The SIP string is rendered as a clickable link. Clicking it opens the destination URL in a new tab.</li>
+        <li>The resolved URL is shown in a read-only field. Click <strong>Copy URL</strong> to copy it to the clipboard.</li>
+        <li>A caption explains whether the resolution comes from a direct owner-bound path or from a saved personal shortcut.</li>
+      </ul>
+      <div class="callout tip">
+        <strong>Tip:</strong> Resolution is deterministic only for owner-bound SIPs. Discovery paths return ranked candidates because no single owner has been committed.
+      </div>
+    </section>
+
+    <!-- 5. Favorites -->
+    <section class="section" id="favorites">
+      <div class="section-header">
+        <span class="section-num">5</span>
+        <h2>Favorites</h2>
+      </div>
+      <p>Favorites (bookmarks) let you save any SIP string from the input for quick recall — useful when exploring a long path you want to return to later. Unlike personal shortcuts, a favorite simply stores the exact SIP string; it does not create an alias.</p>
+
+      <h3>Saving a favorite</h3>
+      <ol>
+        <li>Type or navigate to the SIP string you want to bookmark.</li>
+        <li>Click the <span class="badge fav">&#9734; Favorite</span> button in the actions bar.</li>
+        <li>A <strong>Save to Favorites</strong> form slides into the bottom of the suggestion panel.</li>
+        <li>Optionally type a <strong>name</strong> for the bookmark. Leave the field blank to use the SIP string itself as the name.</li>
+        <li>Click <strong>★ Save</strong>. The form closes and the bookmark appears in the <strong>★ Favorites</strong> card in the right sidebar.</li>
+      </ol>
+      <p>The button turns gold and reads <strong>★ Favorited</strong> whenever the current input matches a saved bookmark. Navigating away (or typing) resets it to <strong>☆ Favorite</strong>.</p>
+
+      <h3>Loading a favorite</h3>
+      <p>Click <strong>Load</strong> next to any entry in the Favorites card. The SIP input is immediately set to that string and the suggestion panel refreshes.</p>
+
+      <h3>Removing a favorite</h3>
+      <p>Click <strong>✕</strong> next to any entry in the Favorites card to delete it from this session.</p>
+
+      <div class="callout info">
+        <strong>Session scope:</strong> Favorites are stored in JavaScript memory and are cleared when the page is reloaded. In a real implementation they would persist in a user profile or browser storage.
+      </div>
+    </section>
+
+    <!-- 6. Personal shortcuts -->
+    <section class="section" id="shortcuts">
+      <div class="section-header">
+        <span class="section-num">6</span>
+        <h2>Personal shortcuts</h2>
+      </div>
+      <p>A <strong>personal shortcut</strong> is a compact alias — such as <code>@games.lasca</code> — that the resolver expands to a longer SIP in your trusted context. Shortcuts are more powerful than Favorites: they create a named alias that participates in IntelliSense and resolution.</p>
+
+      <h3>Saving via shortcut binding (resolver-assisted)</h3>
+      <ol>
+        <li>Type a shortcut path such as <code>@games.lasca</code> (or click <strong>Try @games.lasca</strong>).</li>
+        <li>Owner-bound candidates appear in the suggestion panel under <em>Shortcut discovery candidates</em>.</li>
+        <li>Click <strong>Save @games.lasca as my shortcut</strong> next to the candidate you prefer.</li>
+        <li>The shortcut is saved. Entering <code>@games.lasca</code> now shows a <span class="badge personal">saved shortcut</span> row with options to expand or clear it.</li>
+      </ol>
+
+      <h3>Saving via freeform entry</h3>
+      <ol>
+        <li>Navigate to any SIP with a registered semantic (two or more segments).</li>
+        <li>In the <strong>Create freeform shortcut</strong> section at the bottom of the panel, type your desired alias (e.g. <code>my.lasca</code>).</li>
+        <li>The hint line shows the normalised alias as it will be saved.</li>
+        <li>Click <strong>Save shortcut</strong>.</li>
+      </ol>
+
+      <h3>Using saved shortcuts</h3>
+      <p>Click <strong>My shortcuts</strong> in the top-right corner of the SIP input to open a dropdown listing all saved shortcuts for this session. Clicking an entry loads the full canonical SIP into the input.</p>
+
+      <h3>Clearing shortcuts</h3>
+      <p>Click <strong>Clear saved shortcut</strong> in the suggestion panel when a <span class="badge personal">saved shortcut</span> suggestion is visible, or click <strong>Clear saved shortcut</strong> in the actions bar to remove all personal shortcuts.</p>
+
+      <div class="callout info">
+        <strong>Session scope:</strong> Personal shortcuts live in JavaScript memory and reset on page reload. They do not create global ownership — the shortcut resolves only within this user context.
+      </div>
+    </section>
+
+    <!-- 7. Search -->
+    <section class="section" id="search">
+      <div class="section-header">
+        <span class="section-num">7</span>
+        <h2>Search</h2>
+      </div>
+      <p>The <strong>Search SIPs</strong> bar at the top of the page lets you find any registered SIP path by keyword using a boolean query language. Clicking a result loads it into the SIP input.</p>
+
+      <h3>Query syntax</h3>
+      <table class="badge-table">
+        <tbody>
+          <tr><td><code>chess</code></td><td>Match SIPs containing <em>chess</em>.</td></tr>
+          <tr><td><code>chess checkers</code> or <code>chess | checkers</code> or <code>chess, checkers</code></td><td><strong>OR</strong> — match SIPs containing either word.</td></tr>
+          <tr><td><code>chess &amp; columns</code> or <code>chess + columns</code></td><td><strong>AND</strong> — match SIPs containing both words.</td></tr>
+          <tr><td><code>!chess</code></td><td><strong>NOT</strong> — exclude SIPs containing <em>chess</em>.</td></tr>
+          <tr><td><code>(chess | checkers) + columns</code></td><td>Grouping with parentheses for complex queries.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="example-block">
+        <div class="example-query">chess | checkers</div>
+        <div class="example-desc">Finds all SIPs that mention chess or checkers.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">lasca + stackworks</div>
+        <div class="example-desc">Finds SIPs that mention both Lasca and StackWorks.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">columns !chess</div>
+        <div class="example-desc">Finds SIPs with "columns" but not "chess".</div>
+      </div>
+
+      <h3>Synonym awareness</h3>
+      <p>The search engine understands the semantic synonyms defined in the mockup. Searching for <code>stacking</code> will also surface SIPs that use the equivalent term <code>columns</code> (and vice versa), because the synonym map links them.</p>
+
+      <h3>Bound only filter</h3>
+      <p>Tick the <strong>Bound only</strong> checkbox to restrict results to SIPs that have a registered destination URL.</p>
+
+      <h3>Keyboard navigation in results</h3>
+      <p>Press <span class="key">↓</span> from the search box to move focus into the results list. Use <span class="key">↑</span> / <span class="key">↓</span> to navigate between items, <span class="key">Enter</span> to load a result, and <span class="key">Esc</span> to clear the search.</p>
+    </section>
+
+    <!-- 8. Keyboard & navigation -->
+    <section class="section" id="keyboard">
+      <div class="section-header">
+        <span class="section-num">8</span>
+        <h2>Keyboard &amp; navigation</h2>
+      </div>
+      <p>The SIP input supports full keyboard control of the IntelliSense panel.</p>
+
+      <table class="badge-table">
+        <tbody>
+          <tr><td><span class="key">↑</span> / <span class="key">↓</span></td><td>Move the active highlight up or down through the suggestion list.</td></tr>
+          <tr><td><span class="key">Enter</span></td><td>Select the currently highlighted suggestion, equivalent to clicking it.</td></tr>
+          <tr><td><span class="key">Esc</span></td><td>Close the suggestion panel. Click in the input or type to reopen it.</td></tr>
+          <tr><td><span class="key">.</span> (dot)</td><td>Typing a dot after a segment immediately refreshes suggestions for the next level.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9. Sidebar panels -->
+    <section class="section" id="sidebar">
+      <div class="section-header">
+        <span class="section-num">9</span>
+        <h2>Sidebar panels</h2>
+      </div>
+
+      <h3>★ Favorites</h3>
+      <p>Lists all SIP strings you have bookmarked in this session. Each entry shows its name, the underlying SIP (if different from the name), a <strong>Load</strong> button, and a <strong>✕</strong> remove button. See <a href="#favorites" style="color:var(--accent);">§ 5 Favorites</a> for the full workflow.</p>
+
+      <h3>Current interpretation</h3>
+      <p>A live status panel that reflects the current SIP input:</p>
+      <ul>
+        <li><strong>Mode</strong> — Which of the five modes applies (discovery, owner-bound, shortcut, broad facet, personal shortcut binding).</li>
+        <li><strong>Meaning</strong> — A plain-language description of what the current string represents.</li>
+        <li><strong>Resolution behavior</strong> — Whether the resolver would return candidates, resolve deterministically, or request narrowing.</li>
+        <li><strong>Destination preview</strong> — The URL the SIP resolves to, if one is registered.</li>
+      </ul>
+
+      <h3>Core UX rule</h3>
+      <p>A fixed reference card explaining the fundamental distinction between semantic exploration (typing categories) and identity commitment (choosing an owner-bound result). The explanatory text also covers shortcuts, synonyms, and broad facets.</p>
+
+      <h3>Selection history</h3>
+      <p>A running log of every action taken in the mockup — segment selections, shortcut expansions, owner identity commits, shortcut saves, favorites saves, and more. The most recent action appears at the top. The log is capped at twelve entries.</p>
+    </section>
+
+    <!-- 10. Demo buttons -->
+    <section class="section" id="demo-buttons">
+      <div class="section-header">
+        <span class="section-num">10</span>
+        <h2>Demo buttons</h2>
+      </div>
+      <p>The actions bar below the SIP input contains preset scenario buttons for exploring the mockup without manual typing.</p>
+
+      <div class="scenario">
+        <div class="scenario-title">Reset to @games.</div>
+        <div class="scenario-desc">Returns the SIP input to the initial discovery root and clears any pending state.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Add trailing dot</div>
+        <div class="scenario-desc">Appends a dot to the current string, triggering the next level of discovery suggestions.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try @games.lasca</div>
+        <div class="scenario-desc">Sets the input to the discovery shortcut <code>@games.lasca</code>, which surfaces owner-bound candidates you can open or save as a personal shortcut.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try shortcut binding setup</div>
+        <div class="scenario-desc">Same as above but with a history note explaining the resolver-assisted shortcut binding flow.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Clear saved shortcut</div>
+        <div class="scenario-desc">Removes all personal shortcut bindings saved in the current session.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try @stackworks.games.lasca</div>
+        <div class="scenario-desc">Sets the input to an owner-bound shortcut. It resolves directly to the StackWorks Lasca destination and can also be expanded to the full canonical SIP.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try broad stacking facet</div>
+        <div class="scenario-desc">Sets the input to <code>@games.strategy.abstract.stacking.</code> — a wide-meaning mechanic that matches several narrower branches. The panel shows narrower-path suggestions instead of a single canonical result.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try leaping stacking synonym</div>
+        <div class="scenario-desc">Sets the input to <code>@games.strategy.abstract.capture.leaping.stacking.</code>, demonstrating that <code>stacking</code> is semantically equivalent to <code>columns</code> in this context and surfaces the same Lasca / Damasca continuations.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Run guided demo</div>
+        <div class="scenario-desc">Automatically steps through the full discovery path from <code>@games.</code> to <code>@stackworks.games.strategy.abstract.capture.leaping.columns.lasca</code>, pausing briefly at each step so you can observe the IntelliSense suggestions update in real time.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Toggle metadata</div>
+        <div class="scenario-desc">Expands or collapses the extra metadata section beneath each suggestion row (owner, destination, trust level, and explanatory note).</div>
+      </div>
+    </section>
+
+    <!-- 11. Glossary -->
+    <section class="section" id="glossary">
+      <div class="section-header">
+        <span class="section-num">11</span>
+        <h2>Glossary</h2>
+      </div>
+
+      <div class="glossary-item">
+        <div class="glossary-term">SIP — Semantic Identity Path</div>
+        <div class="glossary-def">A dot-separated, human-readable string prefixed with <code>@</code> that encodes the identity of a concept through a chain of semantic categories. Example: <code>@games.strategy.abstract.capture.leaping.columns.lasca</code>.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Discovery path</div>
+        <div class="glossary-def">A SIP that begins with a semantic category rather than an owner namespace (e.g. <code>@games.…</code>). It explores meaning but does not commit to a single owner or destination.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Owner-bound identity</div>
+        <div class="glossary-def">A SIP whose first segment is an owner namespace (e.g. <code>@stackworks.…</code>). The resolver can deterministically route this to the owner's registered destination.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Shortcut SIP</div>
+        <div class="glossary-def">A compact alias SIP such as <code>@games.lasca</code> that expands to a longer path. A <em>discovery shortcut</em> expands to a longer semantic path; an <em>owner-bound shortcut</em> such as <code>@stackworks.games.lasca</code> expands to the canonical owner-qualified identity.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Personal shortcut binding</div>
+        <div class="glossary-def">A user-saved mapping from a compact alias to a specific owner-bound SIP, stored in the user's trusted context. It does not create global ownership — the binding applies only to the current user.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Semantic synonym</div>
+        <div class="glossary-def">Two path segments that carry identical meaning within a given context. For example, <code>columns</code> and <code>stacking</code> are synonyms in the leaping-capture branch of the games taxonomy. Either segment produces the same set of results.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Broad semantic facet</div>
+        <div class="glossary-def">A high-level cross-cutting concept (e.g. <code>stacking</code> under abstract strategy) that matches multiple narrower branches rather than collapsing to a single canonical path. The resolver presents narrower-path suggestions instead of resolving directly.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Resolver</div>
+        <div class="glossary-def">The system that interprets a SIP string, consults registered owners, and either returns ranked candidates (discovery) or redirects deterministically (owner-bound).</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Favorite / Bookmark</div>
+        <div class="glossary-def">A saved copy of any SIP string, stored with a user-defined name, for quick recall. Unlike a shortcut, a favorite does not create an alias — it preserves the exact SIP string as-is.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Trust level</div>
+        <div class="glossary-def">An indication of how confidently an owner candidate has been verified. The mockup uses two levels: <em>Domain Verified</em> (owner is confirmed) and <em>Candidate</em> (plausible but unverified).</div>
+      </div>
+    </section>
+
+    <footer>
+      Help file for the SIP IntelliSense standalone mockup. No external libraries or network requests.
+    </footer>
+
+  </main>
+</body>
+</html>

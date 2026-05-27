@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f172a'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='22' font-weight='900' text-anchor='middle' fill='%237dd3fc'%3E@%3C/text%3E%3C/svg%3E">
   <title>SIP IntelliSense Mockup - Linked Resolution, Shortcuts, Synonyms, Broad Facets, and Shortcut Binding</title>
   <style>
     :root {
@@ -869,12 +870,147 @@
       color: var(--muted);
       font-size: 13px;
     }
+
+    /* ── Favorites / Bookmarks ──────────────────────────────────────────────── */
+    .badge.fav {
+      color: #fbbf24;
+      border-color: rgba(251, 191, 36, .34);
+      background: rgba(251, 191, 36, .09);
+    }
+
+    button.fav-btn {
+      border-color: rgba(251, 191, 36, .28);
+      background: rgba(251, 191, 36, .07);
+      color: var(--muted);
+    }
+
+    button.fav-btn:hover {
+      border-color: rgba(251, 191, 36, .55);
+      color: var(--warn);
+    }
+
+    button.fav-btn.is-faved {
+      color: var(--warn);
+      border-color: rgba(251, 191, 36, .55);
+      background: rgba(251, 191, 36, .15);
+    }
+
+    .fav-save-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .fav-save-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,.14);
+      outline: 0;
+      background: rgba(3, 7, 18, .46);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .fav-save-input:focus {
+      border-color: rgba(251, 191, 36, .44);
+    }
+
+    .fav-list {
+      display: grid;
+      gap: 7px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .fav-item {
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      border: 1px solid rgba(255,255,255,.08);
+      display: grid;
+      gap: 3px;
+    }
+
+    .fav-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .fav-item-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--warn);
+      overflow-wrap: anywhere;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fav-item-sip {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .fav-item-actions {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .fav-item-actions button {
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .fav-load {
+      border-color: rgba(251, 191, 36, .38);
+      background: rgba(251, 191, 36, .09);
+      color: var(--warn);
+    }
+
+    .fav-remove {
+      border-color: rgba(252, 165, 165, .3);
+      background: rgba(252, 165, 165, .06);
+      color: var(--danger);
+    }
+
+    .fav-empty {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      padding: 12px 0;
+      line-height: 1.55;
+    }
+
+    .help-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: .7;
+      transition: opacity .12s ease;
+    }
+    .help-link:hover { opacity: 1; text-decoration: underline; }
   </style>
 </head>
 <body>
   <main class="page">
     <header>
-      <h1>SIP Semantic IntelliSense Mockup</h1>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <h1>SIP Semantic IntelliSense Mockup</h1>
+        <a class="help-link" href="sip-intellisense-help.html" target="_blank" rel="noopener noreferrer">&#10067; Help</a>
+      </div>
       <p class="subtitle">
         This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, resolver-assisted shortcut binding, semantic synonyms, and broad semantic facets. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, click an owner-bound result to rewrite the string into a canonical owner-qualified identity, or save a discovered result as your personal shortcut.
       </p>
@@ -948,6 +1084,7 @@
             <button id="synonymBtn">Try leaping stacking synonym</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
+            <button id="addFavoriteBtn" class="fav-btn">&#9734; Favorite</button>
           </div>
 
           <div id="pathVisual" class="path-visual" aria-label="Path visualization"></div>
@@ -957,6 +1094,18 @@
       </div>
 
       <aside class="side-section">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <strong>&#9733; Favorites</strong>
+              <span>Bookmarked SIP strings for quick recall.</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="favoritesList" class="fav-list"></div>
+          </div>
+        </div>
+
         <div class="card">
           <div class="card-header">
             <div class="card-title">
@@ -1014,7 +1163,7 @@
     </section>
 
     <footer>
-      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, owner-bound clickable links, and copyable URL previews. No external libraries, fonts, network requests, or build tools required.
+      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, owner-bound clickable links, copyable URL previews, and Favorites bookmarking. No external libraries, fonts, network requests, or build tools required.
     </footer>
   </main>
 
@@ -1043,6 +1192,10 @@
     let shortcutsDropdownOpen = false;
     let sipIndex = [];
     let synonymMap = new Map();
+
+    const favorites = []; // { name, sip }
+    let showFavoriteSaveForm = false;
+    let favoriteDraft = '';
 
     const tree = {
       'games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
@@ -1671,6 +1824,69 @@
       render();
     }
 
+    // ── Favorites / Bookmarks ────────────────────────────────────────────────
+    function alreadyFavorited(sip) {
+      return favorites.some((f) => f.sip === normalize(sip));
+    }
+
+    function saveFavorite(name, sip) {
+      const normalizedSip = normalize(sip);
+      if (!normalizedSip || normalizedSip === '@') return;
+      const n = name.trim() || normalizedSip;
+      if (!alreadyFavorited(normalizedSip)) {
+        favorites.push({ name: n, sip: normalizedSip });
+        addHistory('Favorite saved', `Saved "${n}" as a favorite.`, normalizedSip);
+      }
+      showFavoriteSaveForm = false;
+      favoriteDraft = '';
+      renderFavorites();
+      render();
+    }
+
+    function removeFavorite(idx) {
+      const removed = favorites.splice(idx, 1)[0];
+      if (removed) addHistory('Favorite removed', `Removed "${removed.name}" from favorites.`, removed.sip);
+      renderFavorites();
+      render();
+    }
+
+    function loadFavorite(sip) {
+      input.value = sip;
+      addHistory('Loaded from favorites', 'Loaded SIP string from Favorites.', sip);
+      input.focus();
+      render();
+    }
+
+    function renderFavorites() {
+      const el = document.getElementById('favoritesList');
+      if (!el) return;
+      if (!favorites.length) {
+        el.innerHTML = '<div class="fav-empty">No favorites yet.<br>Type a SIP in the input above, then click &#9734;&nbsp;Favorite to bookmark it.</div>';
+        return;
+      }
+      el.innerHTML = favorites.map((f, i) => `
+        <div class="fav-item">
+          <div class="fav-item-row">
+            <span class="fav-item-name">${escapeHtml(f.name)}</span>
+            <span class="fav-item-actions">
+              <button type="button" class="fav-load" data-fav-load="${i}">Load</button>
+              <button type="button" class="fav-remove" data-fav-remove="${i}">&#x2715;</button>
+            </span>
+          </div>
+          ${f.name !== f.sip ? `<div class="fav-item-sip">${escapeHtml(f.sip)}</div>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function renderFavoritesBtn() {
+      const btn = document.getElementById('addFavoriteBtn');
+      if (!btn) return;
+      const faved = alreadyFavorited(input.value);
+      btn.textContent = faved ? '\u2605 Favorited' : '\u2606 Favorite';
+      btn.classList.toggle('is-faved', faved);
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     function addTrailingDot() {
       const value = normalize(input.value);
       if (!value) input.value = '@games.';
@@ -2075,6 +2291,23 @@
         `;
       }
 
+      if (showFavoriteSaveForm) {
+        const alreadySaved = alreadyFavorited(value);
+        html += `
+          <div class="group">
+            <div class="group-heading"><span>Save to Favorites</span><span class="tag">bookmark</span></div>
+            <div class="fav-save-row">
+              <input id="favNameInput" class="fav-save-input" type="text" spellcheck="false" autocomplete="off"
+                placeholder="Name — leave blank to use SIP string"
+                value="${escapeHtml(favoriteDraft)}" aria-label="Favorite name" />
+              <button type="button" data-action="save-favorite"${alreadySaved ? ' disabled' : ''}>&#9733; Save</button>
+              <button type="button" data-action="cancel-favorite">Cancel</button>
+            </div>
+            ${alreadySaved ? `<div class="shortcut-create-hint error">This SIP is already in Favorites.</div>` : ''}
+          </div>
+        `;
+      }
+
       panel.innerHTML = html;
     }
 
@@ -2299,6 +2532,8 @@
       renderResolutionPreview();
       renderSuggestions();
       renderShortcutsDropdownBtn();
+      renderFavoritesBtn();
+      renderFavorites();
     }
 
     function runDemo() {
@@ -2345,6 +2580,8 @@
 
     input.addEventListener('input', () => {
       activeFlatIndex = -1;
+      showFavoriteSaveForm = false;
+      favoriteDraft = '';
       render();
     });
 
@@ -2387,6 +2624,10 @@
     });
 
     panel.addEventListener('input', (event) => {
+      if (event.target.id === 'favNameInput') {
+        favoriteDraft = event.target.value;
+        return;
+      }
       if (event.target.id !== 'freeformShortcutInput') return;
       freeformShortcutDraft = event.target.value;
       const hint = document.getElementById('shortcutCreateHint');
@@ -2406,13 +2647,29 @@
     });
 
     panel.addEventListener('click', (event) => {
-      const btn = event.target.closest('[data-action="save-freeform-shortcut"]');
+      const btn = event.target.closest('[data-action]');
       if (!btn) return;
-      if (btn.disabled) return;
-      const shortcutInput = document.getElementById('freeformShortcutInput');
-      const raw = shortcutInput ? shortcutInput.value : freeformShortcutDraft;
-      const normalized = normalizeShortcutInput(raw);
-      if (normalized) saveFreeformShortcut(normalized, normalize(input.value));
+      if (btn.dataset.action === 'save-freeform-shortcut') {
+        if (btn.disabled) return;
+        const shortcutInput = document.getElementById('freeformShortcutInput');
+        const raw = shortcutInput ? shortcutInput.value : freeformShortcutDraft;
+        const normalized = normalizeShortcutInput(raw);
+        if (normalized) saveFreeformShortcut(normalized, normalize(input.value));
+        return;
+      }
+      if (btn.dataset.action === 'save-favorite') {
+        if (btn.disabled) return;
+        const nameInput = document.getElementById('favNameInput');
+        const name = nameInput ? nameInput.value : favoriteDraft;
+        saveFavorite(name, input.value);
+        return;
+      }
+      if (btn.dataset.action === 'cancel-favorite') {
+        showFavoriteSaveForm = false;
+        favoriteDraft = '';
+        render();
+        return;
+      }
     });
 
     input.addEventListener('keydown', (event) => {
@@ -2474,6 +2731,36 @@
     document.getElementById('metadataBtn').addEventListener('click', () => {
       showMetadata = !showMetadata;
       renderSuggestions();
+    });
+
+    document.getElementById('addFavoriteBtn').addEventListener('click', () => {
+      showFavoriteSaveForm = !showFavoriteSaveForm;
+      if (!showFavoriteSaveForm) {
+        favoriteDraft = '';
+      }
+      render();
+      if (showFavoriteSaveForm) {
+        requestAnimationFrame(() => {
+          const fi = document.getElementById('favNameInput');
+          if (fi) {
+            fi.focus();
+            fi.select();
+          }
+        });
+      }
+    });
+
+    document.getElementById('favoritesList').addEventListener('click', (event) => {
+      const loadBtn = event.target.closest('[data-fav-load]');
+      if (loadBtn) {
+        const idx = Number(loadBtn.dataset.favLoad);
+        if (favorites[idx]) loadFavorite(favorites[idx].sip);
+        return;
+      }
+      const removeBtn = event.target.closest('[data-fav-remove]');
+      if (removeBtn) {
+        removeFavorite(Number(removeBtn.dataset.favRemove));
+      }
     });
 
     copyUrlBtn.addEventListener('click', async () => {
@@ -2586,6 +2873,7 @@
 
     addHistory('Loaded', 'Initial semantic discovery root is ready.', input.value);
     render();
+    renderFavorites();
   </script>
 </body>
 </html>
