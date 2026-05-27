@@ -658,6 +658,35 @@
 
     .sip-search-input:focus { border-color: rgba(125, 211, 252, .55); }
 
+    .search-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-input-row .sip-search-input { flex: 1; min-width: 0; }
+
+    .search-bound-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .search-bound-label:hover { color: var(--text); }
+
+    .search-bound-label input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
     .search-results {
       margin-top: 10px;
       display: grid;
@@ -841,8 +870,14 @@
         </div>
       </div>
       <div class="card-body">
-        <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
-        <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>( )</code> for grouping</div>
+        <div class="search-input-row">
+          <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
+          <label class="search-bound-label" title="Only show SIPs bound to a destination">
+            <input type="checkbox" id="sipSearchBoundOnly" />
+            Bound only
+          </label>
+        </div>
+        <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>!</code> = NOT &nbsp;·&nbsp; <code>( )</code> for grouping</div>
         <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
       </div>
     </div>
@@ -2001,10 +2036,11 @@
         const ch = query[i];
         if (ch === '|' || ch === ',') { raw.push({ type: 'OR' });    i++; continue; }
         if (ch === '&' || ch === '+') { raw.push({ type: 'AND' });   i++; continue; }
+        if (ch === '!')               { raw.push({ type: 'NOT' });   i++; continue; }
         if (ch === '(')               { raw.push({ type: 'LPAREN' }); i++; continue; }
         if (ch === ')')               { raw.push({ type: 'RPAREN' }); i++; continue; }
         const start = i;
-        while (i < query.length && !/[\s|,&+()[\]{}]/.test(query[i])) i++;
+        while (i < query.length && !/[\s|,&+()![\]{}]/.test(query[i])) i++;
         if (i > start) raw.push({ type: 'TERM', value: query.slice(start, i).toLowerCase() });
       }
       // Convert SPACE to implicit OR when it sits between two value tokens
@@ -2015,8 +2051,8 @@
           const prev = tokens[tokens.length - 1];
           const next = raw.slice(j + 1).find((x) => x.type !== 'SPACE');
           if (prev && (prev.type === 'TERM' || prev.type === 'RPAREN') &&
-              next && (next.type === 'TERM' || next.type === 'LPAREN')) {
-            tokens.push({ type: 'OR' });
+              next && (next.type === 'TERM' || next.type === 'LPAREN' || next.type === 'NOT')) {
+            tokens.push(next.type === 'NOT' ? { type: 'AND' } : { type: 'OR' });
           }
         } else {
           tokens.push(t);
@@ -2050,6 +2086,11 @@
       }
       function parseAtom() {
         const t = peek();
+        if (t.type === 'NOT') {
+          consume();
+          const operand = parseAtom();
+          return operand ? { op: 'NOT', operand } : null;
+        }
         if (t.type === 'LPAREN') {
           consume();
           const expr = parseOr();
@@ -2091,6 +2132,7 @@
         if (syns) { for (const s of syns) { if (text.includes(s)) return true; } }
         return false;
       }
+      if (node.op === 'NOT') return !evalQuery(node.operand, text);
       if (node.op === 'AND') return evalQuery(node.left, text) && evalQuery(node.right, text);
       if (node.op === 'OR')  return evalQuery(node.left, text) || evalQuery(node.right, text);
       return true;
@@ -2109,13 +2151,20 @@
       return [...sipIndex, ...personal].filter((item) => {
         const text = (item.sip + ' ' + item.label).toLowerCase();
         return evalQuery(ast, text);
+      }).sort((a, b) => {
+        const aBound = a.destination ? 0 : 1;
+        const bBound = b.destination ? 0 : 1;
+        if (aBound !== bBound) return aBound - bBound;
+        return a.sip.localeCompare(b.sip);
       }).slice(0, 30);
     }
 
     function renderSearchResults(query) {
       const resultsEl = document.getElementById('searchResults');
       if (!query.trim()) { resultsEl.hidden = true; return; }
-      const results = searchSips(query);
+      const boundOnly = document.getElementById('sipSearchBoundOnly').checked;
+      let results = searchSips(query);
+      if (boundOnly) results = results.filter((item) => item.destination !== '');
       if (!results.length) {
         resultsEl.innerHTML = '<div class="search-empty">No matching SIPs found.</div>';
         resultsEl.hidden = false;
@@ -2384,6 +2433,10 @@
 
     document.getElementById('sipSearch').addEventListener('input', (event) => {
       renderSearchResults(event.target.value);
+    });
+
+    document.getElementById('sipSearchBoundOnly').addEventListener('change', () => {
+      renderSearchResults(document.getElementById('sipSearch').value);
     });
 
     document.getElementById('sipSearch').addEventListener('keydown', (event) => {
