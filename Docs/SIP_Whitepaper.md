@@ -2,7 +2,7 @@
 
 ## White Paper, Architecture Overview, and Documentation Roadmap
 
-Version: Draft 0.9 - Semantic Path Search and Boolean Query Expressions  Revision Date: May 27, 2026  Status: Conceptual Proposal
+Version: Draft 0.9 - Semantic Path Search and Boolean Query Expressions  Revision Date: May 26, 2026  Status: Conceptual Proposal
 
 # Executive Summary
 
@@ -3569,5 +3569,83 @@ Semantic path search further reinforces that SIP is:
 - **context-aware** — personal shortcuts are included only within the user's trusted resolver context
 - **federated** — search results may aggregate identity records across multiple Semantic Identity Providers
 - **meaning-oriented** — search matches against semantic labels and human-readable descriptions as well as raw path strings
+
+---
+
+# Resource-Type Expression Through Owner Binding Levels
+
+An owner-bound SIP identifies who holds an identity, but it does not inherently communicate what kind of resource the destination offers. Is it a place to play the game, read about it, purchase it, watch others play it, or something else entirely?
+
+SIP supports three coexisting approaches to expressing resource-type intent. All three are valid. No single form is mandated. Canonical convention will emerge naturally from adoption patterns across the ecosystem.
+
+## Option A — Terminal Qualifiers
+
+Resource type is expressed as a terminal path segment appended to the game or concept identity:
+
+    @ogs.games.strategy.abstract.territory.enclosure.go.online
+    @senseis.games.strategy.abstract.territory.enclosure.go.strategy
+    @wikipedia.games.strategy.abstract.territory.enclosure.go.rules
+
+Each resource-type segment is a semantic child of the concept node. The game taxonomy tree already carries these as valid continuations:
+
+    games.strategy.abstract.territory.enclosure.go
+      ├── online
+      ├── rules
+      ├── strategy
+      ├── history
+      ├── variants
+      ├── tournaments
+      └── tutorials
+
+Owners may register bindings at any level. OGS might bind `go.online` to their play environment and `go.tournaments` to their tournament calendar. Wikipedia might bind `go.rules` and `go.history` to the corresponding article sections.
+
+This approach is the most semantically precise. The SIP itself is self-describing, navigable via IntelliSense, and machine-readable without out-of-band knowledge.
+
+## Option B — Owner-Implicit Binding
+
+Resource type is inferred from the owner rather than stated in the path:
+
+    @ogs.games.strategy.abstract.territory.enclosure.go
+
+Here, the path ends at the concept level. The resource type is implied by the owner's well-known profile: OGS is an online Go platform, so the destination is implicitly a place to play. No additional segment is needed.
+
+This approach produces shorter SIP strings and works well when the owner is unambiguous and widely known.
+
+## Option C — Namespace Intent
+
+Resource type is inserted as an intent segment between the owner namespace and the discovery path:
+
+    @ogs.play.games.strategy.abstract.territory.enclosure.go
+    @wikipedia.ref.games.strategy.abstract.territory.enclosure.go
+
+The intent segment (`play`, `ref`, `buy`, `watch`) appears directly after the owner namespace. The discovery portion of the path remains structurally intact.
+
+This approach is fully self-describing without any out-of-band knowledge of the owner's profile. It also supports machine-readable classification: a resolver that encounters `.play.games.` can infer playable intent without consulting a knowledge base about the owner. The trade-off is longer SIP strings.
+
+## All Three Coexist
+
+These approaches are not in conflict. A single owner may register multiple bindings simultaneously at different levels:
+
+    @ogs.games.strategy.abstract.territory.enclosure.go          (Option B — owner-implicit)
+    @ogs.games.strategy.abstract.territory.enclosure.go.online   (Option A — terminal qualifier)
+    @ogs.play.games.strategy.abstract.territory.enclosure.go     (Option C — namespace intent)
+
+All three may resolve to the same OGS play destination, or to subtly different entry points within the same platform. The resolver presents all registered bindings and lets the user choose the level of specificity they prefer.
+
+## Evolutionary Convention
+
+Which form predominates will emerge from adoption rather than mandate:
+
+- Option B provides immediate convenience and is likely to dominate for well-known owners in the early ecosystem, since it requires no change to existing SIP paths.
+- Option A provides precision and will grow as taxonomies mature and owners begin publishing resource-type-differentiated bindings. IntelliSense can guide users to these terminal qualifiers through normal step-by-step navigation.
+- Option C provides explicit machine-readable intent and may become the preferred form for AI-native resolution and programmatic SIP generation, where the intent segment can be injected automatically by the calling system.
+
+Resolvers should support all three models simultaneously without conflict. A SIP-aware browser, AI assistant, or integration that encounters any of the three forms should be able to resolve or usefully interpret it.
+
+## Architectural Implication
+
+The distinction between resource types is not encoded in SIP's core path grammar — it is expressed through the path itself, just as all other semantic distinctions are. Terminal qualifiers are ordinary child segments. Namespace intent uses ordinary owner-prefix conventions. No special syntax extension is required.
+
+This means resource-type awareness can be layered into any existing SIP implementation at any time by adding bindings, without changing the underlying resolver, grammar, or identity format.
 
 ---

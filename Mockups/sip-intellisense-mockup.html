@@ -367,6 +367,21 @@
       background: rgba(103, 232, 249, .09);
     }
 
+    .badge.warn {
+      color: #fb923c;
+      border-color: rgba(251, 146, 60, .36);
+      background: rgba(251, 146, 60, .09);
+    }
+
+    .group.deadend-group > .group-heading {
+      color: #fb923c;
+      border-bottom-color: rgba(251, 146, 60, .22);
+    }
+
+    .suggestion.deadend {
+      border-left: 2px solid rgba(251, 146, 60, .35);
+    }
+
     .choice-actions {
       display: flex;
       flex-wrap: wrap;
@@ -1082,6 +1097,9 @@
             <button id="shortcutOwnerBtn">Try @stackworks.games.lasca</button>
             <button id="broadFacetBtn">Try broad stacking facet</button>
             <button id="synonymBtn">Try leaping stacking synonym</button>
+            <button id="resourceTypeABtn">Try Option A — terminal qualifier</button>
+            <button id="resourceTypeBBtn">Try Option B — owner-implicit</button>
+            <button id="resourceTypeCBtn">Try Option C — namespace intent</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
             <button id="addFavoriteBtn" class="fav-btn">&#9734; Favorite</button>
@@ -1192,6 +1210,7 @@
     let shortcutsDropdownOpen = false;
     let sipIndex = [];
     let synonymMap = new Map();
+    let boundPathSet = new Set();
 
     const favorites = []; // { name, sip }
     let showFavoriteSaveForm = false;
@@ -1224,7 +1243,158 @@
       'games.strategy.abstract.capture.displacement.columns.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
       'games.strategy.abstract.capture.displacement.stacks': ['chess'],
       'games.strategy.abstract.capture.displacement.stacks.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
-      'games.strategy.abstract.capture.displacement.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles']
+      'games.strategy.abstract.capture.displacement.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
+
+      // ── Action ──────────────────────────────────────────────────────────────
+      'games.action': ['platformer', 'shooter', 'fighting', 'beat-em-up', 'stealth', 'rhythm'],
+      'games.action.platformer': ['2d', '3d', 'puzzle-platformer', 'run-and-gun'],
+      'games.action.platformer.2d': ['sidescroller', 'metroidvania', 'auto-runner'],
+      'games.action.platformer.3d': ['collect-a-thon', 'precision', 'open-world'],
+      'games.action.shooter': ['fps', 'tps', 'top-down', 'twin-stick', 'battle-royale'],
+      'games.action.shooter.fps': ['arena', 'tactical', 'milsim', 'hero-shooter'],
+      'games.action.shooter.tps': ['cover-based', 'open-world', 'tactical'],
+      'games.action.shooter.battle-royale': ['solo', 'squad', 'building'],
+      'games.action.fighting': ['1v1', 'party', 'arena', 'tag'],
+      'games.action.fighting.1v1': ['traditional', 'platform-fighter', 'weapon-based'],
+      'games.action.stealth': ['tactical', 'action', 'puzzle'],
+      'games.action.rhythm': ['music', 'dance', 'timing'],
+
+      // ── RPG ─────────────────────────────────────────────────────────────────
+      'games.rpg': ['jrpg', 'wrpg', 'action-rpg', 'tactical-rpg', 'roguelike', 'sandbox'],
+      'games.rpg.jrpg': ['turn-based', 'action', 'strategy'],
+      'games.rpg.wrpg': ['open-world', 'dungeon-crawler', 'narrative'],
+      'games.rpg.action-rpg': ['soulslike', 'hack-and-slash', 'looter'],
+      'games.rpg.action-rpg.soulslike': ['dungeon', 'open-world', 'metroidvania'],
+      'games.rpg.roguelike': ['turn-based', 'action', 'deck-building'],
+      'games.rpg.roguelike.deck-building': ['card-draft', 'engine-building', 'slay-the-spire-style'],
+      'games.rpg.roguelike.turn-based': ['dungeon', 'overworld', 'puzzle'],
+      'games.rpg.tactical-rpg': ['grid-based', 'real-time', 'hybrid'],
+      'games.rpg.sandbox': ['survival', 'crafting', 'colony-sim'],
+
+      // ── Puzzle ───────────────────────────────────────────────────────────────
+      'games.puzzle': ['logic', 'spatial', 'word', 'physics', 'matching', 'sokoban'],
+      'games.puzzle.logic': ['deduction', 'constraint', 'grid', 'nonogram'],
+      'games.puzzle.logic.grid': ['sudoku', 'kakuro', 'hitori', 'nurikabe'],
+      'games.puzzle.logic.grid.sudoku': ['rules', 'online', 'variants', 'software', 'daily'],
+      'games.puzzle.logic.grid.kakuro': ['rules', 'online', 'variants'],
+      'games.puzzle.logic.deduction': ['minesweeper', 'picross', 'mastermind'],
+      'games.puzzle.logic.deduction.minesweeper': ['rules', 'online', 'variants', 'strategy'],
+      'games.puzzle.logic.nonogram': ['rules', 'online', 'variants', 'software'],
+      'games.puzzle.spatial': ['sliding', 'rotation', 'assembly', 'packing'],
+      'games.puzzle.spatial.sliding': ['15-puzzle', 'klotski', 'sokoban-style'],
+      'games.puzzle.word': ['crossword', 'anagram', 'spelling', 'typing'],
+      'games.puzzle.physics': ['bridge-builder', 'marble', 'destructive'],
+      'games.puzzle.matching': ['match-3', 'swap', 'chain', 'collapse'],
+      'games.puzzle.sokoban': ['rules', 'online', 'variants', 'levels', 'editors'],
+
+      // ── Casual ───────────────────────────────────────────────────────────────
+      'games.casual': ['hyper-casual', 'idle', 'clicker', 'party', 'social'],
+      'games.casual.idle': ['incremental', 'idle-rpg', 'management'],
+      'games.casual.party': ['trivia', 'drawing', 'mini-games'],
+
+      // ── Adventure ────────────────────────────────────────────────────────────
+      'games.adventure': ['point-and-click', 'walking-sim', 'action-adventure', 'survival', 'visual-novel'],
+      'games.adventure.point-and-click': ['classic', 'modern', 'horror', 'comedy'],
+      'games.adventure.survival': ['crafting', 'open-world', 'horror'],
+      'games.adventure.visual-novel': ['romance', 'mystery', 'sci-fi', 'fantasy'],
+      'games.adventure.action-adventure': ['open-world', 'metroidvania', 'zelda-like'],
+
+      // ── Narrative ────────────────────────────────────────────────────────────
+      'games.narrative': ['interactive-fiction', 'walking-sim', 'dialogue-system', 'visual-novel'],
+      'games.narrative.interactive-fiction': ['parser', 'choice-based', 'hypertext'],
+      'games.narrative.dialogue-system': ['branching', 'relationship-sim', 'npc-driven'],
+
+      // ── Strategy — RTS ───────────────────────────────────────────────────────
+      'games.strategy.rts': ['sci-fi', 'fantasy', 'historical', 'base-building', 'hero-based'],
+      'games.strategy.rts.sci-fi': ['space', 'cyberpunk', 'post-apocalyptic'],
+      'games.strategy.rts.fantasy': ['high-fantasy', 'dark-fantasy', 'mythological'],
+      'games.strategy.rts.historical': ['ancient', 'medieval', 'world-war'],
+      'games.strategy.rts.base-building': ['tower-defense', 'survival', 'colony'],
+
+      // ── Strategy — TBS ───────────────────────────────────────────────────────
+      'games.strategy.tbs': ['military', '4x', 'wargame', 'board-game-style'],
+      'games.strategy.tbs.4x': ['space', 'fantasy', 'historical'],
+      'games.strategy.tbs.4x.space': ['galactic-conquest', 'trading', 'exploration'],
+      'games.strategy.tbs.4x.historical': ['civilization-style', 'ancient', 'modern'],
+      'games.strategy.tbs.wargame': ['hex-based', 'card-based', 'miniature'],
+      'games.strategy.tbs.military': ['tactics', 'campaign', 'skirmish'],
+
+      // ── Strategy — Grand ─────────────────────────────────────────────────────
+      'games.strategy.grand': ['historical', 'fantasy', 'sci-fi', 'diplomatic', 'economic'],
+      'games.strategy.grand.historical': ['ancient', 'medieval', 'early-modern', 'modern'],
+      'games.strategy.grand.economic': ['trading', 'industrial', 'financial'],
+      'games.strategy.grand.diplomatic': ['alliances', 'espionage', 'negotiation'],
+
+      // ── Strategy — MOBA & Tower ──────────────────────────────────────────────
+      'games.strategy.moba': ['5v5', 'hero-shooter', 'auto-battler'],
+      'games.strategy.moba.5v5': ['competitive', 'casual', 'ranked'],
+      'games.strategy.tower': ['lane-defense', 'maze', 'hybrid', 'reverse'],
+      'games.strategy.tower.lane-defense': ['fantasy', 'sci-fi', 'hybrid'],
+
+      // ── Abstract — Territory ─────────────────────────────────────────────────
+      'games.strategy.abstract.territory': ['enclosure', 'influence', 'flooding'],
+      'games.strategy.abstract.territory.enclosure': ['go', 'othello', 'reversi', 'amazons'],
+      'games.strategy.abstract.territory.enclosure.go': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.territory.enclosure.othello': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.territory.enclosure.reversi': ['rules', 'online', 'variants'],
+      'games.strategy.abstract.territory.enclosure.amazons': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.territory.influence': ['blokus', 'tak', 'cathedral'],
+      'games.strategy.abstract.territory.influence.blokus': ['rules', 'online', 'variants', 'tournaments', 'strategy'],
+      'games.strategy.abstract.territory.influence.tak': ['rules', 'online', 'variants', 'strategy'],
+
+      // ── Abstract — Connection ────────────────────────────────────────────────
+      'games.strategy.abstract.connection': ['path', 'bridge', 'network'],
+      'games.strategy.abstract.connection.path': ['hex', 'twixt', 'y', 'havannah'],
+      'games.strategy.abstract.connection.path.hex': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.connection.path.twixt': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.connection.path.y': ['rules', 'online', 'variants'],
+      'games.strategy.abstract.connection.path.havannah': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.connection.bridge': ['bridg-it', 'poly-hex', 'shannon-switching'],
+      'games.strategy.abstract.connection.network': ['sprouts', 'hackenbush', 'dots-and-boxes'],
+      'games.strategy.abstract.connection.network.dots-and-boxes': ['rules', 'online', 'variants', 'strategy'],
+
+      // ── Abstract — Annihilation ──────────────────────────────────────────────
+      'games.strategy.abstract.annihilation': ['capture-all', 'breakthrough', 'racing'],
+      'games.strategy.abstract.annihilation.capture-all': ['checkers', 'draughts', 'alquerque'],
+      'games.strategy.abstract.annihilation.breakthrough': ['breakthrough', 'epaminondas', 'hive'],
+      'games.strategy.abstract.annihilation.breakthrough.hive': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy'],
+      'games.strategy.abstract.annihilation.breakthrough.epaminondas': ['rules', 'online', 'variants'],
+      'games.strategy.abstract.annihilation.racing': ['backgammon', 'nackgammon', 'acey-deucey'],
+      'games.strategy.abstract.annihilation.racing.backgammon': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy'],
+      'games.strategy.abstract.annihilation.racing.nackgammon': ['rules', 'online', 'variants'],
+
+      // ── Abstract — Mancala ───────────────────────────────────────────────────
+      'games.strategy.abstract.mancala': ['two-row', 'four-row', 'circular'],
+      'games.strategy.abstract.mancala.two-row': ['kalah', 'oware', 'awari', 'bao'],
+      'games.strategy.abstract.mancala.two-row.oware': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy'],
+      'games.strategy.abstract.mancala.two-row.kalah': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.mancala.two-row.bao': ['rules', 'online', 'history', 'variants'],
+      'games.strategy.abstract.mancala.four-row': ['omweso', 'bao-la-kiswahili', 'isolo'],
+      'games.strategy.abstract.mancala.circular': ['toguz-kumalak', 'sungka'],
+
+      // ── Abstract — Grid-control ──────────────────────────────────────────────
+      'games.strategy.abstract.grid-control': ['placement', 'movement', 'blocking'],
+      'games.strategy.abstract.grid-control.placement': ['go-moku', 'connect-four', 'pente', 'renju'],
+      'games.strategy.abstract.grid-control.placement.go-moku': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy'],
+      'games.strategy.abstract.grid-control.placement.connect-four': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.grid-control.placement.pente': ['rules', 'online', 'variants', 'strategy'],
+      'games.strategy.abstract.grid-control.placement.renju': ['rules', 'online', 'variants', 'tournaments'],
+      'games.strategy.abstract.grid-control.movement': ['chess-variants', 'racing-kings'],
+      'games.strategy.abstract.grid-control.blocking': ['quoridor', 'blokus', 'twixt-blocking'],
+      'games.strategy.abstract.grid-control.blocking.quoridor': ['rules', 'online', 'variants', 'strategy'],
+
+      // ── Abstract — 3D Spatial ────────────────────────────────────────────────
+      'games.strategy.abstract.3d-spatial': ['stacking', 'volumetric', 'gravity-based'],
+      'games.strategy.abstract.3d-spatial.stacking': ['pylos', '3d-noughts-and-crosses', 'space-lines'],
+      'games.strategy.abstract.3d-spatial.stacking.pylos': ['rules', 'online', 'variants', 'strategy'],
+
+      // ── Abstract — Counting ──────────────────────────────────────────────────
+      'games.strategy.abstract.counting': ['scoring', 'territory-count', 'capture-count'],
+
+      // ── Leaping capture continuations ────────────────────────────────────────
+      'games.strategy.abstract.capture.leaping.checkers': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.capture.leaping.draughts': ['rules', 'online', 'history', 'variants', 'tournaments', 'international', 'english', 'turkish'],
+      'games.strategy.abstract.capture.leaping.dama': ['rules', 'online', 'history', 'variants']
     };
 
     const shortcutAliases = {
@@ -1246,6 +1416,176 @@
           mode: 'owner',
           destination: 'https://stackworks.games/lasca',
           note: 'Owner-bound shortcut. Expands to the canonical StackWorks Lasca identity.'
+        }
+      ],
+      'games.chess': [
+        {
+          label: 'Chess game classification',
+          shortcut: '@games.chess',
+          expandsTo: '@games.strategy.abstract.capture.displacement.chess',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the displacement-capture chess branch.'
+        }
+      ],
+      'stackworks.games.chess': [
+        {
+          label: 'StackWorks — Chess shortcut',
+          shortcut: '@stackworks.games.chess',
+          expandsTo: '@stackworks.games.strategy.abstract.capture.displacement.chess',
+          mode: 'owner',
+          destination: 'https://stackworks.games/chess',
+          note: 'Owner-bound shortcut. Expands to the canonical StackWorks Chess identity.'
+        }
+      ],
+      'games.checkers': [
+        {
+          label: 'Checkers game classification',
+          shortcut: '@games.checkers',
+          expandsTo: '@games.strategy.abstract.capture.leaping.checkers',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the leaping-capture checkers branch.'
+        }
+      ],
+      'stackworks.games.checkers': [
+        {
+          label: 'StackWorks — Checkers shortcut',
+          shortcut: '@stackworks.games.checkers',
+          expandsTo: '@stackworks.games.strategy.abstract.capture.leaping.checkers',
+          mode: 'owner',
+          destination: 'https://stackworks.games/checkers',
+          note: 'Owner-bound shortcut. Expands to the canonical StackWorks Checkers identity.'
+        }
+      ],
+      'games.draughts': [
+        {
+          label: 'Draughts game classification',
+          shortcut: '@games.draughts',
+          expandsTo: '@games.strategy.abstract.capture.leaping.draughts',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the leaping-capture draughts branch.'
+        }
+      ],
+      'stackworks.games.draughts': [
+        {
+          label: 'StackWorks — Draughts shortcut',
+          shortcut: '@stackworks.games.draughts',
+          expandsTo: '@stackworks.games.strategy.abstract.capture.leaping.draughts',
+          mode: 'owner',
+          destination: 'https://stackworks.games/draughts',
+          note: 'Owner-bound shortcut. Expands to the canonical StackWorks Draughts identity.'
+        }
+      ],
+      'games.go': [
+        {
+          label: 'Go game classification',
+          shortcut: '@games.go',
+          expandsTo: '@games.strategy.abstract.territory.enclosure.go',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the territory enclosure Go branch.'
+        }
+      ],
+      'games.hex': [
+        {
+          label: 'Hex game classification',
+          shortcut: '@games.hex',
+          expandsTo: '@games.strategy.abstract.connection.path.hex',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the connection path Hex branch.'
+        }
+      ],
+      'games.backgammon': [
+        {
+          label: 'Backgammon game classification',
+          shortcut: '@games.backgammon',
+          expandsTo: '@games.strategy.abstract.annihilation.racing.backgammon',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the annihilation racing backgammon branch.'
+        }
+      ],
+      'games.hive': [
+        {
+          label: 'Hive game classification',
+          shortcut: '@games.hive',
+          expandsTo: '@games.strategy.abstract.annihilation.breakthrough.hive',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the annihilation breakthrough Hive branch.'
+        }
+      ],
+      'games.oware': [
+        {
+          label: 'Oware game classification',
+          shortcut: '@games.oware',
+          expandsTo: '@games.strategy.abstract.mancala.two-row.oware',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the mancala two-row oware branch.'
+        }
+      ],
+      'games.connect-four': [
+        {
+          label: 'Connect Four game classification',
+          shortcut: '@games.connect-four',
+          expandsTo: '@games.strategy.abstract.grid-control.placement.connect-four',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the grid-control placement Connect Four branch.'
+        }
+      ],
+      'games.quoridor': [
+        {
+          label: 'Quoridor game classification',
+          shortcut: '@games.quoridor',
+          expandsTo: '@games.strategy.abstract.grid-control.blocking.quoridor',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the grid-control blocking Quoridor branch.'
+        }
+      ],
+      'games.sudoku': [
+        {
+          label: 'Sudoku game classification',
+          shortcut: '@games.sudoku',
+          expandsTo: '@games.puzzle.logic.grid.sudoku',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the puzzle logic grid Sudoku branch.'
+        }
+      ],
+      'games.minesweeper': [
+        {
+          label: 'Minesweeper game classification',
+          shortcut: '@games.minesweeper',
+          expandsTo: '@games.puzzle.logic.deduction.minesweeper',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the puzzle logic deduction Minesweeper branch.'
+        }
+      ],
+      'boardgamegeek.games.boardgames.lasca': [
+        {
+          label: 'BoardGameGeek — Lasca (non-canonical path)',
+          shortcut: '@boardgamegeek.games.boardgames.lasca',
+          expandsTo: '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca',
+          mode: 'owner',
+          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          note: 'This path uses a non-canonical discovery segment (boardgames). Expanding rewrites it to the canonical taxonomy: strategy → abstract → capture → leaping → columns → lasca.'
+        }
+      ],
+      'wikipedia.games.boardgames.lasca': [
+        {
+          label: 'Wikipedia — Lasca (non-canonical path)',
+          shortcut: '@wikipedia.games.boardgames.lasca',
+          expandsTo: '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca',
+          mode: 'owner',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          note: 'This path uses a non-canonical discovery segment (boardgames). Expanding rewrites it to the canonical taxonomy: strategy → abstract → capture → leaping → columns → lasca.'
         }
       ]
     };
@@ -1660,6 +2000,343 @@
           trust: 'Domain Verified',
           note: 'StackWorks owner-bound identity for columns chess under the displacement capture branch.'
         }
+      ],
+      'games.strategy.abstract.capture.leaping.draughts': [
+        {
+          label: 'StackWorks — Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/draughts',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for standard draughts.'
+        },
+        {
+          label: 'WorldDraughts',
+          sip: '@worlddraughts.games.strategy.abstract.capture.leaping.draughts',
+          owner: 'WorldDraughts',
+          destination: 'https://www.worlddraughts.com/',
+          trust: 'Candidate',
+          note: 'Reference for international draughts rules and tournaments.'
+        },
+        {
+          label: 'Wikipedia — Draughts',
+          sip: '@wikipedia.games.strategy.abstract.capture.leaping.draughts',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Draughts',
+          trust: 'Candidate',
+          note: 'Knowledge reference for draughts.'
+        }
+      ],
+      'games.strategy.abstract.territory.enclosure.go': [
+        {
+          label: 'OGS — Online Go Server',
+          sip: '@ogs.games.strategy.abstract.territory.enclosure.go',
+          owner: 'OGS',
+          destination: 'https://online-go.com/',
+          trust: 'Candidate',
+          note: 'Major online Go server.'
+        },
+        {
+          label: 'KGS — Go Server',
+          sip: '@kgs.games.strategy.abstract.territory.enclosure.go',
+          owner: 'KGS',
+          destination: 'https://www.gokgs.com/',
+          trust: 'Candidate',
+          note: 'Classic online Go server.'
+        },
+        {
+          label: 'Wikipedia — Go',
+          sip: '@wikipedia.games.strategy.abstract.territory.enclosure.go',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Go_(game)',
+          trust: 'Candidate',
+          note: 'Knowledge reference for the game of Go.'
+        },
+        {
+          label: "Sensei's Library",
+          sip: '@senseis.games.strategy.abstract.territory.enclosure.go',
+          owner: "Sensei's Library",
+          destination: 'https://senseis.xmp.net/',
+          trust: 'Candidate',
+          note: 'Community wiki for Go players.'
+        }
+      ],
+      // Option A — terminal qualifier bindings for Go resource-type nodes
+      'games.strategy.abstract.territory.enclosure.go.online': [
+        {
+          label: 'OGS — Play Go Online',
+          sip: '@ogs.games.strategy.abstract.territory.enclosure.go.online',
+          owner: 'OGS',
+          destination: 'https://online-go.com/play',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: OGS play environment. Differentiates the playable resource from the game-level identity.'
+        },
+        {
+          label: 'KGS — Play Go',
+          sip: '@kgs.games.strategy.abstract.territory.enclosure.go.online',
+          owner: 'KGS',
+          destination: 'https://www.gokgs.com/',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: KGS online play environment.'
+        }
+      ],
+      'games.strategy.abstract.territory.enclosure.go.rules': [
+        {
+          label: 'Wikipedia — Rules of Go',
+          sip: '@wikipedia.games.strategy.abstract.territory.enclosure.go.rules',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Rules_of_Go',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: Wikipedia article on Go rules.'
+        },
+        {
+          label: "Sensei's Library — Rules",
+          sip: '@senseis.games.strategy.abstract.territory.enclosure.go.rules',
+          owner: "Sensei's Library",
+          destination: 'https://senseis.xmp.net/?RulesOfGo',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: Sensei\'s Library rules reference.'
+        }
+      ],
+      'games.strategy.abstract.territory.enclosure.go.strategy': [
+        {
+          label: "Sensei's Library — Strategy",
+          sip: '@senseis.games.strategy.abstract.territory.enclosure.go.strategy',
+          owner: "Sensei's Library",
+          destination: 'https://senseis.xmp.net/?Strategy',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: strategic concepts on Sensei\'s Library.'
+        }
+      ],
+      // Option A — terminal qualifier bindings for Chess resource-type nodes
+      'games.strategy.abstract.capture.displacement.chess.online': [
+        {
+          label: 'Chess.com — Play Chess',
+          sip: '@chessdotcom.games.strategy.abstract.capture.displacement.chess.online',
+          owner: 'chess.com',
+          destination: 'https://www.chess.com/play/online',
+          trust: 'Domain Verified',
+          note: 'Option A terminal-qualifier binding: Chess.com play environment.'
+        },
+        {
+          label: 'StackWorks — Play Chess',
+          sip: '@stackworks.games.strategy.abstract.capture.displacement.chess.online',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/chess',
+          trust: 'Domain Verified',
+          note: 'Option A terminal-qualifier binding: StackWorks chess play environment.'
+        }
+      ],
+      'games.strategy.abstract.capture.displacement.chess.rules': [
+        {
+          label: 'Wikipedia — Rules of Chess',
+          sip: '@wikipedia.games.strategy.abstract.capture.displacement.chess.rules',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Rules_of_chess',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: Wikipedia article on chess rules.'
+        }
+      ],
+      // Option A — terminal qualifier bindings for Lasca resource-type nodes
+      'games.strategy.abstract.capture.leaping.columns.lasca.online': [
+        {
+          label: 'StackWorks — Play Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca.online',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Option A terminal-qualifier binding: StackWorks Lasca play environment.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.lasca.rules': [
+        {
+          label: 'Wikipedia — Lasca rules',
+          sip: '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca.rules',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          trust: 'Candidate',
+          note: 'Option A terminal-qualifier binding: Wikipedia article on Lasca rules.'
+        }
+      ],
+      'games.strategy.abstract.connection.path.hex': [
+        {
+          label: 'BoardGameGeek — Hex',
+          sip: '@boardgamegeek.games.strategy.abstract.connection.path.hex',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/2389/hex',
+          trust: 'Candidate',
+          note: 'Reference page for the board game Hex.'
+        },
+        {
+          label: 'Wikipedia — Hex',
+          sip: '@wikipedia.games.strategy.abstract.connection.path.hex',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Hex_(board_game)',
+          trust: 'Candidate',
+          note: 'Knowledge reference for the game of Hex.'
+        }
+      ],
+      'games.strategy.abstract.annihilation.racing.backgammon': [
+        {
+          label: 'Backgammon Galaxy',
+          sip: '@backgammongalaxy.games.strategy.abstract.annihilation.racing.backgammon',
+          owner: 'Backgammon Galaxy',
+          destination: 'https://backgammongalaxy.com/',
+          trust: 'Candidate',
+          note: 'Online backgammon platform.'
+        },
+        {
+          label: 'Wikipedia — Backgammon',
+          sip: '@wikipedia.games.strategy.abstract.annihilation.racing.backgammon',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Backgammon',
+          trust: 'Candidate',
+          note: 'Knowledge reference for backgammon.'
+        }
+      ],
+      'games.strategy.abstract.mancala.two-row.oware': [
+        {
+          label: 'Oware Society',
+          sip: '@owsoc.games.strategy.abstract.mancala.two-row.oware',
+          owner: 'Oware Society',
+          destination: 'https://www.oware.org/',
+          trust: 'Candidate',
+          note: 'Governing body for competitive oware.'
+        },
+        {
+          label: 'Wikipedia — Oware',
+          sip: '@wikipedia.games.strategy.abstract.mancala.two-row.oware',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Oware',
+          trust: 'Candidate',
+          note: 'Knowledge reference for oware.'
+        }
+      ],
+      'games.strategy.abstract.annihilation.breakthrough.hive': [
+        {
+          label: 'Gen42 — Hive',
+          sip: '@gen42.games.strategy.abstract.annihilation.breakthrough.hive',
+          owner: 'Gen42',
+          destination: 'https://www.gen42.com/games/hive',
+          trust: 'Domain Verified',
+          note: 'Publisher of the Hive board game.'
+        },
+        {
+          label: 'BoardGameGeek — Hive',
+          sip: '@boardgamegeek.games.strategy.abstract.annihilation.breakthrough.hive',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/154/hive',
+          trust: 'Candidate',
+          note: 'Reference page for the Hive board game.'
+        }
+      ],
+      'games.strategy.abstract.grid-control.placement.connect-four': [
+        {
+          label: 'BoardGameGeek — Connect Four',
+          sip: '@boardgamegeek.games.strategy.abstract.grid-control.placement.connect-four',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/2719/connect-four',
+          trust: 'Candidate',
+          note: 'Reference page for Connect Four.'
+        },
+        {
+          label: 'Wikipedia — Connect Four',
+          sip: '@wikipedia.games.strategy.abstract.grid-control.placement.connect-four',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Connect_Four',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Connect Four.'
+        }
+      ],
+      'games.strategy.abstract.grid-control.blocking.quoridor': [
+        {
+          label: 'BoardGameGeek — Quoridor',
+          sip: '@boardgamegeek.games.strategy.abstract.grid-control.blocking.quoridor',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/624/quoridor',
+          trust: 'Candidate',
+          note: 'Reference page for Quoridor.'
+        },
+        {
+          label: 'Wikipedia — Quoridor',
+          sip: '@wikipedia.games.strategy.abstract.grid-control.blocking.quoridor',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Quoridor',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Quoridor.'
+        }
+      ],
+      'games.strategy.abstract.territory.enclosure.othello': [
+        {
+          label: 'World Othello Federation',
+          sip: '@worldothello.games.strategy.abstract.territory.enclosure.othello',
+          owner: 'World Othello Federation',
+          destination: 'https://www.worldothello.org/',
+          trust: 'Candidate',
+          note: 'Governing body for competitive Othello/Reversi.'
+        },
+        {
+          label: 'Wikipedia — Reversi / Othello',
+          sip: '@wikipedia.games.strategy.abstract.territory.enclosure.othello',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Reversi',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Othello/Reversi.'
+        }
+      ],
+      'games.strategy.abstract.territory.influence.blokus': [
+        {
+          label: 'BoardGameGeek — Blokus',
+          sip: '@boardgamegeek.games.strategy.abstract.territory.influence.blokus',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/2453/blokus',
+          trust: 'Candidate',
+          note: 'Reference page for Blokus.'
+        },
+        {
+          label: 'Wikipedia — Blokus',
+          sip: '@wikipedia.games.strategy.abstract.territory.influence.blokus',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Blokus',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Blokus.'
+        }
+      ],
+      'games.puzzle.logic.grid.sudoku': [
+        {
+          label: 'Web Sudoku',
+          sip: '@websudoku.games.puzzle.logic.grid.sudoku',
+          owner: 'Web Sudoku',
+          destination: 'https://www.websudoku.com/',
+          trust: 'Candidate',
+          note: 'Popular online Sudoku platform.'
+        },
+        {
+          label: 'Wikipedia — Sudoku',
+          sip: '@wikipedia.games.puzzle.logic.grid.sudoku',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Sudoku',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Sudoku.'
+        }
+      ],
+      'games.puzzle.logic.deduction.minesweeper': [
+        {
+          label: 'Minesweeper Online',
+          sip: '@minesweeper.games.puzzle.logic.deduction.minesweeper',
+          owner: 'Minesweeper Online',
+          destination: 'https://minesweeper.online/',
+          trust: 'Candidate',
+          note: 'Popular online Minesweeper platform.'
+        },
+        {
+          label: 'Wikipedia — Minesweeper',
+          sip: '@wikipedia.games.puzzle.logic.deduction.minesweeper',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Minesweeper_(video_game)',
+          trust: 'Candidate',
+          note: 'Knowledge reference for Minesweeper.'
+        }
       ]
     };
 
@@ -1673,7 +2350,50 @@
       '@stackworks.games.strategy.abstract.capture.leaping.checkers': 'https://stackworks.games/checkers',
       '@stackworks.games.strategy.abstract.capture.displacement.columns.chess': 'https://stackworks.games/columnsChess',
       '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
-      '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca'
+      '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca',
+      '@stackworks.games.strategy.abstract.capture.leaping.draughts': 'https://stackworks.games/draughts',
+      '@worlddraughts.games.strategy.abstract.capture.leaping.draughts': 'https://www.worlddraughts.com/',
+      '@wikipedia.games.strategy.abstract.capture.leaping.draughts': 'https://en.wikipedia.org/wiki/Draughts',
+      '@ogs.games.strategy.abstract.territory.enclosure.go': 'https://online-go.com/',
+      '@kgs.games.strategy.abstract.territory.enclosure.go': 'https://www.gokgs.com/',
+      '@wikipedia.games.strategy.abstract.territory.enclosure.go': 'https://en.wikipedia.org/wiki/Go_(game)',
+      '@senseis.games.strategy.abstract.territory.enclosure.go': 'https://senseis.xmp.net/',
+      '@boardgamegeek.games.strategy.abstract.connection.path.hex': 'https://boardgamegeek.com/boardgame/2389/hex',
+      '@wikipedia.games.strategy.abstract.connection.path.hex': 'https://en.wikipedia.org/wiki/Hex_(board_game)',
+      '@backgammongalaxy.games.strategy.abstract.annihilation.racing.backgammon': 'https://backgammongalaxy.com/',
+      '@wikipedia.games.strategy.abstract.annihilation.racing.backgammon': 'https://en.wikipedia.org/wiki/Backgammon',
+      '@owsoc.games.strategy.abstract.mancala.two-row.oware': 'https://www.oware.org/',
+      '@wikipedia.games.strategy.abstract.mancala.two-row.oware': 'https://en.wikipedia.org/wiki/Oware',
+      '@gen42.games.strategy.abstract.annihilation.breakthrough.hive': 'https://www.gen42.com/games/hive',
+      '@boardgamegeek.games.strategy.abstract.annihilation.breakthrough.hive': 'https://boardgamegeek.com/boardgame/154/hive',
+      '@boardgamegeek.games.strategy.abstract.grid-control.placement.connect-four': 'https://boardgamegeek.com/boardgame/2719/connect-four',
+      '@wikipedia.games.strategy.abstract.grid-control.placement.connect-four': 'https://en.wikipedia.org/wiki/Connect_Four',
+      '@boardgamegeek.games.strategy.abstract.grid-control.blocking.quoridor': 'https://boardgamegeek.com/boardgame/624/quoridor',
+      '@wikipedia.games.strategy.abstract.grid-control.blocking.quoridor': 'https://en.wikipedia.org/wiki/Quoridor',
+      '@worldothello.games.strategy.abstract.territory.enclosure.othello': 'https://www.worldothello.org/',
+      '@wikipedia.games.strategy.abstract.territory.enclosure.othello': 'https://en.wikipedia.org/wiki/Reversi',
+      '@boardgamegeek.games.strategy.abstract.territory.influence.blokus': 'https://boardgamegeek.com/boardgame/2453/blokus',
+      '@wikipedia.games.strategy.abstract.territory.influence.blokus': 'https://en.wikipedia.org/wiki/Blokus',
+      '@websudoku.games.puzzle.logic.grid.sudoku': 'https://www.websudoku.com/',
+      '@wikipedia.games.puzzle.logic.grid.sudoku': 'https://en.wikipedia.org/wiki/Sudoku',
+      '@minesweeper.games.puzzle.logic.deduction.minesweeper': 'https://minesweeper.online/',
+      '@wikipedia.games.puzzle.logic.deduction.minesweeper': 'https://en.wikipedia.org/wiki/Minesweeper_(video_game)',
+      '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
+      '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca': 'https://en.wikipedia.org/wiki/Lasca',
+      // Option A — terminal qualifier bindings (resource type as final path segment)
+      '@ogs.games.strategy.abstract.territory.enclosure.go.online': 'https://online-go.com/play',
+      '@kgs.games.strategy.abstract.territory.enclosure.go.online': 'https://www.gokgs.com/',
+      '@wikipedia.games.strategy.abstract.territory.enclosure.go.rules': 'https://en.wikipedia.org/wiki/Rules_of_Go',
+      '@senseis.games.strategy.abstract.territory.enclosure.go.rules': 'https://senseis.xmp.net/?RulesOfGo',
+      '@senseis.games.strategy.abstract.territory.enclosure.go.strategy': 'https://senseis.xmp.net/?Strategy',
+      '@chessdotcom.games.strategy.abstract.capture.displacement.chess.online': 'https://www.chess.com/play/online',
+      '@stackworks.games.strategy.abstract.capture.displacement.chess.online': 'https://stackworks.games/chess',
+      '@wikipedia.games.strategy.abstract.capture.displacement.chess.rules': 'https://en.wikipedia.org/wiki/Rules_of_chess',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca.online': 'https://stackworks.games/lasca',
+      '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca.rules': 'https://en.wikipedia.org/wiki/Lasca',
+      // Option C — namespace intent bindings (intent segment between owner and discovery path)
+      '@ogs.play.games.strategy.abstract.territory.enclosure.go': 'https://online-go.com/play',
+      '@wikipedia.ref.games.strategy.abstract.territory.enclosure.go': 'https://en.wikipedia.org/wiki/Go_(game)'
     };
 
     // Runtime-only personal shortcuts for the mockup. In a real SIP resolver,
@@ -1708,6 +2428,28 @@
     function isBoundIdentity(value) {
       const first = segments(value)[0];
       return first && first !== 'games';
+    }
+
+    function findDeadEndReverts(value) {
+      if (!isBoundIdentity(value) || !value.endsWith('.')) return [];
+      const rawKey = stripAt(value); // strips @ and trailing dot
+      const seen = new Set();
+      const results = [];
+      for (const [aliasKey, entries] of Object.entries(shortcutAliases)) {
+        if (aliasKey.startsWith(rawKey + '.')) {
+          for (const entry of entries) {
+            if (entry.expandsTo) {
+              const parts = entry.expandsTo.replace(/^@/, '').split('.');
+              const canonicalPrefix = '@' + parts.slice(0, -1).join('.') + '.';
+              if (!seen.has(canonicalPrefix)) {
+                seen.add(canonicalPrefix);
+                results.push({ entry, canonicalPrefix });
+              }
+            }
+          }
+        }
+      }
+      return results;
     }
 
     function hasRegisteredSemantic(value) {
@@ -2111,10 +2853,12 @@
     function renderSuggestions() {
       const value = normalize(input.value);
       const key = discoveryKey(value);
-      const shortcutItems = shortcutAliases[key] || [];
+      const shortcutItems = shortcutAliases[key] || shortcutAliases[currentKey(value)] || [];
       const synonymItems = getSynonymItemsForPath(key);
       const facetItems = broadSemanticFacets[key] || [];
-      const discoveryItems = value.endsWith('.') ? (tree[key] || []) : [];
+      const discoveryItems = value.endsWith('.')
+        ? (tree[key] || []).filter(seg => boundPathSet.has(key + '.' + seg))
+        : [];
       const ownerItems = isBoundIdentity(value) ? [] : (ownerCandidates[key] || []);
       const personalBinding = getPersonalBinding(value);
       flatSuggestions = [];
@@ -2244,12 +2988,38 @@
       if (!personalBinding && !shortcutItems.length && !synonymItems.length && !facetItems.length && !discoveryItems.length && !ownerItems.length) {
         if (isBoundIdentity(value)) {
           const destination = getDestinationForValue(value);
-          html += `
-            <div class="empty-state">
-              <strong>Owner-bound identity selected.</strong><br>
-              ${destination ? `Destination preview: <code>${escapeHtml(destination)}</code>` : 'No demo destination is registered for this exact mockup string.'}
-            </div>
-          `;
+          const deadEnds = findDeadEndReverts(value);
+          if (deadEnds.length > 0) {
+            const deItemsHtml = deadEnds.map(({ entry, canonicalPrefix }) => {
+              const flatIndex = flatSuggestions.length;
+              flatSuggestions.push({ type: 'deadend-revert', value: canonicalPrefix });
+              return `
+                <div class="suggestion deadend ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+                  <div class="suggestion-main"><span>${escapeHtml(entry.label)}</span><span class="badge warn">non-canonical prefix</span></div>
+                  <div class="suggestion-sub">
+                    This sub-path comes from a shortcut — no discovery continuations exist beyond this point.<br>
+                    Canonical equivalent: <code>${escapeHtml(canonicalPrefix)}</code>
+                  </div>
+                  <div class="choice-actions">
+                    <button type="button" data-action="jump-canonical-prefix" data-flat-index="${flatIndex}">↩ Jump to canonical prefix</button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+            html += `
+              <div class="group deadend-group">
+                <div class="group-heading"><span>Non-canonical shortcut prefix — no continuations here</span><span class="tag">revert?</span></div>
+                <div class="suggestion-list">${deItemsHtml}</div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="empty-state">
+                <strong>Owner-bound identity selected.</strong><br>
+                ${destination ? `Destination preview: <code>${escapeHtml(destination)}</code>` : 'No demo destination is registered for this exact mockup string.'}
+              </div>
+            `;
+          }
         } else if (!value.endsWith('.')) {
           html += `
             <div class="empty-state">
@@ -2327,6 +3097,7 @@
       if (item.type === 'discovery') completeSegment(item.value);
       if (item.type === 'owner') selectOwner(item.value);
       if (item.type === 'personalBinding') expandPersonalShortcutBinding(item.value);
+      if (item.type === 'deadend-revert') { input.value = item.value; render(); }
     }
 
     function buildSipIndex() {
@@ -2452,6 +3223,33 @@
         }
       }
       return map;
+    }
+
+    function buildBoundPathSet() {
+      const set = new Set();
+      function addWithAncestors(key) {
+        const parts = key.split('.');
+        for (let i = parts.length; i >= 1; i--) {
+          set.add(parts.slice(0, i).join('.'));
+        }
+      }
+      for (const key of Object.keys(ownerCandidates)) {
+        addWithAncestors(key);
+      }
+      for (const sip of Object.keys(boundDestinations)) {
+        const withoutAt = sip.startsWith('@') ? sip.slice(1) : sip;
+        const dot = withoutAt.indexOf('.');
+        if (dot >= 0) addWithAncestors(withoutAt.slice(dot + 1));
+      }
+      for (const aliases of Object.values(shortcutAliases)) {
+        for (const a of aliases) {
+          if (a.expandsTo) {
+            const key = a.expandsTo.replace(/^@/, '').split('.').slice(1).join('.');
+            if (key) addWithAncestors('games.' + key);
+          }
+        }
+      }
+      return set;
     }
 
     function evalQuery(node, text) {
@@ -2607,6 +3405,11 @@
           expandPersonalShortcutBinding(flatItem.value);
           return;
         }
+        if (action === 'jump-canonical-prefix' && flatItem && flatItem.type === 'deadend-revert') {
+          input.value = flatItem.value;
+          render();
+          return;
+        }
         if (action === 'clear-personal') {
           clearPersonalShortcutBindings();
           return;
@@ -2727,6 +3530,24 @@
       input.focus();
       render();
     });
+    document.getElementById('resourceTypeABtn').addEventListener('click', () => {
+      input.value = '@games.strategy.abstract.territory.enclosure.go.';
+      addHistory('Option A — terminal qualifier', 'Navigated to the Go concept node with a trailing dot. The discovery panel now shows only the resource-type child segments that have registered bindings: online, rules, strategy. Select one to see owner candidates for that specific resource type.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('resourceTypeBBtn').addEventListener('click', () => {
+      input.value = '@ogs.games.strategy.abstract.territory.enclosure.go';
+      addHistory('Option B — owner-implicit', 'Entered the owner-implicit form. The path ends at the concept level; OGS\'s well-known profile implies this is a playable destination. Compare with Option A (.online) and Option C (.play.) for the same underlying resource.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('resourceTypeCBtn').addEventListener('click', () => {
+      input.value = '@ogs.play.games.strategy.abstract.territory.enclosure.go';
+      addHistory('Option C — namespace intent', 'Entered the namespace-intent form. The intent segment \'play\' sits between the owner namespace and the discovery path, making resource type explicit without a terminal qualifier. Resolves to the same OGS play destination.', input.value);
+      input.focus();
+      render();
+    });
     document.getElementById('demoBtn').addEventListener('click', runDemo);
     document.getElementById('metadataBtn').addEventListener('click', () => {
       showMetadata = !showMetadata;
@@ -2815,6 +3636,7 @@
 
     sipIndex = buildSipIndex();
     synonymMap = buildSynonymMap();
+    boundPathSet = buildBoundPathSet();
 
     document.getElementById('sipSearch').addEventListener('input', (event) => {
       renderSearchResults(event.target.value);

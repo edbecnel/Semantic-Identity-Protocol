@@ -246,6 +246,7 @@
     .badge.facet     { color: #fdba74;     border-color: rgba(253,186,116,.36); background: rgba(253,186,116,.09); }
     .badge.personal  { color: #67e8f9;     border-color: rgba(103,232,249,.36); background: rgba(103,232,249,.09); }
     .badge.fav       { color: #fbbf24;     border-color: rgba(251,191,36,.34);  background: rgba(251,191,36,.09); }
+    .badge.warn      { color: #fb923c;     border-color: rgba(251,146,60,.36);  background: rgba(251,146,60,.09); }
 
     /* ── Keyboard shortcut chips ── */
     .key {
@@ -353,7 +354,7 @@
     <div class="page-header">
       <a class="back-link" href="sip-intellisense-mockup.html">&#8592; Back to mockup</a>
       <h1>SIP IntelliSense — Help</h1>
-      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, and search.</p>
+      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, search, and resource-type binding approaches.</p>
     </div>
 
     <!-- Table of contents -->
@@ -363,14 +364,15 @@
         <li><a href="#overview"><span class="toc-num">1</span>Overview</a></li>
         <li><a href="#sip-input"><span class="toc-num">2</span>The SIP input</a></li>
         <li><a href="#suggestions"><span class="toc-num">3</span>Suggestion types</a></li>
-        <li><a href="#resolution"><span class="toc-num">4</span>Resolution preview</a></li>
-        <li><a href="#favorites"><span class="toc-num">5</span>Favorites</a></li>
-        <li><a href="#shortcuts"><span class="toc-num">6</span>Personal shortcuts</a></li>
-        <li><a href="#search"><span class="toc-num">7</span>Search</a></li>
-        <li><a href="#keyboard"><span class="toc-num">8</span>Keyboard &amp; navigation</a></li>
-        <li><a href="#sidebar"><span class="toc-num">9</span>Sidebar panels</a></li>
-        <li><a href="#demo-buttons"><span class="toc-num">10</span>Demo buttons</a></li>
-        <li><a href="#glossary"><span class="toc-num">11</span>Glossary</a></li>
+        <li><a href="#resource-binding"><span class="toc-num">4</span>Resource-type binding</a></li>
+        <li><a href="#resolution"><span class="toc-num">5</span>Resolution preview</a></li>
+        <li><a href="#favorites"><span class="toc-num">6</span>Favorites</a></li>
+        <li><a href="#shortcuts"><span class="toc-num">7</span>Personal shortcuts</a></li>
+        <li><a href="#search"><span class="toc-num">8</span>Search</a></li>
+        <li><a href="#keyboard"><span class="toc-num">9</span>Keyboard &amp; navigation</a></li>
+        <li><a href="#sidebar"><span class="toc-num">10</span>Sidebar panels</a></li>
+        <li><a href="#demo-buttons"><span class="toc-num">11</span>Demo buttons</a></li>
+        <li><a href="#glossary"><span class="toc-num">12</span>Glossary</a></li>
       </ul>
     </div>
 
@@ -444,6 +446,10 @@
             <td><span class="badge bound">bind owner</span> / <span class="badge bound">candidate</span></td>
             <td><strong>Owner-bound identities.</strong> Registered owners whose SIP overlaps with the current discovery path. In shortcut-binding context, you can <em>open once</em> or <em>save as your shortcut</em>. Outside that context, clicking rewrites the string to the canonical owner-qualified identity.</td>
           </tr>
+          <tr>
+            <td><span class="badge warn">non-canonical prefix</span></td>
+            <td><strong>Dead-end warning.</strong> Shown when the current owner-bound path prefix has no tree entries but matches a known shortcut alias key. The panel offers a <em>↩ Jump to canonical prefix</em> button that rewrites the input to the resolvable canonical form.</td>
+          </tr>
         </tbody>
       </table>
 
@@ -454,10 +460,70 @@
       <p>When the current path has at least two segments and a registered semantic, a <strong>Create freeform shortcut</strong> row appears at the bottom of the panel. Type any alias (e.g. <code>my.lasca</code>) and click <strong>Save shortcut</strong> to bind it to the current SIP for this session.</p>
     </section>
 
-    <!-- 4. Resolution preview -->
-    <section class="section" id="resolution">
+    <!-- 4. Resource-type binding -->
+    <section class="section" id="resource-binding">
       <div class="section-header">
         <span class="section-num">4</span>
+        <h2>Resource-type binding</h2>
+      </div>
+      <p>An owner-bound SIP identifies <em>who</em> holds an identity, but it does not inherently tell you <em>what kind</em> of resource the destination offers — is it a place to play, an article to read, a store page to purchase from? SIP supports three coexisting approaches to expressing resource-type intent.</p>
+
+      <h3>Option A — Terminal qualifiers</h3>
+      <p>Resource type is expressed as a terminal path segment appended to the concept identity:</p>
+      <div class="example-block">
+        <div class="example-query">@ogs.games.strategy.abstract.territory.enclosure.go<strong>.online</strong></div>
+        <div class="example-desc">Play destination — the <code>online</code> segment disambiguates this binding from a rules or history resource.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">@wikipedia.games.strategy.abstract.territory.enclosure.go<strong>.rules</strong></div>
+        <div class="example-desc">Informational destination — Wikipedia article specifically for the rules of Go.</div>
+      </div>
+      <p>These terminal segments are ordinary semantic children of the concept node. The mockup tree carries them as valid IntelliSense continuations — type <code>@games.strategy.abstract.territory.enclosure.go.</code> and the panel will offer <code>online</code>, <code>rules</code>, <code>strategy</code>, <code>history</code>, and others.</p>
+
+      <h3>Option B — Owner-implicit binding</h3>
+      <p>Resource type is <em>inferred</em> from the owner's well-known profile rather than stated in the path:</p>
+      <div class="example-block">
+        <div class="example-query">@ogs.games.strategy.abstract.territory.enclosure.go</div>
+        <div class="example-desc">OGS is an online Go server, so the destination is implicitly playable. No extra segment is needed.</div>
+      </div>
+      <p>This approach produces shorter SIP strings and is the default form already in use throughout the mockup. It works best when the owner is unambiguous and widely known.</p>
+
+      <h3>Option C — Namespace intent</h3>
+      <p>Resource type is inserted as an intent segment directly after the owner namespace, before the discovery path:</p>
+      <div class="example-block">
+        <div class="example-query">@ogs<strong>.play</strong>.games.strategy.abstract.territory.enclosure.go</div>
+        <div class="example-desc">Fully self-describing: owner is OGS, intent is play, concept is Go.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">@wikipedia<strong>.ref</strong>.games.strategy.abstract.territory.enclosure.go</div>
+        <div class="example-desc">Owner is Wikipedia, intent is reference, concept is Go.</div>
+      </div>
+      <p>The discovery portion of the path remains structurally intact. A resolver or AI assistant can infer intent from the inserted segment without out-of-band knowledge of the owner.</p>
+
+      <h3>All three coexist</h3>
+      <p>A single owner may register multiple bindings at different levels simultaneously. The resolver presents all registered bindings and lets the user choose the level of specificity they prefer. Which form predominates in practice will emerge from adoption rather than mandate.</p>
+      <table class="badge-table">
+        <tbody>
+          <tr>
+            <td><span class="badge bound">bind owner</span></td>
+            <td><strong>Option B</strong> — game-level binding: <code>@ogs.games.…go</code></td>
+          </tr>
+          <tr>
+            <td><span class="badge bound">bind owner</span></td>
+            <td><strong>Option A</strong> — terminal-qualifier binding: <code>@ogs.games.…go.online</code></td>
+          </tr>
+          <tr>
+            <td><span class="badge bound">bind owner</span></td>
+            <td><strong>Option C</strong> — namespace-intent binding: <code>@ogs.play.games.…go</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 5. Resolution preview -->
+    <section class="section" id="resolution">
+      <div class="section-header">
+        <span class="section-num">5</span>
         <h2>Resolution preview</h2>
       </div>
       <p>When the current SIP resolves to a known destination — either because it is an owner-bound identity or matches a saved personal shortcut — the <strong>Owner-bound clickable SIP</strong> panel appears below the input.</p>
@@ -471,10 +537,10 @@
       </div>
     </section>
 
-    <!-- 5. Favorites -->
+    <!-- 6. Favorites -->
     <section class="section" id="favorites">
       <div class="section-header">
-        <span class="section-num">5</span>
+        <span class="section-num">6</span>
         <h2>Favorites</h2>
       </div>
       <p>Favorites (bookmarks) let you save any SIP string from the input for quick recall — useful when exploring a long path you want to return to later. Unlike personal shortcuts, a favorite simply stores the exact SIP string; it does not create an alias.</p>
@@ -500,10 +566,10 @@
       </div>
     </section>
 
-    <!-- 6. Personal shortcuts -->
+    <!-- 7. Personal shortcuts -->
     <section class="section" id="shortcuts">
       <div class="section-header">
-        <span class="section-num">6</span>
+        <span class="section-num">7</span>
         <h2>Personal shortcuts</h2>
       </div>
       <p>A <strong>personal shortcut</strong> is a compact alias — such as <code>@games.lasca</code> — that the resolver expands to a longer SIP in your trusted context. Shortcuts are more powerful than Favorites: they create a named alias that participates in IntelliSense and resolution.</p>
@@ -535,10 +601,10 @@
       </div>
     </section>
 
-    <!-- 7. Search -->
+    <!-- 8. Search -->
     <section class="section" id="search">
       <div class="section-header">
-        <span class="section-num">7</span>
+        <span class="section-num">8</span>
         <h2>Search</h2>
       </div>
       <p>The <strong>Search SIPs</strong> bar at the top of the page lets you find any registered SIP path by keyword using a boolean query language. Clicking a result loads it into the SIP input.</p>
@@ -577,10 +643,10 @@
       <p>Press <span class="key">↓</span> from the search box to move focus into the results list. Use <span class="key">↑</span> / <span class="key">↓</span> to navigate between items, <span class="key">Enter</span> to load a result, and <span class="key">Esc</span> to clear the search.</p>
     </section>
 
-    <!-- 8. Keyboard & navigation -->
+    <!-- 9. Keyboard & navigation -->
     <section class="section" id="keyboard">
       <div class="section-header">
-        <span class="section-num">8</span>
+        <span class="section-num">9</span>
         <h2>Keyboard &amp; navigation</h2>
       </div>
       <p>The SIP input supports full keyboard control of the IntelliSense panel.</p>
@@ -595,15 +661,15 @@
       </table>
     </section>
 
-    <!-- 9. Sidebar panels -->
+    <!-- 10. Sidebar panels -->
     <section class="section" id="sidebar">
       <div class="section-header">
-        <span class="section-num">9</span>
+        <span class="section-num">10</span>
         <h2>Sidebar panels</h2>
       </div>
 
       <h3>★ Favorites</h3>
-      <p>Lists all SIP strings you have bookmarked in this session. Each entry shows its name, the underlying SIP (if different from the name), a <strong>Load</strong> button, and a <strong>✕</strong> remove button. See <a href="#favorites" style="color:var(--accent);">§ 5 Favorites</a> for the full workflow.</p>
+      <p>Lists all SIP strings you have bookmarked in this session. Each entry shows its name, the underlying SIP (if different from the name), a <strong>Load</strong> button, and a <strong>✕</strong> remove button. See <a href="#favorites" style="color:var(--accent);">§ 6 Favorites</a> for the full workflow.</p>
 
       <h3>Current interpretation</h3>
       <p>A live status panel that reflects the current SIP input:</p>
@@ -621,10 +687,10 @@
       <p>A running log of every action taken in the mockup — segment selections, shortcut expansions, owner identity commits, shortcut saves, favorites saves, and more. The most recent action appears at the top. The log is capped at twelve entries.</p>
     </section>
 
-    <!-- 10. Demo buttons -->
+    <!-- 11. Demo buttons -->
     <section class="section" id="demo-buttons">
       <div class="section-header">
-        <span class="section-num">10</span>
+        <span class="section-num">11</span>
         <h2>Demo buttons</h2>
       </div>
       <p>The actions bar below the SIP input contains preset scenario buttons for exploring the mockup without manual typing.</p>
@@ -662,6 +728,18 @@
         <div class="scenario-desc">Sets the input to <code>@games.strategy.abstract.capture.leaping.stacking.</code>, demonstrating that <code>stacking</code> is semantically equivalent to <code>columns</code> in this context and surfaces the same Lasca / Damasca continuations.</div>
       </div>
       <div class="scenario">
+        <div class="scenario-title">Try Option A — terminal qualifier</div>
+        <div class="scenario-desc">Sets the input to <code>@games.strategy.abstract.territory.enclosure.go.</code> (trailing dot). The discovery panel shows only the resource-type child segments that have registered bindings: <code>online</code>, <code>rules</code>, and <code>strategy</code>. Select one to see the owner candidates bound specifically to that resource type — demonstrating that the path itself expresses <em>what kind</em> of resource you want.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try Option B — owner-implicit</div>
+        <div class="scenario-desc">Sets the input to <code>@ogs.games.strategy.abstract.territory.enclosure.go</code>. The path ends at the concept level; the resolver infers that OGS offers a playable destination from the owner's well-known profile. No extra qualifier segment is needed. Compare with Option A and Option C for the same underlying resource.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try Option C — namespace intent</div>
+        <div class="scenario-desc">Sets the input to <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The intent segment <code>play</code> is inserted between the owner namespace and the discovery path, making the resource type explicit without a terminal qualifier. The SIP resolves to the same OGS play destination as Option B, but is fully self-describing.</div>
+      </div>
+      <div class="scenario">
         <div class="scenario-title">Run guided demo</div>
         <div class="scenario-desc">Automatically steps through the full discovery path from <code>@games.</code> to <code>@stackworks.games.strategy.abstract.capture.leaping.columns.lasca</code>, pausing briefly at each step so you can observe the IntelliSense suggestions update in real time.</div>
       </div>
@@ -671,10 +749,10 @@
       </div>
     </section>
 
-    <!-- 11. Glossary -->
+    <!-- 12. Glossary -->
     <section class="section" id="glossary">
       <div class="section-header">
-        <span class="section-num">11</span>
+        <span class="section-num">12</span>
         <h2>Glossary</h2>
       </div>
 
@@ -717,6 +795,22 @@
       <div class="glossary-item">
         <div class="glossary-term">Trust level</div>
         <div class="glossary-def">An indication of how confidently an owner candidate has been verified. The mockup uses two levels: <em>Domain Verified</em> (owner is confirmed) and <em>Candidate</em> (plausible but unverified).</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Resource-type qualifier</div>
+        <div class="glossary-def">A path segment or structural convention that communicates the kind of resource a binding offers — for example, whether a destination is a place to play a game, read about it, or purchase it. SIP supports three coexisting approaches: terminal qualifiers (Option A), owner-implicit binding (Option B), and namespace intent (Option C).</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Terminal qualifier binding (Option A)</div>
+        <div class="glossary-def">A binding where the resource type is expressed as a final child segment of the concept path. Example: <code>@ogs.games.strategy.abstract.territory.enclosure.go.online</code>. The <code>online</code> segment is the terminal qualifier. These segments are navigable via IntelliSense as ordinary discovery continuations.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Owner-implicit binding (Option B)</div>
+        <div class="glossary-def">A binding where the resource type is implied by the owner's well-known profile, without any additional path segment. Example: <code>@ogs.games.strategy.abstract.territory.enclosure.go</code> — OGS implies a playable destination. This is the default form used throughout the mockup.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Namespace intent (Option C)</div>
+        <div class="glossary-def">A binding where an intent segment is inserted between the owner namespace and the discovery path. Example: <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The <code>play</code> segment is the intent qualifier. This form is fully self-describing and does not require out-of-band knowledge of the owner's profile.</div>
       </div>
     </section>
 
