@@ -478,7 +478,7 @@
         <div class="example-query">@wikipedia.games.strategy.abstract.territory.enclosure.go<strong>.rules</strong></div>
         <div class="example-desc">Informational destination — Wikipedia article specifically for the rules of Go.</div>
       </div>
-      <p>These terminal segments are ordinary semantic children of the concept node. The mockup tree carries them as valid IntelliSense continuations — type <code>@games.strategy.abstract.territory.enclosure.go.</code> and the panel will offer <code>online</code>, <code>rules</code>, <code>strategy</code>, <code>history</code>, and others.</p>
+      <p>These terminal segments are ordinary semantic children of the concept node. The mockup tree carries them as valid IntelliSense continuations — type <code>@games.strategy.abstract.territory.enclosure.go.</code> and the panel will offer <code>online</code>, <code>rules</code>, <code>strategy</code>, <code>history</code>, and others. (Note: <code>go</code> here is the name of the ancient board game Go, not the verb &ldquo;to go to&rdquo; &mdash; the segment <code>…enclosure.go</code> is the concept node for that game.)</p>
 
       <h3>Option B — Owner-implicit binding</h3>
       <p>Resource type is <em>inferred</em> from the owner's well-known profile rather than stated in the path:</p>
@@ -729,15 +729,15 @@
       </div>
       <div class="scenario">
         <div class="scenario-title">Try Option A — terminal qualifier</div>
-        <div class="scenario-desc">Sets the input to <code>@games.strategy.abstract.territory.enclosure.go.</code> (trailing dot). The discovery panel shows only the resource-type child segments that have registered bindings: <code>online</code>, <code>rules</code>, and <code>strategy</code>. Select one to see the owner candidates bound specifically to that resource type — demonstrating that the path itself expresses <em>what kind</em> of resource you want.</div>
+        <div class="scenario-desc"><strong>Use when you want to find all owners that offer a specific type of resource for a concept, without committing to a particular owner first.</strong> Sets the input to <code>@games.strategy.abstract.territory.enclosure.go.</code> (trailing dot; <code>go</code> is the board game Go, not a verb). The discovery panel narrows to only the resource-type child segments that have registered bindings — here <code>online</code>, <code>rules</code>, and <code>strategy</code>. Selecting one then surfaces every owner registered for that resource type, letting the path itself declare <em>what kind</em> of resource you want before deciding <em>who</em> provides it.</div>
       </div>
       <div class="scenario">
         <div class="scenario-title">Try Option B — owner-implicit</div>
-        <div class="scenario-desc">Sets the input to <code>@ogs.games.strategy.abstract.territory.enclosure.go</code>. The path ends at the concept level; the resolver infers that OGS offers a playable destination from the owner's well-known profile. No extra qualifier segment is needed. Compare with Option A and Option C for the same underlying resource.</div>
+        <div class="scenario-desc"><strong>Use when you already know which owner you want and that owner's well-known profile makes the resource type self-evident.</strong> Sets the input to <code>@ogs.games.strategy.abstract.territory.enclosure.go</code>. Because OGS is a dedicated Go-playing platform, the resolver infers the playable destination from the owner's profile alone — no extra qualifier segment is needed. This produces the most concise SIP, but relies on the reader knowing what OGS does. Compare with Option A (owner-agnostic) and Option C (explicit intent, same owner).</div>
       </div>
       <div class="scenario">
         <div class="scenario-title">Try Option C — namespace intent</div>
-        <div class="scenario-desc">Sets the input to <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The intent segment <code>play</code> is inserted between the owner namespace and the discovery path, making the resource type explicit without a terminal qualifier. The SIP resolves to the same OGS play destination as Option B, but is fully self-describing.</div>
+        <div class="scenario-desc"><strong>Use when you want a fully self-describing SIP that makes the resource type explicit — even to someone unfamiliar with the owner.</strong> Sets the input to <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The intent segment <code>play</code> is inserted immediately after the owner namespace, so the path declares both who provides the resource and what kind it is without relying on a terminal qualifier or the owner's implied profile. The SIP resolves to the same OGS play destination as Option B, but is unambiguous at a glance.</div>
       </div>
       <div class="scenario">
         <div class="scenario-title">Run guided demo</div>
