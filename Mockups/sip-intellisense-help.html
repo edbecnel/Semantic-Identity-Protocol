@@ -468,6 +468,13 @@
       </div>
       <p>An owner-bound SIP identifies <em>who</em> holds an identity, but it does not inherently tell you <em>what kind</em> of resource the destination offers — is it a place to play, an article to read, a store page to purchase from? SIP supports three coexisting approaches to expressing resource-type intent.</p>
 
+      <p>Options A, B, and C demonstrate three different ways a SIP can express what kind of resource a destination offers without changing the underlying concept identity. All three can resolve to the same underlying destination — SIP does not mandate one form. Owners can register any or all of them simultaneously, and the resolver surfaces all registered bindings so the user picks their preferred level of specificity:</p>
+      <ul>
+        <li><strong>Option A (terminal qualifier)</strong> — Best for discovery across multiple owners. The resource type is named explicitly as the final path segment, so you can browse all owners offering a specific resource type without pre-selecting one.</li>
+        <li><strong>Option B (owner-implicit)</strong> — Most concise form. The path stops at the concept level and the resolver infers the resource type from the owner's well-known profile. Works well when the owner is unambiguous and widely known.</li>
+        <li><strong>Option C (namespace intent)</strong> — Fully self-describing. An intent segment is inserted between the owner and the discovery path, making the resource type explicit even to someone unfamiliar with the owner.</li>
+      </ul>
+
       <h3>Option A — Terminal qualifiers</h3>
       <p>Resource type is expressed as a terminal path segment appended to the concept identity:</p>
       <div class="example-block">
