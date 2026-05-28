@@ -521,6 +521,12 @@
       background: rgba(134, 239, 172, .08);
     }
 
+    .crumb.intent {
+      border-color: rgba(167, 139, 250, .32);
+      color: #a78bfa;
+      background: rgba(167, 139, 250, .08);
+    }
+
     .arrow {
       color: var(--muted);
       font-size: 13px;
@@ -893,6 +899,12 @@
       background: rgba(251, 191, 36, .09);
     }
 
+    .badge.intent {
+      color: #a78bfa;
+      border-color: rgba(167, 139, 250, .34);
+      background: rgba(167, 139, 250, .09);
+    }
+
     button.fav-btn {
       border-color: rgba(251, 191, 36, .28);
       background: rgba(251, 191, 36, .07);
@@ -1100,6 +1112,7 @@
             <button id="resourceTypeABtn">Try Option A — terminal qualifier</button>
             <button id="resourceTypeBBtn">Try Option B — owner-implicit</button>
             <button id="resourceTypeCBtn">Try Option C — namespace intent</button>
+            <button id="playIntentBtn">Try @play.games.</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
             <button id="addFavoriteBtn" class="fav-btn">&#9734; Favorite</button>
@@ -1394,7 +1407,49 @@
       // ── Leaping capture continuations ────────────────────────────────────────
       'games.strategy.abstract.capture.leaping.checkers': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
       'games.strategy.abstract.capture.leaping.draughts': ['rules', 'online', 'history', 'variants', 'tournaments', 'international', 'english', 'turkish'],
-      'games.strategy.abstract.capture.leaping.dama': ['rules', 'online', 'history', 'variants']
+      'games.strategy.abstract.capture.leaping.dama': ['rules', 'online', 'history', 'variants'],
+
+      // ── Play-intent prefix — intermediate nodes mirror games.* exactly ───────
+      // At leaf game-name nodes the children DIFFER: playing qualifiers replace
+      // reference qualifiers (rules / history / variants / tutorials → play-online /
+      // play-local / play-vs-ai / find-opponents / join-lobby).
+      'play.games': ['action', 'strategy', 'rpg', 'adventure', 'narrative', 'puzzle', 'casual'],
+      'play.games.strategy': ['abstract', 'rts', 'tbs', 'grand', 'tactical', 'moba', 'tower'],
+      'play.games.strategy.abstract': ['capture', 'annihilation', 'territory', 'grid-control', 'connection', 'stacking', '3d-spatial', 'mancala', 'counting'],
+      'play.games.strategy.abstract.capture': ['displacement', 'leaping'],
+      'play.games.strategy.abstract.capture.leaping': ['columns', 'checkers', 'draughts', 'dama'],
+      'play.games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
+      // ── Play-intent leaf nodes: playing qualifiers ────────────────────────────
+      'play.games.strategy.abstract.capture.leaping.columns.lasca': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.capture.leaping.columns.damasca': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.capture.leaping.columns.columns-draughts': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.capture.leaping.checkers': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.capture.leaping.draughts': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.capture.leaping.dama': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.capture.displacement': ['chess'],
+      'play.games.strategy.abstract.capture.displacement.chess': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.territory': ['enclosure', 'influence'],
+      'play.games.strategy.abstract.territory.enclosure': ['go', 'othello', 'reversi', 'amazons'],
+      'play.games.strategy.abstract.territory.enclosure.go': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.territory.enclosure.othello': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.territory.enclosure.reversi': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.grid-control': ['placement', 'movement', 'blocking'],
+      'play.games.strategy.abstract.grid-control.placement': ['connect-four', 'go-moku', 'pente', 'renju'],
+      'play.games.strategy.abstract.grid-control.placement.connect-four': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.grid-control.blocking': ['quoridor'],
+      'play.games.strategy.abstract.grid-control.blocking.quoridor': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.strategy.abstract.annihilation': ['capture-all', 'breakthrough', 'racing'],
+      'play.games.strategy.abstract.annihilation.racing': ['backgammon', 'nackgammon', 'acey-deucey'],
+      'play.games.strategy.abstract.annihilation.racing.backgammon': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents', 'join-lobby'],
+      'play.games.strategy.abstract.mancala': ['two-row', 'four-row', 'circular'],
+      'play.games.strategy.abstract.mancala.two-row': ['oware', 'kalah', 'awari', 'bao'],
+      'play.games.strategy.abstract.mancala.two-row.oware': ['play-online', 'play-local', 'play-vs-ai', 'find-opponents'],
+      'play.games.puzzle': ['logic', 'spatial', 'word', 'physics', 'matching'],
+      'play.games.puzzle.logic': ['deduction', 'grid'],
+      'play.games.puzzle.logic.grid': ['sudoku'],
+      'play.games.puzzle.logic.grid.sudoku': ['play-online', 'play-daily', 'play-timed', 'find-opponents'],
+      'play.games.puzzle.logic.deduction': ['minesweeper'],
+      'play.games.puzzle.logic.deduction.minesweeper': ['play-online', 'play-local', 'play-timed', 'find-opponents']
     };
 
     const shortcutAliases = {
@@ -1574,7 +1629,7 @@
           shortcut: '@boardgamegeek.games.boardgames.lasca',
           expandsTo: '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca',
           mode: 'owner',
-          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          destination: 'https://boardgamegeek.com/boardgame/6862/laska',
           note: 'This path uses a non-canonical discovery segment (boardgames). Expanding rewrites it to the canonical taxonomy: strategy → abstract → capture → leaping → columns → lasca.'
         }
       ],
@@ -1586,6 +1641,48 @@
           mode: 'owner',
           destination: 'https://en.wikipedia.org/wiki/Lasca',
           note: 'This path uses a non-canonical discovery segment (boardgames). Expanding rewrites it to the canonical taxonomy: strategy → abstract → capture → leaping → columns → lasca.'
+        }
+      ],
+
+      // ── Play-intent discovery shortcuts (mirror games.* but @play. prefix) ──
+      'play.games.lasca': [
+        {
+          label: 'Play Lasca — play-intent shortcut',
+          shortcut: '@play.games.lasca',
+          expandsTo: '@play.games.strategy.abstract.capture.leaping.columns.lasca',
+          mode: 'discovery',
+          destination: '',
+          note: 'Play-intent discovery shortcut. Mirrors @games.lasca but the @play. prefix scopes expansion to active playing contexts rather than reference browsing.'
+        }
+      ],
+      'play.games.chess': [
+        {
+          label: 'Play Chess — play-intent shortcut',
+          shortcut: '@play.games.chess',
+          expandsTo: '@play.games.strategy.abstract.capture.displacement.chess',
+          mode: 'discovery',
+          destination: '',
+          note: 'Play-intent discovery shortcut. Expands to the displacement-capture chess branch under the @play. intent prefix.'
+        }
+      ],
+      'play.games.go': [
+        {
+          label: 'Play Go — play-intent shortcut',
+          shortcut: '@play.games.go',
+          expandsTo: '@play.games.strategy.abstract.territory.enclosure.go',
+          mode: 'discovery',
+          destination: '',
+          note: 'Play-intent discovery shortcut. Expands to the territory enclosure Go branch under the @play. intent prefix.'
+        }
+      ],
+      'play.games.checkers': [
+        {
+          label: 'Play Checkers — play-intent shortcut',
+          shortcut: '@play.games.checkers',
+          expandsTo: '@play.games.strategy.abstract.capture.leaping.checkers',
+          mode: 'discovery',
+          destination: '',
+          note: 'Play-intent discovery shortcut for checkers under the @play. intent prefix.'
         }
       ]
     };
@@ -1806,7 +1903,7 @@
           label: 'BoardGameGeek — Lasca',
           sip: '@boardgamegeek.games.boardgames.lasca',
           owner: 'BoardGameGeek',
-          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          destination: 'https://boardgamegeek.com/boardgame/6862/laska',
           trust: 'Candidate',
           note: 'Reference/discovery candidate for Lasca.'
         },
@@ -1884,7 +1981,7 @@
           label: 'BoardGameGeek — Lasca',
           sip: '@boardgamegeek.games.boardgames.lasca',
           owner: 'BoardGameGeek',
-          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          destination: 'https://boardgamegeek.com/boardgame/6862/laska',
           trust: 'Candidate',
           note: 'Reference/discovery candidate, not the StackWorks-owned game.'
         },
@@ -1910,7 +2007,7 @@
           label: 'BoardGameGeek — Lasca',
           sip: '@boardgamegeek.games.boardgames.lasca',
           owner: 'BoardGameGeek',
-          destination: 'https://boardgamegeek.com/boardgame/6867/lasca',
+          destination: 'https://boardgamegeek.com/boardgame/6862/laska',
           trust: 'Candidate',
           note: 'Reference/discovery candidate for Lasca.'
         },
@@ -2135,6 +2232,14 @@
           destination: 'https://en.wikipedia.org/wiki/Rules_of_chess',
           trust: 'Candidate',
           note: 'Option A terminal-qualifier binding: Wikipedia article on chess rules.'
+        },
+        {
+          label: 'StackWorks — Chess help',
+          sip: '@stackworks.games.strategy.abstract.capture.displacement.chess.rules',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/chess-help',
+          trust: 'Domain Verified',
+          note: 'Option A terminal-qualifier binding: StackWorks in-app help page for Chess rules.'
         }
       ],
       // Option A — terminal qualifier bindings for Lasca resource-type nodes
@@ -2156,6 +2261,14 @@
           destination: 'https://en.wikipedia.org/wiki/Lasca',
           trust: 'Candidate',
           note: 'Option A terminal-qualifier binding: Wikipedia article on Lasca rules.'
+        },
+        {
+          label: 'StackWorks — Lasca help',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca.rules',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/help',
+          trust: 'Domain Verified',
+          note: 'Option A terminal-qualifier binding: StackWorks in-app help page for Lasca rules.'
         }
       ],
       'games.strategy.abstract.connection.path.hex': [
@@ -2337,6 +2450,79 @@
           trust: 'Candidate',
           note: 'Knowledge reference for Minesweeper.'
         }
+      ],
+
+      // ── Play-intent owner candidates ──────────────────────────────────────────
+      // Owner-bound identities whose discovery portion starts with play.games.*
+      // The @play. prefix signals active playing intent. The full taxonomy path
+      // after play.games.* is identical to the matching games.* discovery path.
+      'play.games.strategy.abstract.capture.leaping.columns.lasca': [
+        {
+          label: 'StackWorks — Play Lasca',
+          sip: '@stackworks.play.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Play-intent owner-bound identity for StackWorks Lasca. The @play. prefix in the semantic path signals active playing rather than reference, history, or community browsing. The taxonomy after play.games.* is identical to the @games.* discovery path.'
+        }
+      ],
+      'play.games.strategy.abstract.capture.leaping.columns.damasca': [
+        {
+          label: 'StackWorks — Play Damasca',
+          sip: '@stackworks.play.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Play-intent owner-bound identity for StackWorks Damasca.'
+        }
+      ],
+      'play.games.strategy.abstract.capture.displacement.chess': [
+        {
+          label: 'Chess.com — Play Chess',
+          sip: '@chessdotcom.play.games.strategy.abstract.capture.displacement.chess',
+          owner: 'chess.com',
+          destination: 'https://www.chess.com/play/online',
+          trust: 'Domain Verified',
+          note: 'Play-intent owner-bound identity for Chess.com. Resolves directly to the play environment rather than the chess concept landing page.'
+        },
+        {
+          label: 'StackWorks — Play Chess',
+          sip: '@stackworks.play.games.strategy.abstract.capture.displacement.chess',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/chess',
+          trust: 'Domain Verified',
+          note: 'Play-intent owner-bound identity for StackWorks Chess.'
+        }
+      ],
+      'play.games.strategy.abstract.territory.enclosure.go': [
+        {
+          label: 'OGS — Play Go',
+          sip: '@ogs.play.games.strategy.abstract.territory.enclosure.go',
+          owner: 'OGS',
+          destination: 'https://online-go.com/play',
+          trust: 'Candidate',
+          note: 'Play-intent identity for the Online Go Server. Resolves directly to the OGS play environment rather than the OGS landing page.'
+        }
+      ],
+      'play.games.strategy.abstract.annihilation.racing.backgammon': [
+        {
+          label: 'Backgammon Galaxy — Play',
+          sip: '@backgammongalaxy.play.games.strategy.abstract.annihilation.racing.backgammon',
+          owner: 'Backgammon Galaxy',
+          destination: 'https://backgammongalaxy.com/',
+          trust: 'Candidate',
+          note: 'Play-intent identity for Backgammon Galaxy.'
+        }
+      ],
+      'play.games.puzzle.logic.grid.sudoku': [
+        {
+          label: 'Web Sudoku — Play',
+          sip: '@websudoku.play.games.puzzle.logic.grid.sudoku',
+          owner: 'Web Sudoku',
+          destination: 'https://www.websudoku.com/',
+          trust: 'Candidate',
+          note: 'Play-intent identity for Web Sudoku. Resolves to the active puzzle play page.'
+        }
       ]
     };
 
@@ -2349,7 +2535,7 @@
       '@chessdotcom.games.strategy.abstract.capture.displacement.chess': 'https://www.chess.com/',
       '@stackworks.games.strategy.abstract.capture.leaping.checkers': 'https://stackworks.games/checkers',
       '@stackworks.games.strategy.abstract.capture.displacement.columns.chess': 'https://stackworks.games/columnsChess',
-      '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
+      '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6862/laska',
       '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca',
       '@stackworks.games.strategy.abstract.capture.leaping.draughts': 'https://stackworks.games/draughts',
       '@worlddraughts.games.strategy.abstract.capture.leaping.draughts': 'https://www.worlddraughts.com/',
@@ -2378,7 +2564,7 @@
       '@wikipedia.games.puzzle.logic.grid.sudoku': 'https://en.wikipedia.org/wiki/Sudoku',
       '@minesweeper.games.puzzle.logic.deduction.minesweeper': 'https://minesweeper.online/',
       '@wikipedia.games.puzzle.logic.deduction.minesweeper': 'https://en.wikipedia.org/wiki/Minesweeper_(video_game)',
-      '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca': 'https://boardgamegeek.com/boardgame/6867/lasca',
+      '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca': 'https://boardgamegeek.com/boardgame/6862/laska',
       '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca': 'https://en.wikipedia.org/wiki/Lasca',
       // Option A — terminal qualifier bindings (resource type as final path segment)
       '@ogs.games.strategy.abstract.territory.enclosure.go.online': 'https://online-go.com/play',
@@ -2388,12 +2574,21 @@
       '@senseis.games.strategy.abstract.territory.enclosure.go.strategy': 'https://senseis.xmp.net/?Strategy',
       '@chessdotcom.games.strategy.abstract.capture.displacement.chess.online': 'https://www.chess.com/play/online',
       '@stackworks.games.strategy.abstract.capture.displacement.chess.online': 'https://stackworks.games/chess',
+      '@stackworks.games.strategy.abstract.capture.displacement.chess.rules': 'https://stackworks.games/chess-help',
       '@wikipedia.games.strategy.abstract.capture.displacement.chess.rules': 'https://en.wikipedia.org/wiki/Rules_of_chess',
       '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca.online': 'https://stackworks.games/lasca',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca.rules': 'https://stackworks.games/help',
       '@wikipedia.games.strategy.abstract.capture.leaping.columns.lasca.rules': 'https://en.wikipedia.org/wiki/Lasca',
       // Option C — namespace intent bindings (intent segment between owner and discovery path)
       '@ogs.play.games.strategy.abstract.territory.enclosure.go': 'https://online-go.com/play',
-      '@wikipedia.ref.games.strategy.abstract.territory.enclosure.go': 'https://en.wikipedia.org/wiki/Go_(game)'
+      '@wikipedia.ref.games.strategy.abstract.territory.enclosure.go': 'https://en.wikipedia.org/wiki/Go_(game)',
+      // ── Play-intent owner-bound destinations ──────────────────────────────────
+      '@stackworks.play.games.strategy.abstract.capture.leaping.columns.lasca': 'https://stackworks.games/lasca',
+      '@stackworks.play.games.strategy.abstract.capture.leaping.columns.damasca': 'https://stackworks.games/damasca',
+      '@chessdotcom.play.games.strategy.abstract.capture.displacement.chess': 'https://www.chess.com/play/online',
+      '@stackworks.play.games.strategy.abstract.capture.displacement.chess': 'https://stackworks.games/chess',
+      '@backgammongalaxy.play.games.strategy.abstract.annihilation.racing.backgammon': 'https://backgammongalaxy.com/',
+      '@websudoku.play.games.puzzle.logic.grid.sudoku': 'https://www.websudoku.com/'
     };
 
     // Runtime-only personal shortcuts for the mockup. In a real SIP resolver,
@@ -2427,7 +2622,9 @@
 
     function isBoundIdentity(value) {
       const first = segments(value)[0];
-      return first && first !== 'games';
+      // 'play' is an intent prefix, not an owner name. @play.games.* is a
+      // play-intent discovery path, not an owner-bound identity.
+      return first && first !== 'games' && first !== 'play';
     }
 
     function findDeadEndReverts(value) {
@@ -2656,8 +2853,9 @@
           pathVisual.appendChild(arrow);
         }
         const crumb = document.createElement('span');
-        crumb.className = 'crumb' + (bound && index === 0 ? ' owner' : '');
-        crumb.textContent = index === 0 && bound ? `owner: ${seg}` : seg;
+        const isIntentPrefix = !bound && index === 0 && seg === 'play';
+        crumb.className = 'crumb' + (bound && index === 0 ? ' owner' : '') + (isIntentPrefix ? ' intent' : '');
+        crumb.textContent = index === 0 && bound ? `owner: ${seg}` : (isIntentPrefix ? `intent: ${seg}` : seg);
         pathVisual.appendChild(crumb);
       });
     }
@@ -2701,35 +2899,43 @@
       const isOwnerShortcut = shortcutItems.some((item) => item.mode === 'owner');
       const isBroadFacet = facetItems.length > 0;
 
+      const isPlayIntent = !bound && segments(value)[0] === 'play';
+
       modePill.classList.toggle('bound', bound || isOwnerShortcut || (!!personal && personal.isOwnerBound));
       modeLabel.textContent = personal
         ? (personal.isOwnerBound ? 'Personal shortcut binding' : 'Personal discovery shortcut')
         : bound || isOwnerShortcut
           ? 'Owner-bound identity'
-          : hasShortcut
-            ? 'Shortcut discovery path'
-            : isBroadFacet
-              ? 'Broad semantic facet'
-              : 'Discovery path';
+          : isPlayIntent
+            ? 'Play-intent discovery path'
+            : hasShortcut
+              ? 'Shortcut discovery path'
+              : isBroadFacet
+                ? 'Broad semantic facet'
+                : 'Discovery path';
       statusMode.textContent = modeLabel.textContent;
       statusMeaning.textContent = personal
         ? `User-defined shortcut. ${personal.shortcut} resolves in this trusted context to ${personal.sip}.`
         : bound || isOwnerShortcut
           ? 'Specific owner-qualified semantic identity or owner-bound shortcut'
-          : hasShortcut
-            ? 'Compact unbound shortcut that can expand to a longer discovery path or be bound after user selection'
-            : isBroadFacet
-              ? 'Broad cross-cutting mechanic that may match several narrower semantic branches'
-              : 'Unbound semantic exploration';
+          : isPlayIntent
+            ? 'Play-intent qualified discovery path. The @play. prefix scopes exploration and resolution to active playing contexts. Intermediate nodes mirror the @games.* taxonomy exactly; leaf nodes differ — playing qualifiers replace reference qualifiers.'
+            : hasShortcut
+              ? 'Compact unbound shortcut that can expand to a longer discovery path or be bound after user selection'
+              : isBroadFacet
+                ? 'Broad cross-cutting mechanic that may match several narrower semantic branches'
+                : 'Unbound semantic exploration';
       statusResolution.textContent = personal
         ? (personal.isOwnerBound
             ? 'Resolve directly to the owner destination via saved shortcut. This does not create global ownership.'
             : 'Expand to the saved discovery path. No owner is committed.')
         : bound || isOwnerShortcut
           ? 'Eligible for deterministic resolution if trust/confidence thresholds are satisfied.'
-          : isBroadFacet
-            ? 'Return possible refinements, narrower branches, and ranked owner-bound candidates; do not collapse to one path.'
-            : 'Return ranked candidates; do not auto-redirect.';
+          : isPlayIntent
+            ? 'Return play-intent ranked candidates. At leaf nodes, qualifiers (play-online, play-local, play-vs-ai, find-opponents, join-lobby) replace reference qualifiers (rules, history, variants, tutorials).'
+            : isBroadFacet
+              ? 'Return possible refinements, narrower branches, and ranked owner-bound candidates; do not collapse to one path.'
+              : 'Return ranked candidates; do not auto-redirect.';
       statusDestination.innerHTML = destination
         ? `<code>${escapeHtml(destination)}</code>`
         : '<code>none yet</code>';
@@ -3249,6 +3455,11 @@
           }
         }
       }
+      // Populate all play.games.* intent-prefix tree paths so they are fully
+      // discoverable without requiring explicit owner candidates for each node.
+      for (const key of Object.keys(tree)) {
+        if (key.startsWith('play.')) addWithAncestors(key);
+      }
       return set;
     }
 
@@ -3545,6 +3756,12 @@
     document.getElementById('resourceTypeCBtn').addEventListener('click', () => {
       input.value = '@ogs.play.games.strategy.abstract.territory.enclosure.go';
       addHistory('Option C — namespace intent', 'Entered the namespace-intent form. The intent segment \'play\' sits between the owner namespace and the discovery path, making resource type explicit without a terminal qualifier. Resolves to the same OGS play destination.', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('playIntentBtn').addEventListener('click', () => {
+      input.value = '@play.games.';
+      addHistory('Play-intent path', 'Entered the @play. intent prefix with games. Intermediate nodes mirror @games.* exactly. At leaf game-name nodes, playing qualifiers (play-online, play-local, play-vs-ai, find-opponents, join-lobby) replace reference qualifiers (rules, history, variants, tutorials).', input.value);
       input.focus();
       render();
     });

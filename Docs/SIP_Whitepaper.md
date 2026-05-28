@@ -225,6 +225,29 @@ Semantic identities are:
 
 This prevents semantic namespace speculation.
 
+### Owner-Bound Paths Are Not Exempt From This Principle
+
+This principle applies equally to the owner segment of owner-bound SIP paths.
+
+The owner segment in a path such as:
+
+@amazon.cloud.aws
+
+is a self-asserted, verification-backed label — not a globally reserved namespace.
+
+Multiple distinct entities may legitimately assert paths sharing the same owner label, provided they occupy distinct semantic categories:
+
+@amazon.commerce.marketplace
+@amazon.bakery.shop
+
+Neither entity globally owns the root label `amazon`. Each holds verified, consensus-backed authority over their own full semantic path.
+
+Scarcity in SIP applies at the level of the complete semantic path, not at the owner segment root.
+
+Resolver confidence and cross-provider consensus — not prior registration — determine authoritative resolution when owner labels overlap.
+
+This closes the structural equivalent of DNS `.com` scarcity that would otherwise be recreated at the owner segment level.
+
 ## Principle 6 — Consensus Matters More Than Ownership
 
 Multiple Semantic Identity Providers (SIPs) may publish mappings.
@@ -1154,6 +1177,25 @@ Because low-specificity semantic identities possess limited deterministic routin
 provide reduced monopolistic value compared to traditional domain names.
 
 This naturally discourages semantic namespace speculation and artificial semantic scarcity.
+
+### Owner-Bound Root Name Scarcity
+
+A structural risk exists if the owner segment of owner-bound SIP paths is treated as a globally reserved root. This would recreate DNS-style name scarcity at the owner level — a problem SIP is specifically designed to avoid.
+
+For example, if `@amazon` were a globally exclusive root, any unrelated business legitimately named "Amazon" would face the same exhaustion, conflict, and squatting dynamics as the `.com` domain space.
+
+SIP prevents this through three complementary design constraints:
+
+**1. Full-path uniqueness, not root uniqueness.**
+The minimum uniqueness unit is the complete semantic path, not the owner segment alone. `@amazon.commerce.marketplace` and `@amazon.bakery.shop` are distinct identities with no ownership conflict at the root.
+
+**2. Verification-over-reservation.**
+Owner segment legitimacy is earned through verification, not reserved by prior registration. Multiple entities may assert paths with the same owner label. Resolver confidence scores — derived from DNS verification, HTTPS verification, provider consensus, and semantic relevance — determine which path resolves in a given context.
+
+**3. Category-scoped authority.**
+No entity holds monopolistic authority over `@owner.*` globally. Verified authority is scoped to `@owner.category.*` paths where ownership evidence exists. Paths in unrelated categories remain independently claimable by other verified entities.
+
+This architecture ensures that owner-bound path resolution remains scarcity-resistant, consistent with SIP's federated and consensus-driven design principles.
 
 # Challenges, Risks, and Open Questions
 
