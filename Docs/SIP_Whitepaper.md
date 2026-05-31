@@ -2581,6 +2581,196 @@ Resolve the fully descriptive StackWorks Lasca semantic identity.
 This allows SIP to remain both practical for everyday use and semantically precise for AI-native identity resolution.
 
 
+# Shortcut Sharing, Identity, and Global Publishing
+
+## Overview
+
+Personal shortcut SIPs are useful individually, but their value compounds when users can share curated shortcut collections with others. SIP defines a layered model for shortcut sharing that ranges from fully anonymous distribution to globally registered, identity-verified publication.
+
+The model has three tiers:
+
+* Anonymous sharing — distribute a shortcut collection with no identity attached
+* Identified sharing — attach a verified email identity as author attribution
+* Global publishing — register the collection at a globally unique, owner-bound SIP address
+
+Each tier builds on the previous. Anonymous sharing requires no identity. Identified sharing requires proof of email ownership. Global publishing additionally requires proof of domain or namespace ownership.
+
+## The Shortcut Package Format
+
+A shortcut collection is exported as a JSON document conforming to the `sip-shortcuts/1.0` schema.
+
+A minimal anonymous package:
+
+```json
+{
+  "schema": "sip-shortcuts/1.0",
+  "label": "Shared Shortcuts",
+  "created": "2026-05-31",
+  "bindings": [
+    { "shortcut": "@games.lasca", "sip": "@stackworks.games.lasca" },
+    { "shortcut": "@aws", "sip": "@amazon.cloud.aws" }
+  ]
+}
+```
+
+An identified package with a global publishing address:
+
+```json
+{
+  "schema": "sip-shortcuts/1.0",
+  "author": {
+    "email": "alice@example.com",
+    "label": "alice"
+  },
+  "publishedAt": "@example.com.alice.shortcuts",
+  "label": "Alice's Shortcuts",
+  "created": "2026-05-31",
+  "bindings": [
+    { "shortcut": "@games.lasca", "sip": "@stackworks.games.lasca", "createdBy": "alice@example.com" },
+    { "shortcut": "@aws", "sip": "@amazon.cloud.aws", "createdBy": "alice@example.com" }
+  ]
+}
+```
+
+The `author` field is present only in identified mode. The `publishedAt` field is present only when the collection has been registered at a globally unique owner-bound SIP address. The `createdBy` field on each binding records which identity created that shortcut.
+
+## Tier 1 — Anonymous Sharing
+
+Any user may export their personal shortcuts as an anonymous package. The package contains no author information and carries no identity claim.
+
+Anonymous packages:
+
+* may be freely distributed by any means (file, link, QR code, message)
+* may be imported by any recipient
+* do not enable global registry publication
+* cannot be globally verified or attributed
+* are stored by the recipient under a timestamped anonymous key
+
+Anonymous sharing is appropriate when the user prefers not to attach their identity, or when no verified email identity has been established.
+
+## Tier 2 — Identified Sharing
+
+A user who has established a verified email identity may export an identified package. The package includes an `author` field containing the user's email address and display label.
+
+Identified packages:
+
+* carry author attribution that recipients can inspect
+* allow recipients to know whose shortcuts they are importing
+* are a prerequisite for global publishing
+* cannot be globally published without additionally satisfying domain or namespace ownership requirements
+
+**Identity verification requirement:**
+Before the `author` field may be considered trustworthy by a recipient or resolver, the exporting user must have proven ownership of the email address. This is accomplished through standard email ownership verification — for example, a magic link or one-time passcode sent to the stated address. A client application should not allow a user to export an identified package using an unverified email address.
+
+## Tier 3 — Global Publishing
+
+A user who has completed identified sharing may additionally register their shortcut collection at a globally unique, owner-bound SIP address. This address is recorded in the `publishedAt` field of the package.
+
+Global publishing serves two purposes:
+
+* It gives the collection a stable, addressable SIP location so others can subscribe to or verify updates.
+* It anchors the collection's identity to a verified namespace, making it independently resolvable by SIP resolvers.
+
+A `publishedAt` address must be owner-bound and rooted in a verified namespace. Two options are supported.
+
+### Option 1 — Domain-Derived Publishing SIP
+
+The simplest path to a globally unique publishing SIP is to derive it automatically from the user's verified email address.
+
+Derivation rule:
+
+```
+{local}@{domain}  →  @{domain}.{local}.shortcuts
+```
+
+Examples:
+
+```
+alice@example.com   →  @example.com.alice.shortcuts
+bob@acme.org        →  @acme.org.bob.shortcuts
+edbecnel@gmail.com  →  @gmail.com.edbecnel.shortcuts
+```
+
+Global uniqueness is anchored to the email domain. The domain owner (the organization or email provider) is the identity authority that vouches for the sub-identity. For custom domains this requires the user to have proven domain ownership (for example via a DNS TXT record or SIP manifest). For managed email providers such as Gmail or Outlook, the provider acts as the vouching identity authority on behalf of the sub-identity.
+
+**Domain ownership verification requirement:**
+A client or registry must not accept a domain-derived `publishedAt` address unless the domain portion of the address has been independently verified — either by the user proving control of the domain's DNS, or by the email provider having issued a verifiable credential for the sub-identity under their domain.
+
+### Option 2 — Provider-Assigned Publishing SIP
+
+A federated SIP identity provider may assign a publishing SIP to a user from within the provider's own verified owner namespace.
+
+Example:
+
+A SIP identity provider operating under `@com.provider` may assign:
+
+```
+@com.provider.alice.shortcuts
+```
+
+to a user who has registered with that provider. The provider guarantees the uniqueness and validity of the assignment within their namespace because `@com.provider` is itself a verified, owner-bound SIP root.
+
+Provider-assigned publishing SIPs:
+
+* do not require the user to own a domain
+* are portable across email addresses
+* depend on the provider's continued operation and trustworthiness
+* should be issued only after the provider has verified the user's identity to its own satisfaction
+
+Recipients and resolvers should treat a provider-assigned `publishedAt` address as trustworthy only if the provider's root namespace (`@com.provider` in the example above) is itself registered and verified in the SIP registry.
+
+## Precedence — Personal Shortcuts Shadow Imported Ones
+
+When a recipient imports a shortcut collection, their own personal shortcut bindings always take precedence over any imported binding for the same shortcut key.
+
+Example:
+
+The recipient has a personal binding:
+
+```
+@aws  →  @amazon.cloud.aws
+```
+
+An imported collection from Alice also defines:
+
+```
+@aws  →  @amazon.cloud.aws.govcloud
+```
+
+The recipient's personal binding wins. The imported binding is retained in the collection but is marked as shadowed and will not be used for resolution unless the recipient removes their own binding.
+
+This ensures that imported shortcuts can never silently override a user's deliberate personal choices.
+
+## Importing Shortcut Packages
+
+Recipients import a shortcut package by loading its JSON file into their SIP client. The client validates the schema, inspects the `author` and `publishedAt` fields, and stores the collection.
+
+On import:
+
+* Identified packages are stored and displayed with the author's name and email.
+* Anonymous packages are stored with a timestamped anonymous label.
+* The `publishedAt` address, if present, is recorded as advisory. The recipient's resolver should independently verify that the package at that SIP address matches what was imported before treating it as globally confirmed.
+* A user cannot import their own exported package — their bindings are already present as personal shortcuts.
+
+## Advisory Nature of publishedAt on Import
+
+The `publishedAt` field in an imported package is informational. It tells the recipient where the author claims the collection is globally registered. It does not constitute proof.
+
+A SIP resolver or client that wishes to verify a globally published collection should resolve the stated `publishedAt` SIP address independently and confirm that the package served at that address matches the imported one — for example by comparing a cryptographic hash or a signed manifest.
+
+Unverified `publishedAt` claims should be displayed to the user as unconfirmed rather than trusted.
+
+## Core Shortcut Sharing Rule
+
+The core rule is:
+
+Anyone may share shortcuts anonymously.  
+Identified sharing requires verified email ownership.  
+Global publishing requires verified domain or namespace ownership.  
+Personal shortcuts always take precedence over imported ones.  
+A `publishedAt` address is advisory until independently verified by a resolver.
+
+
 # Identity–Discovery Spectrum
 
 SIP recognizes that semantic pathways exist along a spectrum between:

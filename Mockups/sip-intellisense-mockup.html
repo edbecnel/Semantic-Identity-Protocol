@@ -892,6 +892,190 @@
       font-size: 13px;
     }
 
+    .shortcuts-dropdown-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 13px 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid rgba(44, 59, 93, .45);
+    }
+
+    .shortcuts-dropdown-section--imported {
+      color: #fbbf24;
+      opacity: .85;
+    }
+
+    .shortcuts-dropdown-clear-import {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: color .1s ease;
+    }
+
+    .shortcuts-dropdown-clear-import:hover { color: var(--danger); transform: none; }
+
+    .shortcuts-dropdown-item--imported .shortcuts-dropdown-alias { color: #fbbf24; }
+    .shortcuts-dropdown-item--shadowed { opacity: .5; pointer-events: none; }
+
+    .shortcuts-dropdown-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 13px;
+      border-top: 1px solid rgba(44, 59, 93, .55);
+      background: rgba(15, 23, 42, .7);
+    }
+
+    .shortcuts-dropdown-footer button,
+    .shortcuts-dropdown-footer label {
+      font-size: 11px;
+      padding: 4px 9px;
+      border-radius: 7px;
+      cursor: pointer;
+      border: 1px solid rgba(103, 232, 249, .22);
+      background: rgba(103, 232, 249, .07);
+      color: var(--muted);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .shortcuts-dropdown-footer button:hover,
+    .shortcuts-dropdown-footer label:hover {
+      border-color: rgba(103, 232, 249, .5);
+      color: var(--text);
+      transform: none;
+    }
+
+    .shortcuts-dropdown-identity {
+      font-size: 11px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      text-align: right;
+    }
+
+    .user-identity-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .user-identity-row input {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 7px;
+      border: 1px solid rgba(103, 232, 249, .22);
+      background: rgba(15, 23, 42, .7);
+      color: var(--text);
+      width: 220px;
+    }
+
+    .user-identity-row input:focus {
+      border-color: rgba(103, 232, 249, .55);
+      outline: none;
+    }
+
+    .shortcuts-publishing-section {
+      border-top: 1px solid rgba(44, 59, 93, .55);
+      padding: 8px 13px 10px;
+      background: rgba(15, 23, 42, .7);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .shortcuts-publishing-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 2px;
+    }
+
+    .shortcuts-publishing-active {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: var(--good);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .shortcuts-publishing-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .pub-option-num {
+      min-width: 14px;
+      font-weight: 700;
+      color: rgba(152, 168, 199, .55);
+    }
+
+    .pub-option-label {
+      flex: 1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: var(--accent);
+      overflow-wrap: anywhere;
+    }
+
+    .pub-option-label--muted { color: var(--muted); font-family: inherit; font-style: italic; }
+
+    .pub-option-btn {
+      flex-shrink: 0;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(103, 232, 249, .22);
+      background: rgba(103, 232, 249, .07);
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .pub-option-btn:hover { border-color: rgba(103, 232, 249, .5); color: var(--text); transform: none; }
+    .pub-option-btn:disabled { opacity: .4; cursor: default; }
+
+    .pub-custom-input {
+      flex: 1;
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(103, 232, 249, .22);
+      background: rgba(15, 23, 42, .8);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      min-width: 0;
+    }
+
+    .pub-custom-input:focus { border-color: rgba(103, 232, 249, .55); outline: none; }
+
     /* ── Favorites / Bookmarks ──────────────────────────────────────────────── */
     .badge.fav {
       color: #fbbf24;
@@ -1029,6 +1213,169 @@
       transition: opacity .12s ease;
     }
     .help-link:hover { opacity: 1; text-decoration: underline; }
+
+    /* ── Shortcut manager overlay ── */
+    .shortcuts-manager-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(9, 14, 26, .88);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px 48px;
+      overflow-y: auto;
+    }
+
+    .shortcuts-manager-panel {
+      width: min(860px, 100%);
+      background: linear-gradient(180deg, rgba(17, 28, 51, .98), rgba(15, 23, 42, .99));
+      border: 1px solid rgba(125, 211, 252, .22);
+      border-radius: 18px;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, .55);
+      padding: 26px 28px 32px;
+    }
+
+    .shortcuts-manager-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(44, 59, 93, .65);
+    }
+
+    .shortcuts-manager-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.025em;
+      color: var(--text);
+    }
+
+    .shortcuts-manager-close {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, .13);
+      border-radius: 8px;
+      padding: 5px 12px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color .1s, border-color .1s;
+    }
+    .shortcuts-manager-close:hover { color: var(--text); border-color: rgba(255,255,255,.3); transform: none; }
+
+    .shortcuts-manager-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      color: var(--accent);
+      margin: 0 0 10px;
+      opacity: .75;
+    }
+
+    .sm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+    .sm-table th {
+      text-align: left;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 1px solid rgba(44, 59, 93, .65);
+    }
+    .sm-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(44, 59, 93, .28);
+      vertical-align: middle;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sm-table tr:last-child td { border-bottom: 0; }
+    .sm-table td.sm-alias { font-family: monospace; font-size: 13px; color: var(--accent); width: 30%; }
+    .sm-table td.sm-sip   { font-family: monospace; font-size: 13px; color: var(--good); }
+    .sm-table td.sm-acts  { white-space: nowrap; text-align: right; width: 110px; }
+
+    .sm-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .04);
+      color: var(--muted);
+      font-weight: 600;
+      transition: color .1s, border-color .1s;
+      margin-left: 4px;
+    }
+    .sm-btn:hover { color: var(--text); border-color: rgba(255,255,255,.3); transform: none; }
+    .sm-btn.sm-danger { border-color: rgba(252,165,165,.3); color: var(--danger); background: rgba(252,165,165,.05); }
+    .sm-btn.sm-danger:hover { border-color: rgba(252,165,165,.6); transform: none; }
+    .sm-btn.sm-save { border-color: rgba(134,239,172,.3); color: var(--good); background: rgba(134,239,172,.05); }
+    .sm-btn.sm-save:hover { border-color: rgba(134,239,172,.6); transform: none; }
+
+    .sm-edit-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .sm-edit-inputs input {
+      font-family: monospace;
+      font-size: 13px;
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(125, 211, 252, .32);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 4px 8px;
+      width: 100%;
+    }
+    .sm-edit-inputs input:focus { outline: none; border-color: rgba(125,211,252,.65); }
+
+    .sm-collection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, .03);
+      border-radius: 9px 9px 0 0;
+      border: 1px solid rgba(44, 59, 93, .55);
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .sm-collection-header + .sm-collection-table-wrap { margin-top: 0; }
+    .sm-collection-header:first-child { margin-top: 0; }
+
+    .sm-collection-table-wrap {
+      border: 1px solid rgba(44, 59, 93, .55);
+      border-top: 0;
+      border-radius: 0 0 9px 9px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .sm-collection-table-wrap .sm-table { margin-bottom: 0; }
+
+    .sm-empty {
+      color: var(--muted);
+      font-size: 13px;
+      font-style: italic;
+      padding: 6px 2px 16px;
+    }
+
+    /* Ensure author display:flex doesn't override the UA [hidden]=display:none */
+    .shortcuts-manager-overlay[hidden] { display: none !important; }
   </style>
 </head>
 <body>
@@ -1116,6 +1463,13 @@
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
             <button id="addFavoriteBtn" class="fav-btn">&#9734; Favorite</button>
+          </div>
+
+          <div class="user-identity-row">
+            <label for="userEmailInput">Your SIP identity:</label>
+            <input id="userEmailInput" type="email" autocomplete="off" spellcheck="false"
+              placeholder="you@example.com" value="you@example.com"
+              aria-label="Your email identity for shortcut sharing" />
           </div>
 
           <div id="pathVisual" class="path-visual" aria-label="Path visualization"></div>
@@ -2594,7 +2948,33 @@
     // Runtime-only personal shortcuts for the mockup. In a real SIP resolver,
     // this could live in a browser profile, AI assistant memory, organizational
     // profile, or trusted local resolver context.
-    const personalShortcutBindings = {};
+    // Pre-populated with one sample so "My shortcuts" is non-empty on first load,
+    // illustrating what a user-defined shortcut looks like.
+    const personalShortcutBindings = {
+      '@games.lasca': {
+        shortcut: '@games.lasca',
+        label: 'StackWorks — Lasca',
+        sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+        destination: 'https://stackworks.games/lasca',
+        owner: 'stackworks',
+        trust: 'Verified',
+        note: 'Sample shortcut — compresses the full Lasca canonical path.',
+        isOwnerBound: true,
+        createdBy: 'you@example.com'
+      }
+    };
+
+    // The current user's identity, used as the author of exported shortcut packages.
+    // In a real SIP resolver this would come from a browser profile or federated
+    // identity provider. Editable via the "Your SIP identity" field in the UI.
+    // publishedAt: the SIP address where this user's shortcut collection is (or will be)
+    // globally registered. null = sharing only (no global publishing).
+    // Must be owner-bound and rooted in a verified namespace for global uniqueness.
+    const currentUser = { email: 'you@example.com', label: 'You', publishedAt: null };
+
+    // Shortcut collections imported from other users, keyed by the author's email.
+    // Own shortcuts (personalShortcutBindings) always take precedence over imported ones.
+    const importedShortcutCollections = {};
 
     function getPersonalBinding(value) {
       return personalShortcutBindings[normalize(value)] || null;
@@ -2740,7 +3120,8 @@
         owner: candidate.owner,
         trust: candidate.trust,
         note: candidate.note,
-        isOwnerBound: true
+        isOwnerBound: true,
+        createdBy: currentUser.email
       };
       input.value = shortcut;
       addHistory('Personal shortcut saved', `${shortcut} now resolves for this user to ${candidate.sip}.`, `${shortcut} → ${candidate.destination}`);
@@ -2981,7 +3362,8 @@
         owner: '',
         trust: 'Personal',
         note: `User-defined shortcut for ${targetSip}.`,
-        isOwnerBound: isBoundIdentity(targetSip)
+        isOwnerBound: isBoundIdentity(targetSip),
+        createdBy: currentUser.email
       };
       freeformShortcutDraft = '';
       addHistory('Freeform shortcut saved', `${alias} now resolves in this session to ${targetSip}.`, `${alias} → ${destination || targetSip}`);
@@ -2992,29 +3374,463 @@
       const btn = document.getElementById('shortcutsDropdownBtn');
       const countEl = document.getElementById('shortcutsCount');
       if (!btn || !countEl) return;
-      const count = Object.keys(personalShortcutBindings).length;
-      countEl.textContent = count;
-      countEl.hidden = count === 0;
+      const ownCount = Object.keys(personalShortcutBindings).length;
+      const importedCount = Object.values(importedShortcutCollections)
+        .reduce((sum, c) => sum + Object.keys(c.bindings).length, 0);
+      const total = ownCount + importedCount;
+      countEl.textContent = total;
+      countEl.hidden = total === 0;
+    }
+
+    // ── Shortcut sharing ─────────────────────────────────────────────────────
+
+    // Returns all imported bindings matching a shortcut key, across all collections.
+    function getImportedBindings(value) {
+      const key = normalize(value);
+      const results = [];
+      for (const [email, collection] of Object.entries(importedShortcutCollections)) {
+        const binding = collection.bindings[key];
+        if (binding) results.push({ collection, binding });
+      }
+      return results;
+    }
+
+    // Export the current user's personal shortcuts as a JSON package.
+    // mode: 'identified' includes the author field (enables global publishing);
+    //       'anonymous'  omits it (no identity, no global scope, no attribution).
+    function exportShortcuts(mode) {
+      const bindings = Object.values(personalShortcutBindings);
+      if (!bindings.length) {
+        addHistory('Export skipped', 'No personal shortcuts to export.', input.value);
+        return;
+      }
+      const pkg = {
+        schema: 'sip-shortcuts/1.0',
+        ...(mode === 'identified' ? { author: { email: currentUser.email, label: currentUser.label } } : {}),
+        // publishedAt: the SIP address where this package is globally registered.
+        // Valid only for identified mode and only when rooted in a verified owner namespace.
+        // Options:
+        //   1. Domain-derived:       @example.com.alice.shortcuts  (anchored to email domain)
+        //   2. Provider-assigned:    @com.provider.alice.shortcuts  (assigned by a federated SIP
+        //                            identity provider, rooted in their verified owner namespace)
+        //   3. Absent / null:        sharing only — no global publishing rights
+        ...(mode === 'identified' && currentUser.publishedAt ? { publishedAt: currentUser.publishedAt } : {}),
+        label: mode === 'identified' ? `${currentUser.label}'s Shortcuts` : 'Shared Shortcuts',
+        created: new Date().toISOString().slice(0, 10),
+        bindings: bindings.map(({ createdBy: _omit, ...b }) =>
+          mode === 'identified' ? { ...b, createdBy: currentUser.email } : b
+        )
+      };
+      const json = JSON.stringify(pkg, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sip-shortcuts.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      const modeLabel = mode === 'identified'
+        ? `as ${currentUser.email} (identified — can be globally published)`
+        : 'anonymously (no identity attached — cannot be globally published)';
+      addHistory('Shortcuts exported', `Exported ${bindings.length} shortcut(s) ${modeLabel}.`, 'sip-shortcuts.json');
+    }
+
+    // Import a shortcut package from a File object.
+    // Identified packages are scoped under the author's email.
+    // Anonymous packages are stored under a timestamped anon key.
+    function importShortcutsFromFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        let pkg;
+        try { pkg = JSON.parse(e.target.result); }
+        catch { addHistory('Import failed', 'File is not valid JSON.', file.name); return; }
+        if (pkg.schema !== 'sip-shortcuts/1.0' || !Array.isArray(pkg.bindings)) {
+          addHistory('Import failed', 'File does not match the sip-shortcuts/1.0 schema.', file.name);
+          return;
+        }
+        const isIdentified = !!(pkg.author && pkg.author.email);
+        if (isIdentified && pkg.author.email === currentUser.email) {
+          addHistory('Import skipped', 'Cannot import your own exported shortcuts — they are already in your personal shortcuts.', file.name);
+          return;
+        }
+        const collectionKey = isIdentified
+          ? pkg.author.email
+          : 'anon:' + Date.now();
+        const bindingsMap = {};
+        for (const b of pkg.bindings) {
+          if (b.shortcut) {
+            const key = normalize(b.shortcut);
+            bindingsMap[key] = {
+              ...b,
+              shortcut: key,
+              ...(isIdentified ? { createdBy: pkg.author.email } : {})
+            };
+          }
+        }
+        const fromLabel = isIdentified
+          ? `from ${pkg.author.email} (identified)`
+          : 'from an anonymous package (no identity — cannot be globally verified)';
+        if (importedShortcutCollections[collectionKey]) {
+          // Collection already exists — merge: add new bindings, skip duplicates.
+          const existing = importedShortcutCollections[collectionKey];
+          let added = 0, skipped = 0;
+          for (const [key, binding] of Object.entries(bindingsMap)) {
+            if (existing.bindings[key]) {
+              skipped++;
+            } else {
+              existing.bindings[key] = binding;
+              added++;
+            }
+          }
+          // Update advisory publishedAt if the newer package has one.
+          if (pkg.publishedAt) existing.publishedAt = pkg.publishedAt;
+          const parts = [];
+          if (added)   parts.push(`${added} new shortcut${added   === 1 ? '' : 's'} added`);
+          if (skipped) parts.push(`${skipped} duplicate${skipped === 1 ? '' : 's'} skipped`);
+          addHistory('Shortcuts merged', `${parts.join(', ')} ${fromLabel}. Own shortcuts take precedence.`, file.name);
+        } else {
+          importedShortcutCollections[collectionKey] = {
+            author: isIdentified ? pkg.author : null,
+            // publishedAt from the package tells the recipient where this collection is globally
+            // registered. It is advisory — the recipient's resolver should verify the SIP independently.
+            publishedAt: pkg.publishedAt || null,
+            label: pkg.label || (isIdentified ? `${pkg.author.email}'s Shortcuts` : 'Anonymous Shortcuts'),
+            imported: new Date().toISOString().slice(0, 10),
+            bindings: bindingsMap
+          };
+          const count = Object.keys(bindingsMap).length;
+          addHistory('Shortcuts imported', `Imported ${count} shortcut${count === 1 ? '' : 's'} ${fromLabel}. Own shortcuts take precedence.`, file.name);
+        }
+        renderShortcutsDropdownBtn();
+        render();
+      };
+      reader.readAsText(file);
+    }
+
+    function clearImportedCollection(collectionKey) {
+      const col = importedShortcutCollections[collectionKey];
+      if (!col) return;
+      const label = col.author ? col.author.email : col.label;
+      delete importedShortcutCollections[collectionKey];
+      addHistory('Imported shortcuts removed', `Removed shortcuts imported from ${label}.`, input.value);
+      renderShortcutsDropdownBtn();
+      render();
+    }
+
+    // Derives a globally unique publishing SIP from an email address.
+    // The domain anchors global uniqueness (verified via DNS / SIP owner verification).
+    // Example: alice@example.com  →  @example.com.alice.shortcuts
+    // Note: production implementations may prefer reverse-domain notation
+    // (e.g. @com.example.alice.shortcuts) to mirror DNS hierarchy explicitly.
+    function derivedPublishingSip(email) {
+      if (!email || !email.includes('@')) return null;
+      const [local, domain] = email.split('@');
+      const safe = (s) => s.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const domainSegs = domain.split('.').map(safe).filter(Boolean).join('.');
+      const localSafe = safe(local);
+      return domainSegs && localSafe ? `@${domainSegs}.${localSafe}.shortcuts` : null;
+    }
+
+    // ── Shortcut manager ─────────────────────────────────────────────────────
+
+    function openShortcutsManager() {
+      closeShortcutsDropdown();
+      renderShortcutsManager();
+      document.getElementById('shortcutsManager').hidden = false;
+    }
+
+    function closeShortcutsManager() {
+      document.getElementById('shortcutsManager').hidden = true;
+    }
+
+    function renderShortcutsManager() {
+      const overlay = document.getElementById('shortcutsManager');
+
+      // ── My shortcuts rows ─────────────────────────────────────────────────
+      const ownBindings = Object.values(personalShortcutBindings);
+      let ownRows = '';
+      if (ownBindings.length === 0) {
+        ownRows = '<tr><td colspan="3" class="sm-empty">No personal shortcuts saved yet.</td></tr>';
+      } else {
+        for (const b of ownBindings) {
+          const k = normalize(b.shortcut);
+          ownRows += `
+            <tr>
+              <td class="sm-alias">${escapeHtml(b.shortcut)}</td>
+              <td class="sm-sip">${escapeHtml(b.sip)}</td>
+              <td class="sm-acts">
+                <button type="button" class="sm-btn" data-sm-edit-own="${escapeHtml(k)}">Edit</button>
+                <button type="button" class="sm-btn sm-danger" data-sm-delete-own="${escapeHtml(k)}">Delete</button>
+              </td>
+            </tr>`;
+        }
+      }
+
+      // ── Imported collections ──────────────────────────────────────────────
+      const importedEntries = Object.entries(importedShortcutCollections);
+      let importedHtml = '';
+      if (importedEntries.length === 0) {
+        importedHtml = '<p class="sm-empty">No imported collections.</p>';
+      } else {
+        for (const [colKey, col] of importedEntries) {
+          const authorLabel = col.author
+            ? `${escapeHtml(col.author.label)} &lt;${escapeHtml(col.author.email)}&gt;`
+            : escapeHtml(col.label);
+          const bindings = Object.values(col.bindings);
+          const count = bindings.length;
+          let bindingRows = bindings.map(b => {
+            const shadowed = !!personalShortcutBindings[normalize(b.shortcut)];
+            return `
+              <tr>
+                <td class="sm-alias" style="${shadowed ? 'color:var(--warn);' : ''}">${escapeHtml(b.shortcut)}${shadowed ? ' <span style="font-size:10px;opacity:.7;">(shadowed)</span>' : ''}</td>
+                <td class="sm-sip">${escapeHtml(b.sip)}</td>
+                <td class="sm-acts">
+                  <button type="button" class="sm-btn sm-danger"
+                    data-sm-delete-imported="${escapeHtml(colKey)}"
+                    data-sm-binding-key="${escapeHtml(normalize(b.shortcut))}">Delete</button>
+                </td>
+              </tr>`;
+          }).join('');
+          importedHtml += `
+            <div class="sm-collection-header">
+              <span>${authorLabel}${col.publishedAt ? ` &nbsp;<span style="color:var(--good);font-size:11px;font-family:monospace;font-weight:400;">${escapeHtml(col.publishedAt)}</span>` : ''}</span>
+              <span style="display:flex;align-items:center;gap:8px;">
+                <span style="color:var(--muted);font-size:11px;font-weight:400;">${count} shortcut${count === 1 ? '' : 's'}</span>
+                <button type="button" class="sm-btn sm-danger" data-sm-remove-collection="${escapeHtml(colKey)}">Remove all</button>
+              </span>
+            </div>
+            <div class="sm-collection-table-wrap">
+              <table class="sm-table">
+                <tbody>${bindingRows}</tbody>
+              </table>
+            </div>`;
+        }
+      }
+
+      overlay.innerHTML = `
+        <div class="shortcuts-manager-panel">
+          <div class="shortcuts-manager-header">
+            <h2 class="shortcuts-manager-title">Shortcut Manager</h2>
+            <button type="button" class="shortcuts-manager-close" id="smClose">&#x2715; Close</button>
+          </div>
+
+          <div class="shortcuts-manager-section-title">My shortcuts</div>
+          <table class="sm-table">
+            <thead>
+              <tr>
+                <th style="width:28%;">Alias</th>
+                <th>Target SIP</th>
+                <th style="width:118px;"></th>
+              </tr>
+            </thead>
+            <tbody id="smOwnBody">${ownRows}</tbody>
+          </table>
+
+          <div class="shortcuts-manager-section-title">Imported collections</div>
+          <div id="smImportedBody">${importedHtml}</div>
+        </div>`;
+
+      // ── Event handling ────────────────────────────────────────────────────
+      overlay.querySelector('#smClose').addEventListener('click', closeShortcutsManager);
+
+      overlay.addEventListener('click', (e) => {
+        // Click backdrop → close
+        if (e.target === overlay) { closeShortcutsManager(); return; }
+
+        // Delete personal shortcut
+        const deleteOwn = e.target.closest('[data-sm-delete-own]');
+        if (deleteOwn) {
+          const key = deleteOwn.dataset.smDeleteOwn;
+          const b = personalShortcutBindings[key];
+          if (b) {
+            delete personalShortcutBindings[key];
+            addHistory('Shortcut deleted', `Deleted personal shortcut ${b.shortcut}.`, b.shortcut);
+            renderShortcutsDropdownBtn();
+            renderShortcutsManager();
+          }
+          return;
+        }
+
+        // Start editing a personal shortcut
+        const editOwn = e.target.closest('[data-sm-edit-own]');
+        if (editOwn && !editOwn.closest('tr').querySelector('.sm-edit-inputs')) {
+          const key = editOwn.dataset.smEditOwn;
+          const b = personalShortcutBindings[key];
+          if (!b) return;
+          const row = editOwn.closest('tr');
+          row.innerHTML = `
+            <td colspan="2" style="padding:7px 10px;">
+              <div class="sm-edit-inputs">
+                <input type="text" data-sm-edit-alias value="${escapeHtml(b.shortcut)}" placeholder="@alias" />
+                <input type="text" data-sm-edit-sip   value="${escapeHtml(b.sip)}"      placeholder="@target.sip" />
+              </div>
+            </td>
+            <td class="sm-acts">
+              <button type="button" class="sm-btn sm-save" data-sm-save-own="${escapeHtml(key)}">Save</button>
+              <button type="button" class="sm-btn"         data-sm-cancel-edit>Cancel</button>
+            </td>`;
+          row.querySelector('[data-sm-edit-alias]').focus();
+          return;
+        }
+
+        // Cancel inline edit
+        const cancelEdit = e.target.closest('[data-sm-cancel-edit]');
+        if (cancelEdit) { renderShortcutsManager(); return; }
+
+        // Save inline edit
+        const saveOwn = e.target.closest('[data-sm-save-own]');
+        if (saveOwn) {
+          const oldKey = saveOwn.dataset.smSaveOwn;
+          const row = saveOwn.closest('tr');
+          const newAlias = normalize(row.querySelector('[data-sm-edit-alias]').value.trim());
+          const newSip   = normalize(row.querySelector('[data-sm-edit-sip]').value.trim());
+          if (!newAlias || !newSip) return;
+          const old = personalShortcutBindings[oldKey];
+          delete personalShortcutBindings[oldKey];
+          personalShortcutBindings[newAlias] = { ...old, shortcut: newAlias, sip: newSip };
+          addHistory('Shortcut updated', `Updated shortcut ${newAlias} → ${newSip}.`, newAlias);
+          renderShortcutsDropdownBtn();
+          renderShortcutsManager();
+          return;
+        }
+
+        // Delete a single binding from an imported collection
+        const deleteImported = e.target.closest('[data-sm-delete-imported]');
+        if (deleteImported) {
+          const colKey     = deleteImported.dataset.smDeleteImported;
+          const bindingKey = deleteImported.dataset.smBindingKey;
+          const col = importedShortcutCollections[colKey];
+          if (col && col.bindings[bindingKey]) {
+            delete col.bindings[bindingKey];
+            addHistory('Imported shortcut deleted', `Deleted ${bindingKey} from ${col.author ? col.author.email : col.label}.`, bindingKey);
+            if (Object.keys(col.bindings).length === 0) delete importedShortcutCollections[colKey];
+            renderShortcutsDropdownBtn();
+            renderShortcutsManager();
+          }
+          return;
+        }
+
+        // Remove an entire imported collection
+        const removeCol = e.target.closest('[data-sm-remove-collection]');
+        if (removeCol) {
+          const colKey = removeCol.dataset.smRemoveCollection;
+          const col = importedShortcutCollections[colKey];
+          if (col) {
+            delete importedShortcutCollections[colKey];
+            addHistory('Collection removed', `Removed imported collection from ${col.author ? col.author.email : col.label}.`, colKey);
+            renderShortcutsDropdownBtn();
+            renderShortcutsManager();
+          }
+          return;
+        }
+      });
     }
 
     function openShortcutsDropdown() {
       const dropdown = document.getElementById('shortcutsDropdown');
       const btn = document.getElementById('shortcutsDropdownBtn');
       if (!dropdown || !btn) return;
-      const bindings = Object.values(personalShortcutBindings);
-      if (!bindings.length) {
-        dropdown.innerHTML = '<div class="shortcuts-dropdown-empty">No saved shortcuts yet.</div>';
+      const ownBindings = Object.values(personalShortcutBindings);
+      const importedEntries = Object.entries(importedShortcutCollections);
+      const hasContent = ownBindings.length > 0 || importedEntries.length > 0;
+      let html = '';
+      if (!hasContent) {
+        html = '<div class="shortcuts-dropdown-empty">No saved shortcuts yet.</div>';
       } else {
-        dropdown.innerHTML = bindings.map((b) => `
-          <button type="button" class="shortcuts-dropdown-item" data-shortcut="${escapeHtml(b.shortcut)}">
-            <span class="shortcuts-dropdown-alias">${escapeHtml(b.shortcut)}</span>
-            <span class="shortcuts-dropdown-target">${escapeHtml(b.sip)}</span>
-          </button>
-        `).join('');
+        if (ownBindings.length) {
+          html += '<div class="shortcuts-dropdown-section">My shortcuts</div>';
+          html += ownBindings.map((b) => `
+            <button type="button" class="shortcuts-dropdown-item" data-shortcut="${escapeHtml(b.shortcut)}">
+              <span class="shortcuts-dropdown-alias">${escapeHtml(b.shortcut)}</span>
+              <span class="shortcuts-dropdown-target">${escapeHtml(b.sip)}</span>
+            </button>
+          `).join('');
+        }
+        for (const [collectionKey, collection] of importedEntries) {
+          const authorLabel = collection.author
+            ? escapeHtml(`${collection.author.label} <${collection.author.email}>`)
+            : escapeHtml(collection.label + ' (anonymous)');
+          html += `
+            <div class="shortcuts-dropdown-section shortcuts-dropdown-section--imported">
+              From ${authorLabel}${collection.publishedAt ? ` &nbsp;<span style="color:var(--good);font-size:10px;font-family:monospace;font-weight:400;">${escapeHtml(collection.publishedAt)}</span>` : ''}
+              <button type="button" class="shortcuts-dropdown-clear-import"
+                data-clear-key="${escapeHtml(collectionKey)}"
+                title="Remove this imported collection">&#x2715;</button>
+            </div>
+          `;
+          html += Object.values(collection.bindings).map((b) => {
+            const shadowed = !!personalShortcutBindings[normalize(b.shortcut)];
+            return `
+              <button type="button"
+                class="shortcuts-dropdown-item shortcuts-dropdown-item--imported${shadowed ? ' shortcuts-dropdown-item--shadowed' : ''}"
+                data-shortcut="${escapeHtml(b.shortcut)}" data-collection-key="${escapeHtml(collectionKey)}"
+                ${shadowed ? 'title="Shadowed by your own shortcut with the same key"' : ''}>
+                <span class="shortcuts-dropdown-alias">${escapeHtml(b.shortcut)}</span>
+                <span class="shortcuts-dropdown-target">${escapeHtml(b.sip)}</span>
+                ${shadowed ? '<span class="shortcuts-dropdown-target" style="color:var(--warn);font-size:10px;">shadowed by your own shortcut</span>' : ''}
+              </button>
+            `;
+          }).join('');
+        }
       }
+      const hasIdentity = currentUser.email && currentUser.email !== 'you@example.com';
+      const derived = hasIdentity ? derivedPublishingSip(currentUser.email) : null;
+      const publishedAt = currentUser.publishedAt;
+      const pubDisplay = publishedAt
+        ? `<span class="shortcuts-publishing-active">${escapeHtml(publishedAt)}</span>`
+        : '<span style="color:var(--muted);font-style:italic;font-size:11px;">not set — sharing only</span>';
+      html += `
+        <div class="shortcuts-dropdown-footer">
+          <button type="button" class="shortcuts-export-btn" data-export-mode="anonymous">&#8679; Share anonymously</button>
+          <button type="button" class="shortcuts-export-btn" data-export-mode="identified"
+            ${!hasIdentity
+              ? 'disabled title="Set your SIP identity below the input first"'
+              : `title="Identified export · author: ${escapeHtml(currentUser.email)}${publishedAt ? ' · publishedAt: ' + publishedAt : ' · no global publishing SIP set'}"`}>
+            &#8679; Share as ${publishedAt ? escapeHtml(publishedAt) : escapeHtml(currentUser.email)}
+          </button>
+          <label class="shortcuts-import-label">
+            &#8681; Import
+            <input class="shortcuts-import-file" type="file" accept=".json" style="display:none" />
+          </label>
+          <button type="button" class="shortcuts-dropdown-footer button" data-open-manager style="margin-left:auto;">&#9881; Manage</button>
+        </div>
+        ${hasIdentity ? `
+        <div class="shortcuts-publishing-section">
+          <div class="shortcuts-publishing-heading">
+            <span>Global publishing SIP</span>
+            ${pubDisplay}
+          </div>
+          <div class="shortcuts-publishing-option">
+            <span class="pub-option-num">1</span>
+            <span class="pub-option-label">${derived ? escapeHtml(derived) : '—'}</span>
+            ${derived ? `<button type="button" class="pub-option-btn" data-pub-use="${escapeHtml(derived)}"
+              title="Domain-derived from your email. Globally unique because it is anchored to your verified email domain.">Use derived</button>` : ''}
+          </div>
+          <div class="shortcuts-publishing-option">
+            <span class="pub-option-num">2</span>
+            <input class="pub-custom-input" type="text" spellcheck="false"
+              placeholder="@com.provider.alice.shortcuts"
+              aria-label="Provider-assigned publishing SIP" />
+            <button type="button" class="pub-option-btn" data-pub-set
+              title="SIP assigned by a federated identity provider, rooted in their verified owner namespace.">Set</button>
+          </div>
+          <div class="shortcuts-publishing-option">
+            <span class="pub-option-num">3</span>
+            <span class="pub-option-label pub-option-label--muted">None — sharing only, no global registry</span>
+            <button type="button" class="pub-option-btn" data-pub-clear>Clear</button>
+          </div>
+        </div>
+        ` : ''}
+      `;
+      dropdown.innerHTML = html;
       dropdown.hidden = false;
       shortcutsDropdownOpen = true;
       btn.setAttribute('aria-expanded', 'true');
+      dropdown.querySelector('.shortcuts-import-file').addEventListener('change', (e) => {
+        importShortcutsFromFile(e.target.files[0]);
+        closeShortcutsDropdown();
+      });
     }
 
     function closeShortcutsDropdown() {
@@ -3833,22 +4649,115 @@
 
     document.getElementById('shortcutsDropdown').addEventListener('click', (event) => {
       event.stopPropagation();
-      const item = event.target.closest('.shortcuts-dropdown-item');
-      if (!item) return;
-      const shortcut = item.dataset.shortcut;
-      if (shortcut) {
-        const binding = personalShortcutBindings[shortcut];
-        const target = binding ? binding.sip : shortcut;
-        input.value = target;
-        addHistory('Shortcut expanded from dropdown', `Expanded ${shortcut} → ${target}.`, target);
+
+      // Export buttons
+      const exportBtn = event.target.closest('.shortcuts-export-btn');
+      if (exportBtn && !exportBtn.disabled) {
+        exportShortcuts(exportBtn.dataset.exportMode);
         closeShortcutsDropdown();
-        input.focus();
-        render();
+        return;
       }
+
+      // Publishing SIP — option 1: use derived SIP
+      const pubUseBtn = event.target.closest('[data-pub-use]');
+      if (pubUseBtn) {
+        currentUser.publishedAt = pubUseBtn.dataset.pubUse;
+        addHistory('Publishing SIP set (derived)',
+          `Global publishing SIP set to ${currentUser.publishedAt}. Globally unique because it is anchored to your email domain.`,
+          currentUser.publishedAt);
+        openShortcutsDropdown();
+        return;
+      }
+
+      // Publishing SIP — option 2: set custom provider-assigned SIP
+      const pubSetBtn = event.target.closest('[data-pub-set]');
+      if (pubSetBtn) {
+        const dropdown = document.getElementById('shortcutsDropdown');
+        const customInput = dropdown && dropdown.querySelector('.pub-custom-input');
+        const val = customInput ? customInput.value.trim() : '';
+        if (!val) {
+          addHistory('Publishing SIP not set', 'Enter a provider-assigned SIP in the field first.', '');
+          return;
+        }
+        const norm = normalize(val);
+        if (!isBoundIdentity(norm)) {
+          addHistory('Invalid publishing SIP',
+            'A publishing SIP must start with a verified owner namespace (not a discovery path like @games.*).',
+            val);
+          return;
+        }
+        currentUser.publishedAt = norm;
+        addHistory('Publishing SIP set (provider-assigned)',
+          `Global publishing SIP set to ${currentUser.publishedAt}. Ensure this namespace is verified through your identity provider.`,
+          currentUser.publishedAt);
+        openShortcutsDropdown();
+        return;
+      }
+
+      // Publishing SIP — option 3: clear (sharing only)
+      const pubClearBtn = event.target.closest('[data-pub-clear]');
+      if (pubClearBtn) {
+        currentUser.publishedAt = null;
+        addHistory('Publishing SIP cleared', 'This collection will be shared without a global publishing SIP.', '');
+        openShortcutsDropdown();
+        return;
+      }
+
+      // Open shortcut manager
+      const openManagerBtn = event.target.closest('[data-open-manager]');
+      if (openManagerBtn) {
+        openShortcutsManager();
+        return;
+      }
+
+      // Remove-imported-collection button
+      const clearBtn = event.target.closest('.shortcuts-dropdown-clear-import');
+      if (clearBtn) {
+        clearImportedCollection(clearBtn.dataset.clearKey);
+        closeShortcutsDropdown();
+        return;
+      }
+
+      // Shortcut item (own or imported)
+      const item = event.target.closest('.shortcuts-dropdown-item');
+      if (!item || item.classList.contains('shortcuts-dropdown-item--shadowed')) return;
+      const shortcut = item.dataset.shortcut;
+      if (!shortcut) return;
+      const collectionKey = item.dataset.collectionKey;
+      let target, sourceLabel;
+      if (collectionKey) {
+        const col = importedShortcutCollections[collectionKey];
+        const binding = col && col.bindings[normalize(shortcut)];
+        target = binding ? binding.sip : shortcut;
+        sourceLabel = col && col.author ? `imported from ${col.author.email}` : `imported (anonymous)`;
+      } else {
+        const binding = personalShortcutBindings[shortcut];
+        target = binding ? binding.sip : shortcut;
+        sourceLabel = 'my shortcut';
+      }
+      input.value = target;
+      addHistory('Shortcut expanded from dropdown', `Expanded ${shortcut} → ${target} (${sourceLabel}).`, target);
+      closeShortcutsDropdown();
+      input.focus();
+      render();
     });
 
     document.addEventListener('click', () => {
       if (shortcutsDropdownOpen) closeShortcutsDropdown();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !document.getElementById('shortcutsManager').hidden) {
+        closeShortcutsManager();
+      }
+    });
+
+    document.getElementById('userEmailInput').addEventListener('change', (e) => {
+      const val = e.target.value.trim();
+      currentUser.email = val || 'you@example.com';
+      currentUser.label = currentUser.email.split('@')[0] || 'You';
+      currentUser.publishedAt = null; // clear stale publishing SIP — re-derive or re-enter for new identity
+      addHistory('Identity updated', `Your SIP identity is now ${currentUser.email}. Publishing SIP cleared — re-set it in the shortcuts panel.`, '');
     });
 
     sipIndex = buildSipIndex();
@@ -3914,5 +4823,7 @@
     render();
     renderFavorites();
   </script>
+
+  <div id="shortcutsManager" class="shortcuts-manager-overlay" hidden></div>
 </body>
 </html>

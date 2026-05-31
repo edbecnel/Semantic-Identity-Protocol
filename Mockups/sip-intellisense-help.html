@@ -354,7 +354,7 @@
     <div class="page-header">
       <a class="back-link" href="sip-intellisense-mockup.html">&#8592; Back to mockup</a>
       <h1>SIP IntelliSense — Help</h1>
-      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, search, and resource-type binding approaches.</p>
+      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, shortcut sharing, import and management, search, and resource-type binding approaches.</p>
     </div>
 
     <!-- Table of contents -->
@@ -368,11 +368,12 @@
         <li><a href="#resolution"><span class="toc-num">5</span>Resolution preview</a></li>
         <li><a href="#favorites"><span class="toc-num">6</span>Favorites</a></li>
         <li><a href="#shortcuts"><span class="toc-num">7</span>Personal shortcuts</a></li>
-        <li><a href="#search"><span class="toc-num">8</span>Search</a></li>
-        <li><a href="#keyboard"><span class="toc-num">9</span>Keyboard &amp; navigation</a></li>
-        <li><a href="#sidebar"><span class="toc-num">10</span>Sidebar panels</a></li>
-        <li><a href="#demo-buttons"><span class="toc-num">11</span>Demo buttons</a></li>
-        <li><a href="#glossary"><span class="toc-num">12</span>Glossary</a></li>
+        <li><a href="#shortcut-sharing"><span class="toc-num">8</span>Sharing, import &amp; manage</a></li>
+        <li><a href="#search"><span class="toc-num">9</span>Search</a></li>
+        <li><a href="#keyboard"><span class="toc-num">10</span>Keyboard &amp; navigation</a></li>
+        <li><a href="#sidebar"><span class="toc-num">11</span>Sidebar panels</a></li>
+        <li><a href="#demo-buttons"><span class="toc-num">12</span>Demo buttons</a></li>
+        <li><a href="#glossary"><span class="toc-num">13</span>Glossary</a></li>
       </ul>
     </div>
 
@@ -608,10 +609,98 @@
       </div>
     </section>
 
-    <!-- 8. Search -->
-    <section class="section" id="search">
+    <!-- 8. Sharing & import -->
+    <section class="section" id="shortcut-sharing">
       <div class="section-header">
         <span class="section-num">8</span>
+        <h2>Sharing, import &amp; manage</h2>
+      </div>
+      <p>Personal shortcuts become more powerful when shared. The <strong>My shortcuts</strong> dropdown lets you export your collection as a <code>sip-shortcuts/1.0</code> JSON file and import collections from others. Sharing works across three tiers — anonymous, identified, and globally published — each requiring progressively more identity verification.</p>
+
+      <h3>Your SIP identity</h3>
+      <p>The <strong>Your SIP identity</strong> field below the SIP input sets the email address that identifies you as an author. It is optional — you can share shortcuts without it. When set, it unlocks identified sharing and the global publishing options.</p>
+      <div class="callout info">
+        <strong>In a real implementation</strong> this field would be pre-populated from a verified browser profile or federated identity provider. The email address must be confirmed via ownership verification (e.g. a magic link or one-time passcode) before the system treats it as trustworthy. The mockup allows free entry so you can explore all sharing flows without authentication.
+      </div>
+
+      <h3>Opening the shortcuts panel</h3>
+      <p>Click the <strong>My shortcuts ▾</strong> button at the top-right of the SIP input card. The dropdown shows your saved shortcuts, any imported collections, and the sharing controls at the bottom.</p>
+
+      <h3>Tier 1 — Share anonymously</h3>
+      <p>Click <strong>↑ Share anonymously</strong> to download your shortcuts as a JSON file with no author information. Anyone can import the file, but recipients cannot verify who created it and it cannot be published to the global SIP registry.</p>
+
+      <h3>Tier 2 — Share as (identified)</h3>
+      <p>Click <strong>↑ Share as &lt;your identity&gt;</strong> to download an identified package. The file includes an <code>author</code> field containing your email and display name so recipients know who shared the collection. The button is disabled until you set a SIP identity in the field below the input.</p>
+      <ul>
+        <li>When no global publishing SIP is set, the button label shows your raw email address. The author field is included in the export but no <code>publishedAt</code> registry address is attached.</li>
+        <li>When a global publishing SIP is set, the button label changes to that SIP address and the <code>publishedAt</code> field is embedded in every subsequent export.</li>
+      </ul>
+
+      <h3>Tier 3 — Global publishing SIP</h3>
+      <p>The <strong>Global publishing SIP</strong> section at the bottom of the dropdown lets you register a stable, globally unique SIP address for your shortcut collection. This address is embedded in identified exports so recipients and resolvers know where to find the canonical, registry-verified version.</p>
+      <p>Two options are available:</p>
+
+      <p><strong>Option 1 — Use derived</strong></p>
+      <p>Click <strong>Use derived</strong> to set your publishing SIP automatically from your email address using the rule <code>{local}@{domain} → @{domain}.{local}.shortcuts</code>. Examples:</p>
+      <ul>
+        <li><code>alice@example.com</code> &rarr; <code>@example.com.alice.shortcuts</code></li>
+        <li><code>edbecnel@gmail.com</code> &rarr; <code>@gmail.com.edbecnel.shortcuts</code></li>
+      </ul>
+      <p>Global uniqueness is anchored to the email domain. For a custom domain this requires DNS or SIP manifest verification. For a managed provider (Gmail, Outlook, etc.) the provider vouches for the sub-identity on your behalf.</p>
+
+      <p><strong>Option 2 — Provider-assigned</strong></p>
+      <p>A federated SIP identity provider may issue a publishing SIP from within their own verified namespace. Enter the provider-assigned address in the text field and click <strong>Set</strong>. Example: <code>@com.provider.alice.shortcuts</code>. The address must be an owner-bound identity — discovery paths are not accepted.</p>
+
+      <p><strong>Option 3 — Clear</strong></p>
+      <p>Click <strong>Clear</strong> to remove the global publishing SIP. Subsequent identified exports will include the author field but no <code>publishedAt</code> address.</p>
+
+      <div class="callout tip">
+        <strong>The Share button label updates immediately.</strong> Once you set or clear a global publishing SIP, the Share button label changes to reflect the new state — either the publishing SIP address or your raw email as a fallback.
+      </div>
+
+      <h3>Importing a shortcut collection</h3>
+      <p>Click <strong>↓ Import</strong> in the shortcuts dropdown and select a <code>sip-shortcuts/1.0</code> JSON file. The client validates the schema and stores the collection.</p>
+      <ul>
+        <li><strong>Identified packages</strong> are listed under the author's name and email.</li>
+        <li><strong>Anonymous packages</strong> are listed under a timestamped anonymous label.</li>
+        <li>A <code>publishedAt</code> address in the package is displayed as advisory — a real resolver would independently verify it before treating it as globally confirmed.</li>
+        <li>You cannot import your own exported package — your bindings are already in your personal shortcuts.</li>
+      </ul>
+
+      <h3>Precedence — your shortcuts win</h3>
+      <p>If an imported collection defines the same shortcut alias as one of your personal bindings, your binding takes precedence. The imported binding is retained but marked as <strong>shadowed</strong> and will not be used for resolution. Imported shortcuts can never silently override your deliberate choices.</p>
+
+      <h3>Managing your shortcuts</h3>
+      <p>Click the <strong>&#9881; Manage</strong> button in the footer of the shortcuts dropdown to open the <strong>Shortcut Manager</strong> panel. The manager provides a dedicated interface for editing and deleting both your personal shortcuts and any imported collections.</p>
+
+      <h4>My Shortcuts</h4>
+      <p>The <strong>My Shortcuts</strong> table lists every personal shortcut you have saved. Each row shows the alias and the target SIP it expands to, with two action buttons:</p>
+      <ul>
+        <li><strong>Edit</strong> — replaces the row with two inline inputs. Adjust the alias, the target SIP, or both, then click <strong>Save</strong> to commit or <strong>Cancel</strong> to discard. If you change the alias key, the old key is removed and replaced with the new one.</li>
+        <li><strong>Delete</strong> — permanently removes the binding from your personal shortcuts.</li>
+      </ul>
+
+      <h4>Imported Collections</h4>
+      <p>Each imported collection is listed under a header showing the author name and email (or a timestamped anonymous label), the shortcut count, and the <code>publishedAt</code> SIP address if one is present. Within each collection you can:</p>
+      <ul>
+        <li>Click <strong>Remove all</strong> in the collection header to delete the entire collection at once.</li>
+        <li>Click <strong>Delete</strong> on an individual binding row to remove just that one binding. If the last binding is removed the collection is also cleaned up.</li>
+        <li>Bindings whose alias matches one of your personal shortcuts are highlighted in amber with a <em>(shadowed)</em> label — they are retained for inspection but never used for resolution.</li>
+      </ul>
+
+      <div class="callout tip">
+        <strong>Close the manager</strong> by clicking <strong>&#x2715; Close</strong> in the panel header, pressing <span class="key">Esc</span>, or clicking the dark backdrop behind the panel.
+      </div>
+
+      <div class="callout info">
+        <strong>Session scope:</strong> Imported collections and the global publishing SIP setting live in JavaScript memory and reset on page reload. In a real implementation they would persist in a user profile.
+      </div>
+    </section>
+
+    <!-- 9. Search -->
+    <section class="section" id="search">
+      <div class="section-header">
+        <span class="section-num">9</span>
         <h2>Search</h2>
       </div>
       <p>The <strong>Search SIPs</strong> bar at the top of the page lets you find any registered SIP path by keyword using a boolean query language. Clicking a result loads it into the SIP input.</p>
@@ -650,10 +739,10 @@
       <p>Press <span class="key">↓</span> from the search box to move focus into the results list. Use <span class="key">↑</span> / <span class="key">↓</span> to navigate between items, <span class="key">Enter</span> to load a result, and <span class="key">Esc</span> to clear the search.</p>
     </section>
 
-    <!-- 9. Keyboard & navigation -->
+    <!-- 10. Keyboard & navigation -->
     <section class="section" id="keyboard">
       <div class="section-header">
-        <span class="section-num">9</span>
+        <span class="section-num">10</span>
         <h2>Keyboard &amp; navigation</h2>
       </div>
       <p>The SIP input supports full keyboard control of the IntelliSense panel.</p>
@@ -668,10 +757,10 @@
       </table>
     </section>
 
-    <!-- 10. Sidebar panels -->
+    <!-- 11. Sidebar panels -->
     <section class="section" id="sidebar">
       <div class="section-header">
-        <span class="section-num">10</span>
+        <span class="section-num">11</span>
         <h2>Sidebar panels</h2>
       </div>
 
@@ -694,10 +783,10 @@
       <p>A running log of every action taken in the mockup — segment selections, shortcut expansions, owner identity commits, shortcut saves, favorites saves, and more. The most recent action appears at the top. The log is capped at twelve entries.</p>
     </section>
 
-    <!-- 11. Demo buttons -->
+    <!-- 12. Demo buttons -->
     <section class="section" id="demo-buttons">
       <div class="section-header">
-        <span class="section-num">11</span>
+        <span class="section-num">12</span>
         <h2>Demo buttons</h2>
       </div>
       <p>The actions bar below the SIP input contains preset scenario buttons for exploring the mockup without manual typing.</p>
@@ -756,10 +845,10 @@
       </div>
     </section>
 
-    <!-- 12. Glossary -->
+    <!-- 13. Glossary -->
     <section class="section" id="glossary">
       <div class="section-header">
-        <span class="section-num">12</span>
+        <span class="section-num">13</span>
         <h2>Glossary</h2>
       </div>
 
@@ -818,6 +907,38 @@
       <div class="glossary-item">
         <div class="glossary-term">Namespace intent (Option C)</div>
         <div class="glossary-def">A binding where an intent segment is inserted between the owner namespace and the discovery path. Example: <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The <code>play</code> segment is the intent qualifier. This form is fully self-describing and does not require out-of-band knowledge of the owner's profile.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">sip-shortcuts/1.0</div>
+        <div class="glossary-def">The JSON schema used for exporting and importing shortcut collections. Every package includes a <code>schema</code> field set to <code>"sip-shortcuts/1.0"</code>, a <code>bindings</code> array, and optional <code>author</code>, <code>publishedAt</code>, <code>label</code>, and <code>created</code> fields.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Anonymous shortcut package</div>
+        <div class="glossary-def">A <code>sip-shortcuts/1.0</code> export with no <code>author</code> field. Can be freely distributed and imported, but cannot be published to the global SIP registry and carries no author attribution.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Identified shortcut package</div>
+        <div class="glossary-def">A <code>sip-shortcuts/1.0</code> export that includes an <code>author</code> field with the exporter's verified email address and display name. Identified packages are a prerequisite for global publishing. The email must be ownership-verified before the author field is considered trustworthy by a recipient or resolver.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">publishedAt</div>
+        <div class="glossary-def">An optional field in an identified shortcut package that records the globally unique, owner-bound SIP address where the collection is registered in the SIP registry. Recipients should treat this value as advisory until a resolver independently verifies the package at that address.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Domain-derived publishing SIP</div>
+        <div class="glossary-def">A globally unique publishing address derived automatically from the user's email: <code>{local}@{domain} → @{domain}.{local}.shortcuts</code>. Uniqueness is anchored to the email domain, which must be verified by DNS ownership proof or vouched for by a managed email provider.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Provider-assigned publishing SIP</div>
+        <div class="glossary-def">A publishing address issued by a federated SIP identity provider from within their own verified owner namespace. Does not require the user to own a domain. Trustworthy only if the provider's root namespace is itself registered and verified in the SIP registry.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Shadowed binding</div>
+        <div class="glossary-def">An imported shortcut binding that shares the same alias key as one of the user's personal shortcuts. The personal binding always wins; the imported one is retained but marked shadowed and excluded from resolution. Shadowing ensures imported collections cannot silently override deliberate personal choices.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Shortcut manager</div>
+        <div class="glossary-def">A full-screen panel opened via the &#9881; Manage button in the shortcuts dropdown footer. Provides full CRUD for personal shortcut bindings — inline edit of alias and target SIP, delete individual bindings — and collection-level controls for imported packages — remove a single binding or the entire collection. Shadowed bindings are highlighted amber in the manager.</div>
       </div>
     </section>
 
