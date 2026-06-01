@@ -781,6 +781,29 @@
       overflow-wrap: anywhere;
     }
 
+    .search-result-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .search-result-actions button {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 7px;
+      border: 1px solid rgba(125, 211, 252, .25);
+      background: rgba(125, 211, 252, .07);
+      color: var(--accent);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .search-result-actions button:hover {
+      background: rgba(125, 211, 252, .18);
+      border-color: rgba(125, 211, 252, .5);
+    }
+
     .search-empty {
       padding: 12px 0;
       color: var(--muted);
@@ -1485,6 +1508,14 @@
           <label class="search-bound-label" title="Only show SIPs bound to a destination">
             <input type="checkbox" id="sipSearchBoundOnly" />
             Bound only
+          </label>
+          <label class="search-bound-label" title="Only show global and owner-brand shortcut aliases">
+            <input type="checkbox" id="sipSearchGlobalOnly" />
+            Global shortcuts
+          </label>
+          <label class="search-bound-label" title="Only show your saved personal shortcuts">
+            <input type="checkbox" id="sipSearchPersonalOnly" />
+            Personal shortcuts
           </label>
         </div>
         <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>!</code> = NOT &nbsp;·&nbsp; <code>( )</code> for grouping</div>
@@ -3408,7 +3439,15 @@
     function getDestinationForValue(value) {
       const normalized = normalize(value);
       const personal = getPersonalBinding(normalized);
-      return personal ? personal.destination : boundDestinations[normalized];
+      if (personal) return personal.destination;
+      if (boundDestinations[normalized]) return boundDestinations[normalized];
+      // Also check shortcut alias destination (owner-bound shortcuts not in boundDestinations)
+      const key = stripAt(normalized);
+      const aliases = shortcutAliases[key] || [];
+      for (const a of aliases) {
+        if (normalize(a.shortcut) === normalized && a.destination) return a.destination;
+      }
+      return undefined;
     }
 
     function normalize(value) {
@@ -4608,9 +4647,13 @@
 
     function buildSipIndex() {
       const map = new Map();
-      function add(sip, label, kind, destination) {
-        if (!map.has(sip)) map.set(sip, { sip, label, kind, destination: destination || '' });
-        else if (destination && !map.get(sip).destination) map.get(sip).destination = destination;
+      function add(sip, label, kind, destination, resolvedSip) {
+        if (!map.has(sip)) map.set(sip, { sip, label, kind, destination: destination || '', resolvedSip: resolvedSip || '' });
+        else {
+          const ex = map.get(sip);
+          if (destination && !ex.destination) ex.destination = destination;
+          if (resolvedSip && !ex.resolvedSip) ex.resolvedSip = resolvedSip;
+        }
       }
       for (const [key, children] of Object.entries(tree)) {
         add('@' + key, '@' + key, 'discovery', '');
@@ -4620,7 +4663,7 @@
         for (const c of candidates) { if (c.sip) add(c.sip, c.label, 'owner', c.destination); }
       }
       for (const aliases of Object.values(shortcutAliases)) {
-        for (const a of aliases) add(a.shortcut, a.label, a.mode === 'owner' ? 'owner-shortcut' : 'shortcut', a.destination);
+        for (const a of aliases) add(a.shortcut, a.label, a.mode === 'owner' ? 'owner-shortcut' : 'shortcut', a.destination, a.expandsTo);
       }
       for (const [sip, dest] of Object.entries(boundDestinations)) {
         const ex = map.get(sip);
@@ -4800,25 +4843,58 @@
 
     function renderSearchResults(query) {
       const resultsEl = document.getElementById('searchResults');
-      if (!query.trim()) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
-      const boundOnly = document.getElementById('sipSearchBoundOnly').checked;
+      const boundOnly    = document.getElementById('sipSearchBoundOnly').checked;
+      const globalOnly   = document.getElementById('sipSearchGlobalOnly').checked;
+      const personalOnly = document.getElementById('sipSearchPersonalOnly').checked;
+      const GLOBAL_KINDS   = new Set(['shortcut', 'owner-shortcut']);
+      const PERSONAL_KINDS = new Set(['personal']);
+      // Build the active kind filter set from the checked boxes
+      const kindFilter = (() => {
+        if (globalOnly && personalOnly) return new Set([...GLOBAL_KINDS, ...PERSONAL_KINDS]);
+        if (globalOnly)   return GLOBAL_KINDS;
+        if (personalOnly) return PERSONAL_KINDS;
+        return null; // no kind filter
+      })();
+      if (!query.trim()) {
+        if (!kindFilter) { resultsEl.hidden = true; resultsEl.innerHTML = ''; return; }
+        // No query but a kind filter is active — show the full catalog for those kinds
+        const allPersonal = Object.values(personalShortcutBindings).map((b) => ({
+          sip: b.shortcut, label: b.label, kind: 'personal', destination: b.destination || '', resolvedSip: b.sip
+        }));
+        let results = [...sipIndex, ...allPersonal].filter((item) => kindFilter.has(item.kind));
+        if (boundOnly) results = results.filter((item) => item.destination !== '');
+        if (!results.length) {
+          resultsEl.innerHTML = '<div class="search-empty">No matching shortcuts found.</div>';
+          resultsEl.hidden = false;
+          return;
+        }
+        renderSearchResultItems(results, resultsEl);
+        return;
+      }
       let results = searchSips(query);
-      if (boundOnly) results = results.filter((item) => item.destination !== '');
+      if (boundOnly)    results = results.filter((item) => item.destination !== '');
+      if (kindFilter)   results = results.filter((item) => kindFilter.has(item.kind));
       if (!results.length) {
         resultsEl.innerHTML = '<div class="search-empty">No matching SIPs found.</div>';
         resultsEl.hidden = false;
         return;
       }
+      renderSearchResultItems(results, resultsEl);
+    }
+
+    function renderSearchResultItems(results, resultsEl) {
       const kindBadge = {
         discovery: '<span class="badge discovery">discovery</span>',
         owner: '<span class="badge bound">owner-bound</span>',
-        'owner-shortcut': '<span class="badge shortcut">owner-bound shortcut</span>',
-        shortcut: '<span class="badge shortcut">shortcut</span>',
+        'owner-shortcut': '<span class="badge shortcut">owner shortcut</span>',
+        shortcut: '<span class="badge shortcut">global shortcut</span>',
         bound: '<span class="badge bound">bound</span>',
         personal: '<span class="badge personal">personal</span>'
       };
-      resultsEl.innerHTML = results.map((item) => `
-        <div class="search-result-item" data-sip="${escapeHtml(item.sip)}" role="option" tabindex="0">
+      resultsEl.innerHTML = results.map((item) => {
+        const hasExpansion = item.resolvedSip && item.resolvedSip !== item.sip;
+        return `
+        <div class="search-result-item" data-sip="${escapeHtml(item.sip)}" data-resolved-sip="${escapeHtml(item.resolvedSip || '')}" role="option" tabindex="0">
           <div class="search-result-main">
             <code class="search-result-sip">${escapeHtml(item.sip)}</code>
             ${kindBadge[item.kind] || ''}
@@ -4829,8 +4905,14 @@
               ${item.resolvedSip ? `<span class="search-result-dest">${escapeHtml(item.resolvedSip)}</span>` : ''}
               ${item.destination ? `<span class="search-result-dest">${escapeHtml(item.destination)}</span>` : ''}
             </div>` : ''}
+          ${hasExpansion ? `
+            <div class="search-result-actions">
+              <button type="button" data-action="load-shortcut">Use shortcut</button>
+              <button type="button" data-action="load-expanded">Use expanded</button>
+            </div>` : ''}
         </div>
-      `).join('');
+      `;
+      }).join('');
       resultsEl.hidden = false;
     }
 
@@ -5302,6 +5384,14 @@
       renderSearchResults(document.getElementById('sipSearch').value);
     });
 
+    document.getElementById('sipSearchGlobalOnly').addEventListener('change', () => {
+      renderSearchResults(document.getElementById('sipSearch').value);
+    });
+
+    document.getElementById('sipSearchPersonalOnly').addEventListener('change', () => {
+      renderSearchResults(document.getElementById('sipSearch').value);
+    });
+
     document.getElementById('sipSearch').addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         event.target.value = '';
@@ -5328,13 +5418,23 @@
     document.getElementById('searchResults').addEventListener('click', (event) => {
       const item = event.target.closest('.search-result-item');
       if (!item) return;
-      const sip = item.dataset.sip;
-      if (sip) {
-        input.value = sip;
+      const actionBtn   = event.target.closest('[data-action]');
+      const shortcutSip = item.dataset.sip;
+      const expandedSip = item.dataset.resolvedSip || shortcutSip;
+      let chosen, historyLabel;
+      if (actionBtn && actionBtn.dataset.action === 'load-expanded') {
+        chosen = expandedSip;
+        historyLabel = `Loaded expanded path from search: ${shortcutSip} \u2192 ${expandedSip}`;
+      } else {
+        chosen = shortcutSip;
+        historyLabel = `Loaded ${shortcutSip} from SIP search.`;
+      }
+      if (chosen) {
+        input.value = chosen;
         document.getElementById('sipSearch').value = '';
         renderSearchResults('');
         document.getElementById('sipSearchClear').style.display = 'none';
-        addHistory('Selected from search', `Loaded ${sip} from SIP search.`, sip);
+        addHistory('Selected from search', historyLabel, chosen);
         input.focus();
         render();
       }
