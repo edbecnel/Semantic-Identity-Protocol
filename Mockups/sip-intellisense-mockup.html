@@ -1596,20 +1596,31 @@
       'games.strategy.abstract.stacking.capture.displacement.columns': ['hypothetical-game', 'placeholder-variant'],
       'games.strategy.abstract.stacking.capture.rotation.columns': ['hypothetical-game', 'placeholder-variant'],
       'games.strategy.abstract.capture': ['displacement', 'leaping'],
-      'games.strategy.abstract.capture.leaping': ['columns', 'stacking', 'checkers', 'dama', 'draughts'],
-      'games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts'],
-      'games.strategy.abstract.capture.leaping.stacking': ['lasca', 'damasca', 'columns-draughts'],
+      'games.strategy.abstract.capture.leaping': ['columns', 'stacking', 'stacks', 'checkers', 'dama', 'draughts'],
+      'games.strategy.abstract.capture.leaping.columns': ['lasca', 'damasca', 'columns-draughts', 'dama'],
+      'games.strategy.abstract.capture.leaping.stacking': ['lasca', 'damasca', 'columns-draughts', 'dama'],
+      'games.strategy.abstract.capture.leaping.stacks': ['lasca', 'damasca', 'columns-draughts', 'dama'],
       'games.strategy.abstract.capture.leaping.columns.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
       'games.strategy.abstract.capture.leaping.stacking.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
+      'games.strategy.abstract.capture.leaping.stacks.lasca': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
       'games.strategy.abstract.capture.leaping.columns.damasca': ['classic', 'international', 'rules', 'online'],
       'games.strategy.abstract.capture.leaping.stacking.damasca': ['classic', 'international', 'rules', 'online'],
+      'games.strategy.abstract.capture.leaping.stacks.damasca': ['classic', 'international', 'rules', 'online'],
       'games.strategy.abstract.capture.leaping.columns.columns-draughts': ['rules', 'variants', 'online'],
       'games.strategy.abstract.capture.leaping.stacking.columns-draughts': ['rules', 'variants', 'online'],
-      'games.strategy.abstract.capture.displacement': ['chess', 'columns', 'stacks'],
+      'games.strategy.abstract.capture.leaping.stacks.columns-draughts': ['rules', 'variants', 'online'],
+      'games.strategy.abstract.capture.leaping.columns.dama': ['classic', 'international'],
+      'games.strategy.abstract.capture.leaping.stacking.dama': ['classic', 'international'],
+      'games.strategy.abstract.capture.leaping.stacks.dama': ['classic', 'international'],
+      'games.strategy.abstract.capture.leaping.columns.dama.classic': ['rules', 'online', 'history', 'variants'],
+      'games.strategy.abstract.capture.leaping.columns.dama.international': ['rules', 'online', 'history', 'variants'],
+      'games.strategy.abstract.capture.displacement': ['chess', 'columns', 'stacks', 'stacking'],
       'games.strategy.abstract.capture.displacement.columns': ['chess'],
       'games.strategy.abstract.capture.displacement.columns.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
       'games.strategy.abstract.capture.displacement.stacks': ['chess'],
       'games.strategy.abstract.capture.displacement.stacks.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
+      'games.strategy.abstract.capture.displacement.stacking': ['chess'],
+      'games.strategy.abstract.capture.displacement.stacking.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
       'games.strategy.abstract.capture.displacement.chess': ['rules', 'online', 'variants', 'tournaments', 'openings', 'puzzles'],
 
       // ── Action ──────────────────────────────────────────────────────────────
@@ -2095,6 +2106,30 @@
           note: 'Semantic synonym. In this leaping capture context, stacks and stacking describe the same mechanic.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.stacks.lasca': [
+        {
+          label: 'Equivalent stacking path',
+          from: '@games.strategy.abstract.capture.leaping.stacks.lasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking.lasca',
+          note: 'The stacks synonym resolves to the same identity as the stacking path.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacks.damasca': [
+        {
+          label: 'Equivalent stacking path',
+          from: '@games.strategy.abstract.capture.leaping.stacks.damasca',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking.damasca',
+          note: 'The stacks synonym resolves to the same identity as the stacking path.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacks.columns-draughts': [
+        {
+          label: 'Equivalent stacking path',
+          from: '@games.strategy.abstract.capture.leaping.stacks.columns-draughts',
+          equivalent: '@games.strategy.abstract.capture.leaping.stacking.columns-draughts',
+          note: 'The stacks synonym resolves to the same identity as the stacking path.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.columns.lasca': [
         {
           label: 'Equivalent stacking path',
@@ -2396,6 +2431,32 @@
           note: 'Knowledge/reference candidate for Lasca.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.stacks.lasca': [
+        {
+          label: 'StackWorks — Lasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/lasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Lasca. Reached through the stacks synonym.'
+        },
+        {
+          label: 'BoardGameGeek — Lasca',
+          sip: '@boardgamegeek.games.boardgames.lasca',
+          owner: 'BoardGameGeek',
+          destination: 'https://boardgamegeek.com/boardgame/6862/laska',
+          trust: 'Candidate',
+          note: 'Reference/discovery candidate for Lasca.'
+        },
+        {
+          label: 'Wikipedia — Lasca',
+          sip: '@wikipedia.games.boardgames.lasca',
+          owner: 'Wikipedia',
+          destination: 'https://en.wikipedia.org/wiki/Lasca',
+          trust: 'Candidate',
+          note: 'Knowledge/reference candidate for Lasca.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.columns.damasca': [
         {
           label: 'StackWorks — Damasca',
@@ -2416,6 +2477,16 @@
           note: 'Canonical owner-qualified identity for StackWorks Damasca. Reached through the stacking synonym.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.stacks.damasca': [
+        {
+          label: 'StackWorks — Damasca',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/damasca',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Damasca. Reached through the stacks synonym.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.columns.columns-draughts': [
         {
           label: 'StackWorks — Columns Draughts',
@@ -2426,6 +2497,44 @@
           note: 'Canonical owner-qualified identity for StackWorks Columns Draughts.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.columns.dama': [
+        {
+          label: 'StackWorks — Dama Classic',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.classic',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-classic',
+          trust: 'Domain Verified',
+          note: 'StackWorks Dama Classic reached through the columns path.'
+        },
+        {
+          label: 'StackWorks — Dama International',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.international',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-international',
+          trust: 'Domain Verified',
+          note: 'StackWorks Dama International reached through the columns path.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.dama.classic': [
+        {
+          label: 'StackWorks — Dama Classic',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.classic',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-classic',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Dama Classic via the columns path.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.columns.dama.international': [
+        {
+          label: 'StackWorks — Dama International',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.international',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-international',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Dama International via the columns path.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.stacking.columns-draughts': [
         {
           label: 'StackWorks — Columns Draughts',
@@ -2434,6 +2543,16 @@
           destination: 'https://stackworks.games/columns-draughts',
           trust: 'Domain Verified',
           note: 'Canonical owner-qualified identity for StackWorks Columns Draughts. Reached through the stacking synonym.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.stacks.columns-draughts': [
+        {
+          label: 'StackWorks — Columns Draughts',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/columns-draughts',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Columns Draughts. Reached through the stacks synonym.'
         }
       ],
       'games.strategy.abstract.capture.displacement.chess': [
@@ -2955,6 +3074,8 @@
       '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca': 'https://stackworks.games/lasca',
       '@stackworks.games.strategy.abstract.capture.leaping.columns.damasca': 'https://stackworks.games/damasca',
       '@stackworks.games.strategy.abstract.capture.leaping.columns.columns-draughts': 'https://stackworks.games/columns-draughts',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.classic': 'https://stackworks.games/dama-classic',
+      '@stackworks.games.strategy.abstract.capture.leaping.columns.dama.international': 'https://stackworks.games/dama-international',
       '@stackworks.games.strategy.abstract.capture.displacement.chess': 'https://stackworks.games/chess',
       '@chessdotcom.games.strategy.abstract.capture.displacement.chess': 'https://www.chess.com/',
       '@stackworks.games.strategy.abstract.capture.leaping.checkers': 'https://stackworks.games/checkers',
@@ -3918,6 +4039,34 @@
     // synonym prefix appears anywhere in the middle of the path. When a suffix
     // follows the synonym prefix, from/equivalent are expanded to include it so
     // selecting the suggestion rewrites the whole path correctly.
+    function getOwnerCandidatesForPath(key) {
+      if (!key) return [];
+      const seenSips = new Set();
+      const visitedKeys = new Set();
+      const results = [];
+      function addCandidates(k) {
+        if (visitedKeys.has(k)) return;
+        visitedKeys.add(k);
+        for (const c of (ownerCandidates[k] || [])) {
+          if (!seenSips.has(c.sip)) { seenSips.add(c.sip); results.push(c); }
+        }
+        const segs = k.split('.');
+        for (let len = segs.length; len >= 1; len--) {
+          const prefix = segs.slice(0, len).join('.');
+          const entries = synonymEquivalents[prefix];
+          if (entries) {
+            const suffix = segs.slice(len).join('.');
+            for (const entry of entries) {
+              const equivBase = entry.equivalent.replace(/^@/, '').replace(/\.$/, '');
+              addCandidates(suffix ? equivBase + '.' + suffix : equivBase);
+            }
+          }
+        }
+      }
+      addCandidates(key);
+      return results;
+    }
+
     function getSynonymItemsForPath(key) {
       if (!key) return [];
       const segs = key.split('.');
@@ -3954,7 +4103,7 @@
       const discoveryItems = value.endsWith('.')
         ? (tree[key] || []).filter(seg => boundPathSet.has(key + '.' + seg))
         : [];
-      const ownerItems = isBoundIdentity(value) ? [] : (ownerCandidates[key] || []);
+      const ownerItems = isBoundIdentity(value) ? [] : getOwnerCandidatesForPath(key);
       const personalBinding = getPersonalBinding(value);
       flatSuggestions = [];
       activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + facetItems.length + discoveryItems.length + ownerItems.length - 1);
