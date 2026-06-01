@@ -1761,7 +1761,9 @@
       // ── Leaping capture continuations ────────────────────────────────────────
       'games.strategy.abstract.capture.leaping.checkers': ['rules', 'online', 'history', 'variants', 'tournaments', 'strategy', 'tutorials'],
       'games.strategy.abstract.capture.leaping.draughts': ['rules', 'online', 'history', 'variants', 'tournaments', 'international', 'english', 'turkish'],
-      'games.strategy.abstract.capture.leaping.dama': ['rules', 'online', 'history', 'variants'],
+      'games.strategy.abstract.capture.leaping.dama': ['classic', 'international'],
+      'games.strategy.abstract.capture.leaping.dama.classic': ['rules', 'online', 'history', 'variants'],
+      'games.strategy.abstract.capture.leaping.dama.international': ['rules', 'online', 'history', 'variants'],
 
       // ── Play-intent prefix — intermediate nodes mirror games.* exactly ───────
       // At leaf game-name nodes the children DIFFER: playing qualifiers replace
@@ -1885,6 +1887,26 @@
           mode: 'owner',
           destination: 'https://stackworks.games/draughts',
           note: 'Owner-bound shortcut. Expands to the canonical StackWorks Draughts identity.'
+        }
+      ],
+      'games.dama': [
+        {
+          label: 'Dama game classification',
+          shortcut: '@games.dama',
+          expandsTo: '@games.strategy.abstract.capture.leaping.dama',
+          mode: 'discovery',
+          destination: '',
+          note: 'Discovery shortcut. Expands to the leaping-capture dama branch.'
+        }
+      ],
+      'stackworks.games.dama': [
+        {
+          label: 'StackWorks — Dama shortcut',
+          shortcut: '@stackworks.games.dama',
+          expandsTo: '@stackworks.games.strategy.abstract.capture.leaping.dama',
+          mode: 'owner',
+          destination: 'https://stackworks.games/dama-classic',
+          note: 'Owner-bound shortcut. Expands to the canonical StackWorks Dama identity.'
         }
       ],
       'games.go': [
@@ -2452,6 +2474,44 @@
           note: 'StackWorks owner-bound identity for columns chess under the displacement capture branch.'
         }
       ],
+      'games.strategy.abstract.capture.leaping.dama': [
+        {
+          label: 'StackWorks — Dama Classic',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.dama.classic',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-classic',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for Dama Classic (8×8 standard ruleset).'
+        },
+        {
+          label: 'StackWorks — Dama International',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.dama.international',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-international',
+          trust: 'Domain Verified',
+          note: 'StackWorks owner-bound identity for Dama International.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.dama.classic': [
+        {
+          label: 'StackWorks — Dama Classic',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.dama.classic',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-classic',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Dama Classic.'
+        }
+      ],
+      'games.strategy.abstract.capture.leaping.dama.international': [
+        {
+          label: 'StackWorks — Dama International',
+          sip: '@stackworks.games.strategy.abstract.capture.leaping.dama.international',
+          owner: 'StackWorks',
+          destination: 'https://stackworks.games/dama-international',
+          trust: 'Domain Verified',
+          note: 'Canonical owner-qualified identity for StackWorks Dama International.'
+        }
+      ],
       'games.strategy.abstract.capture.leaping.draughts': [
         {
           label: 'StackWorks — Draughts',
@@ -2902,6 +2962,9 @@
       '@boardgamegeek.games.boardgames.lasca': 'https://boardgamegeek.com/boardgame/6862/laska',
       '@wikipedia.games.boardgames.lasca': 'https://en.wikipedia.org/wiki/Lasca',
       '@stackworks.games.strategy.abstract.capture.leaping.draughts': 'https://stackworks.games/draughts',
+      '@stackworks.games.dama': 'https://stackworks.games/dama-classic',
+      '@stackworks.games.strategy.abstract.capture.leaping.dama.classic': 'https://stackworks.games/dama-classic',
+      '@stackworks.games.strategy.abstract.capture.leaping.dama.international': 'https://stackworks.games/dama-international',
       '@worlddraughts.games.strategy.abstract.capture.leaping.draughts': 'https://www.worlddraughts.com/',
       '@wikipedia.games.strategy.abstract.capture.leaping.draughts': 'https://en.wikipedia.org/wiki/Draughts',
       '@ogs.games.strategy.abstract.territory.enclosure.go': 'https://online-go.com/',
