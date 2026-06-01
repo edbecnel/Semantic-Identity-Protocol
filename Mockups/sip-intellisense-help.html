@@ -354,7 +354,7 @@
     <div class="page-header">
       <a class="back-link" href="sip-intellisense-mockup.html">&#8592; Back to mockup</a>
       <h1>SIP IntelliSense — Help</h1>
-      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, shortcuts, synonyms, broad facets, favorites, shortcut sharing, import and management, search, and resource-type binding approaches.</p>
+      <p class="subtitle">A guide to every feature in the interactive mockup: input, suggestions, identity layers &amp; the global registry, resource-type binding, shortcuts, synonyms, broad facets, favorites, shortcut sharing, import and management, search, and demo buttons.</p>
     </div>
 
     <!-- Table of contents -->
@@ -364,16 +364,17 @@
         <li><a href="#overview"><span class="toc-num">1</span>Overview</a></li>
         <li><a href="#sip-input"><span class="toc-num">2</span>The SIP input</a></li>
         <li><a href="#suggestions"><span class="toc-num">3</span>Suggestion types</a></li>
-        <li><a href="#resource-binding"><span class="toc-num">4</span>Resource-type binding</a></li>
-        <li><a href="#resolution"><span class="toc-num">5</span>Resolution preview</a></li>
-        <li><a href="#favorites"><span class="toc-num">6</span>Favorites</a></li>
-        <li><a href="#shortcuts"><span class="toc-num">7</span>Personal shortcuts</a></li>
-        <li><a href="#shortcut-sharing"><span class="toc-num">8</span>Sharing, import &amp; manage</a></li>
-        <li><a href="#search"><span class="toc-num">9</span>Search</a></li>
-        <li><a href="#keyboard"><span class="toc-num">10</span>Keyboard &amp; navigation</a></li>
-        <li><a href="#sidebar"><span class="toc-num">11</span>Sidebar panels</a></li>
-        <li><a href="#demo-buttons"><span class="toc-num">12</span>Demo buttons</a></li>
-        <li><a href="#glossary"><span class="toc-num">13</span>Glossary</a></li>
+        <li><a href="#identity-layers"><span class="toc-num">4</span>Identity layers &amp; global registry</a></li>
+        <li><a href="#resource-binding"><span class="toc-num">5</span>Resource-type binding</a></li>
+        <li><a href="#resolution"><span class="toc-num">6</span>Resolution preview</a></li>
+        <li><a href="#favorites"><span class="toc-num">7</span>Favorites</a></li>
+        <li><a href="#shortcuts"><span class="toc-num">8</span>Personal shortcuts</a></li>
+        <li><a href="#shortcut-sharing"><span class="toc-num">9</span>Sharing, import &amp; manage</a></li>
+        <li><a href="#search"><span class="toc-num">10</span>Search</a></li>
+        <li><a href="#keyboard"><span class="toc-num">11</span>Keyboard &amp; navigation</a></li>
+        <li><a href="#sidebar"><span class="toc-num">12</span>Sidebar panels</a></li>
+        <li><a href="#demo-buttons"><span class="toc-num">13</span>Demo buttons</a></li>
+        <li><a href="#glossary"><span class="toc-num">14</span>Glossary</a></li>
       </ul>
     </div>
 
@@ -461,10 +462,99 @@
       <p>When the current path has at least two segments and a registered semantic, a <strong>Create freeform shortcut</strong> row appears at the bottom of the panel. Type any alias (e.g. <code>my.lasca</code>) and click <strong>Save shortcut</strong> to bind it to the current SIP for this session.</p>
     </section>
 
-    <!-- 4. Resource-type binding -->
-    <section class="section" id="resource-binding">
+    <!-- 4. Identity layers & global registry -->
+    <section class="section" id="identity-layers">
       <div class="section-header">
         <span class="section-num">4</span>
+        <h2>Identity layers &amp; the global registry</h2>
+      </div>
+      <p>A SIP identity is not a single flat string. It is better understood as a <strong>four-layer model</strong>, with each layer serving a different purpose for different audiences. The <strong>Identity Layers</strong> card in the right sidebar visualises this chain for the Lasca example.</p>
+
+      <h3>The four layers</h3>
+      <table class="badge-table">
+        <tbody>
+          <tr>
+            <td style="white-space:nowrap;"><strong>Layer 1</strong><br>Domain alias</td>
+            <td><code>lasca.stackworks.games</code><br>A familiar web URL fragment. <strong>Not a SIP string</strong> — it does not begin with <code>@</code>. Resolved via the domain&rsquo;s <code>/.well-known/sip.json</code> manifest into the SIP layer below.</td>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap;"><strong>Layer 2</strong><br>SIP shortcut</td>
+            <td><code>@stackworks/lasca</code><br>An owner-bound SIP shortcut. Begins with <code>@</code>. Human-friendly and marketable. Registered in the owner namespace. Expands to the semantic discovery path below.</td>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap;"><strong>Layer 3</strong><br>Discovery path</td>
+            <td><code>@games.strategy.abstract.capture.leaping.stacking.lasca</code><br>A concept-level SIP. Owner-neutral — not bound to any one publisher. Returned by the global shortcut registry when a global shortcut like <code>@games/lasca</code> is resolved.</td>
+          </tr>
+          <tr>
+            <td style="white-space:nowrap;"><strong>Layer 4</strong><br>Canonical owner-bound SIP</td>
+            <td><code>@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca</code><br>The permanent, machine-verifiable identity. Not dependent on any domain name. This is the form resolvers ultimately verify.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout rule">
+        <strong>Core rule:</strong> SIP strings begin with <code>@</code>. Domain aliases do not begin with <code>@</code> and are not SIP strings. They are web entry points that bridge into SIP resolution.
+      </div>
+
+      <h3>Domain discovery manifests</h3>
+      <p>A domain participates in SIP by publishing a manifest at <code>https://&lt;domain&gt;/.well-known/sip.json</code>. The manifest lists SIP aliases the domain resolves to, each with a fingerprint for verification. The domain is a doorway; the SIP identity is the verified canonical record.</p>
+      <p>Example manifest for <code>stackworks.games</code>:</p>
+      <div class="example-block">
+        <div class="example-query" style="font-size:12px;line-height:1.6;">
+          &quot;sipManifest&quot;: &quot;1.0&quot;,<br>
+          &quot;domain&quot;: &quot;stackworks.games&quot;,<br>
+          &quot;aliases&quot;: [{ &quot;alias&quot;: &quot;@stackworks/lasca&quot;, &quot;fingerprint&quot;: &quot;7K3Q-9M2A&quot; }],<br>
+          &quot;signedBy&quot;: &quot;@owner/edbecnel&quot;
+        </div>
+        <div class="example-desc">Published at <code>https://stackworks.games/.well-known/sip.json</code>. The resolver can independently verify the alias against the fingerprint and signature.</div>
+      </div>
+
+      <h3>Global SIP Shortcut Registry</h3>
+      <p>Short, public, owner-neutral shortcuts such as <code>@games/lasca</code> or <code>@games/chess</code> are governed by a <strong>Global SIP Shortcut Registry</strong> — not privately owned by whoever registers first.</p>
+      <p>Key principles:</p>
+      <ul>
+        <li><strong>Namespace stewardship.</strong> Public namespaces such as <code>@games</code>, <code>@music</code>, and <code>@recipes</code> are managed by recognised namespace stewards, not private companies.</li>
+        <li><strong>Acceptance process.</strong> A global shortcut goes through proposal → public review → conflict check → semantic path assignment → signed publication. First-come, first-served does not apply.</li>
+        <li><strong>Signed registry entries.</strong> Each accepted shortcut is a signed JSON record including the shortcut, the discovery path it expands to, the steward, status, and a cryptographic signature.</li>
+        <li><strong>Anti-scarcity.</strong> Short global shortcuts remain discovery-oriented and do not create private ownership over public semantic concepts. An owner-bound shortcut like <code>@stackworks/lasca</code> is distinct from and does not displace the global shortcut <code>@games/lasca</code>.</li>
+      </ul>
+      <p>Example global registry entry:</p>
+      <div class="example-block">
+        <div class="example-query" style="font-size:12px;line-height:1.6;">
+          &quot;shortcut&quot;: &quot;@games/lasca&quot;,<br>
+          &quot;resolvesTo&quot;: &quot;@games.strategy.abstract.capture.leaping.stacking.lasca&quot;,<br>
+          &quot;namespace&quot;: &quot;@games&quot;,<br>
+          &quot;steward&quot;: &quot;SIP Games Namespace Registry&quot;,<br>
+          &quot;status&quot;: &quot;accepted&quot;,<br>
+          &quot;type&quot;: &quot;semantic-discovery-shortcut&quot;,<br>
+          &quot;signature&quot;: &quot;&hellip;&quot;
+        </div>
+        <div class="example-desc">Accepted by the <em>@games</em> namespace steward after a public review process. Note that this is a discovery shortcut — it does not point to StackWorks or any private owner.</div>
+      </div>
+
+      <h3>Three shortcut types</h3>
+      <table class="badge-table">
+        <tbody>
+          <tr>
+            <td><code>@games/lasca</code></td>
+            <td><strong>Global semantic shortcut.</strong> Public, owner-neutral. Governed by a namespace steward. Resolves to a discovery path, not to a private owner.</td>
+          </tr>
+          <tr>
+            <td><code>@stackworks/lasca</code></td>
+            <td><strong>Owner or brand shortcut.</strong> Controlled by the verified owner. Resolves to an owner-bound SIP and can route deterministically.</td>
+          </tr>
+          <tr>
+            <td><code>@my/lasca</code></td>
+            <td><strong>Local or private shortcut.</strong> User-defined alias. Not globally authoritative. Applies only within the user&rsquo;s trusted context.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 5. Resource-type binding -->
+    <section class="section" id="resource-binding">
+      <div class="section-header">
+        <span class="section-num">5</span>
         <h2>Resource-type binding</h2>
       </div>
       <p>An owner-bound SIP identifies <em>who</em> holds an identity, but it does not inherently tell you <em>what kind</em> of resource the destination offers — is it a place to play, an article to read, a store page to purchase from? SIP supports three coexisting approaches to expressing resource-type intent.</p>
@@ -528,10 +618,10 @@
       </table>
     </section>
 
-    <!-- 5. Resolution preview -->
+    <!-- 6. Resolution preview -->
     <section class="section" id="resolution">
       <div class="section-header">
-        <span class="section-num">5</span>
+        <span class="section-num">6</span>
         <h2>Resolution preview</h2>
       </div>
       <p>When the current SIP resolves to a known destination — either because it is an owner-bound identity or matches a saved personal shortcut — the <strong>Owner-bound clickable SIP</strong> panel appears below the input.</p>
@@ -545,10 +635,10 @@
       </div>
     </section>
 
-    <!-- 6. Favorites -->
+    <!-- 7. Favorites -->
     <section class="section" id="favorites">
       <div class="section-header">
-        <span class="section-num">6</span>
+        <span class="section-num">7</span>
         <h2>Favorites</h2>
       </div>
       <p>Favorites (bookmarks) let you save any SIP string from the input for quick recall — useful when exploring a long path you want to return to later. Unlike personal shortcuts, a favorite simply stores the exact SIP string; it does not create an alias.</p>
@@ -574,10 +664,10 @@
       </div>
     </section>
 
-    <!-- 7. Personal shortcuts -->
+    <!-- 8. Personal shortcuts -->
     <section class="section" id="shortcuts">
       <div class="section-header">
-        <span class="section-num">7</span>
+        <span class="section-num">8</span>
         <h2>Personal shortcuts</h2>
       </div>
       <p>A <strong>personal shortcut</strong> is a compact alias — such as <code>@games.lasca</code> — that the resolver expands to a longer SIP in your trusted context. Shortcuts are more powerful than Favorites: they create a named alias that participates in IntelliSense and resolution.</p>
@@ -609,13 +699,13 @@
       </div>
     </section>
 
-    <!-- 8. Sharing & import -->
+    <!-- 9. Sharing & import -->
     <section class="section" id="shortcut-sharing">
       <div class="section-header">
-        <span class="section-num">8</span>
+        <span class="section-num">9</span>
         <h2>Sharing, import &amp; manage</h2>
       </div>
-      <p>Personal shortcuts become more powerful when shared. The <strong>My shortcuts</strong> dropdown lets you export your collection as a <code>sip-shortcuts/1.0</code> JSON file and import collections from others. Sharing works across three tiers — anonymous, identified, and globally published — each requiring progressively more identity verification.</p>
+      <p>Personal shortcuts become more powerful when shared. The <strong>My shortcuts</strong> dropdown lets you export your collection as a <code>sip-shortcuts/1.0</code> JSON file and import collections from others. Sharing works across three tiers — anonymous, identified, and globally published — each requiring progressively more identity verification. See <a href="#identity-layers" style="color:var(--accent);">§ 4 Identity layers</a> for how a globally-published shortcut collection anchors to the owner-bound SIP registry.</p>
 
       <h3>Your SIP identity</h3>
       <p>The <strong>Your SIP identity</strong> field below the SIP input sets the email address that identifies you as an author. It is optional — you can share shortcuts without it. When set, it unlocks identified sharing and the global publishing options.</p>
@@ -697,10 +787,10 @@
       </div>
     </section>
 
-    <!-- 9. Search -->
+    <!-- 10. Search -->
     <section class="section" id="search">
       <div class="section-header">
-        <span class="section-num">9</span>
+        <span class="section-num">10</span>
         <h2>Search</h2>
       </div>
       <p>The <strong>Search SIPs</strong> bar at the top of the page lets you find any registered SIP path by keyword using a boolean query language. Clicking a result loads it into the SIP input.</p>
@@ -739,10 +829,10 @@
       <p>Press <span class="key">↓</span> from the search box to move focus into the results list. Use <span class="key">↑</span> / <span class="key">↓</span> to navigate between items, <span class="key">Enter</span> to load a result, and <span class="key">Esc</span> to clear the search.</p>
     </section>
 
-    <!-- 10. Keyboard & navigation -->
+    <!-- 11. Keyboard & navigation -->
     <section class="section" id="keyboard">
       <div class="section-header">
-        <span class="section-num">10</span>
+        <span class="section-num">11</span>
         <h2>Keyboard &amp; navigation</h2>
       </div>
       <p>The SIP input supports full keyboard control of the IntelliSense panel.</p>
@@ -757,15 +847,18 @@
       </table>
     </section>
 
-    <!-- 11. Sidebar panels -->
+    <!-- 12. Sidebar panels -->
     <section class="section" id="sidebar">
       <div class="section-header">
-        <span class="section-num">11</span>
+        <span class="section-num">12</span>
         <h2>Sidebar panels</h2>
       </div>
 
+      <h3>Identity Layers</h3>
+      <p>Visualises the four-layer resolution chain for the Lasca example, showing how a domain alias (layer 1) bridges through an owner-bound SIP shortcut (layer 2) and a semantic discovery path (layer 3) down to the permanent canonical owner-bound SIP identity (layer 4). Also displays a live example of a signed <strong>Global Registry Entry</strong> and a <strong>Domain Manifest</strong> in JSON format. See <a href="#identity-layers" style="color:var(--accent);">§ 4 Identity layers &amp; global registry</a> for full details.</p>
+
       <h3>★ Favorites</h3>
-      <p>Lists all SIP strings you have bookmarked in this session. Each entry shows its name, the underlying SIP (if different from the name), a <strong>Load</strong> button, and a <strong>✕</strong> remove button. See <a href="#favorites" style="color:var(--accent);">§ 6 Favorites</a> for the full workflow.</p>
+      <p>Lists all SIP strings you have bookmarked in this session. Each entry shows its name, the underlying SIP (if different from the name), a <strong>Load</strong> button, and a <strong>✕</strong> remove button. See <a href="#favorites" style="color:var(--accent);">§ 7 Favorites</a> for the full workflow.</p>
 
       <h3>Current interpretation</h3>
       <p>A live status panel that reflects the current SIP input:</p>
@@ -779,14 +872,17 @@
       <h3>Core UX rule</h3>
       <p>A fixed reference card explaining the fundamental distinction between semantic exploration (typing categories) and identity commitment (choosing an owner-bound result). The explanatory text also covers shortcuts, synonyms, and broad facets.</p>
 
+      <h3>Current interpretation</h3>
+      <p>A live status panel that reflects the current SIP input: mode, plain-language meaning, resolution behaviour, and destination preview.</p>
+
       <h3>Selection history</h3>
       <p>A running log of every action taken in the mockup — segment selections, shortcut expansions, owner identity commits, shortcut saves, favorites saves, and more. The most recent action appears at the top. The log is capped at twelve entries.</p>
     </section>
 
-    <!-- 12. Demo buttons -->
+    <!-- 13. Demo buttons -->
     <section class="section" id="demo-buttons">
       <div class="section-header">
-        <span class="section-num">12</span>
+        <span class="section-num">13</span>
         <h2>Demo buttons</h2>
       </div>
       <p>The actions bar below the SIP input contains preset scenario buttons for exploring the mockup without manual typing.</p>
@@ -836,6 +932,14 @@
         <div class="scenario-desc"><strong>Use when you want a fully self-describing SIP that makes the resource type explicit — even to someone unfamiliar with the owner.</strong> Sets the input to <code>@ogs.play.games.strategy.abstract.territory.enclosure.go</code>. The intent segment <code>play</code> is inserted immediately after the owner namespace, so the path declares both who provides the resource and what kind it is without relying on a terminal qualifier or the owner's implied profile. The SIP resolves to the same OGS play destination as Option B, but is unambiguous at a glance.</div>
       </div>
       <div class="scenario">
+        <div class="scenario-title">Try domain alias chain</div>
+        <div class="scenario-desc">Loads the owner-bound shortcut <code>@stackworks.games.lasca</code> that the domain alias <code>lasca.stackworks.games</code> bridges to, and logs a detailed history entry explaining the full four-layer chain: domain alias → SIP shortcut → semantic discovery path → canonical owner-bound SIP. Demonstrates that the domain name is a web entry point, not a SIP identity — it enters the chain via the <code>/.well-known/sip.json</code> manifest. See <a href="#identity-layers" style="color:var(--accent);">§ 4</a> for background.</div>
+      </div>
+      <div class="scenario">
+        <div class="scenario-title">Try global shortcut @games/lasca</div>
+        <div class="scenario-desc">Sets the input to <code>@games.lasca</code> (the dot-notation equivalent of the registry shortcut <code>@games/lasca</code>) and logs a history entry explaining that this shortcut is governed by the <em>SIP Games Namespace Registry</em> — not privately owned by StackWorks or any other party. The shortcut resolves to the owner-neutral discovery path <code>@games.strategy.abstract.capture.leaping.stacking.lasca</code>. Contrast this with <strong>Try @stackworks.games.lasca</strong>, which uses the owner-bound shortcut that resolves deterministically to the StackWorks destination.</div>
+      </div>
+      <div class="scenario">
         <div class="scenario-title">Run guided demo</div>
         <div class="scenario-desc">Automatically steps through the full discovery path from <code>@games.</code> to <code>@stackworks.games.strategy.abstract.capture.leaping.columns.lasca</code>, pausing briefly at each step so you can observe the IntelliSense suggestions update in real time.</div>
       </div>
@@ -845,16 +949,44 @@
       </div>
     </section>
 
-    <!-- 13. Glossary -->
+    <!-- 14. Glossary -->
     <section class="section" id="glossary">
       <div class="section-header">
-        <span class="section-num">13</span>
+        <span class="section-num">14</span>
         <h2>Glossary</h2>
       </div>
 
       <div class="glossary-item">
         <div class="glossary-term">SIP — Semantic Identity Path</div>
         <div class="glossary-def">A dot-separated, human-readable string prefixed with <code>@</code> that encodes the identity of a concept through a chain of semantic categories. Example: <code>@games.strategy.abstract.capture.leaping.columns.lasca</code>.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Domain-based discovery alias</div>
+        <div class="glossary-def">A familiar domain-style address (e.g. <code>lasca.stackworks.games</code> or <code>stackworks.games/lasca</code>) that serves as a web entry point into SIP resolution. <strong>Not a SIP string</strong> — it does not begin with <code>@</code>. Resolved via the domain&rsquo;s <code>/.well-known/sip.json</code> manifest into a SIP shortcut or canonical identity. The domain is a doorway; the SIP identity remains the verified canonical record.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Domain discovery manifest (<code>/.well-known/sip.json</code>)</div>
+        <div class="glossary-def">A JSON document published by a domain at the conventional path <code>https://&lt;domain&gt;/.well-known/sip.json</code>. Lists the SIP aliases the domain resolves to, each with an optional fingerprint and a cryptographic signature from the verified owner. Lets ordinary domain names participate in SIP without becoming the root identity.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Canonical owner-bound SIP identity</div>
+        <div class="glossary-def">The full permanent SIP identity used internally by resolvers, registries, and verification systems. Example: <code>@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca</code>. Permanent, machine-verifiable, portable, and not dependent on any domain name. Users rarely need to type or see this form — it is the truth underneath the shortcut.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Global SIP Shortcut Registry</div>
+        <div class="glossary-def">A formal registry layer that defines accepted public shortcut paths such as <code>@games/lasca</code> or <code>@games/chess</code>. Each shortcut is a signed registry entry, not merely a piece of text. Entries are approved by namespace stewards through an acceptance process — proposal, public review, conflict check, semantic path assignment, and signed publication. First-come, first-served does not apply to public semantic concepts.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Namespace steward</div>
+        <div class="glossary-def">An organisation or working group responsible for reviewing and approving global shortcut entries within a specific public namespace. For example, the <em>SIP Games Namespace Registry</em> is the steward for the <code>@games</code> namespace. Namespace stewards manage a shared public vocabulary rather than owning it commercially.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Signed registry entry</div>
+        <div class="glossary-def">A registry record for an accepted global shortcut, signed by the namespace steward. Includes the shortcut, the discovery path it resolves to, the namespace, status, description, steward name, version, creation date, and cryptographic signature. The signature allows resolvers to verify the record&rsquo;s authenticity independently.</div>
+      </div>
+      <div class="glossary-item">
+        <div class="glossary-term">Global semantic shortcut</div>
+        <div class="glossary-def">A public, owner-neutral shortcut (e.g. <code>@games/lasca</code>) governed by a namespace steward. Resolves to a semantic discovery path, not to any private owner. Distinct from an owner or brand shortcut (e.g. <code>@stackworks/lasca</code>), which is controlled by a verified owner and resolves to an owner-bound identity.</div>
       </div>
       <div class="glossary-item">
         <div class="glossary-term">Discovery path</div>
@@ -943,7 +1075,7 @@
     </section>
 
     <footer>
-      Help file for the SIP IntelliSense standalone mockup. No external libraries or network requests.
+      Help file for the SIP IntelliSense standalone mockup. Covers all features including identity layers, global shortcut registry, domain discovery manifests, and demo scenarios. No external libraries or network requests.
     </footer>
 
   </main>

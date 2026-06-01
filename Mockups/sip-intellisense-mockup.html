@@ -1376,6 +1376,85 @@
 
     /* Ensure author display:flex doesn't override the UA [hidden]=display:none */
     .shortcuts-manager-overlay[hidden] { display: none !important; }
+
+    /* ── Identity-layer chain card ─────────────────────────────────────────── */
+    .chain {
+      display: grid;
+      gap: 0;
+    }
+
+    .chain-node {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .chain-node-inner {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.035);
+      border-radius: 11px;
+      padding: 9px 11px;
+      margin-bottom: 4px;
+    }
+
+    .chain-node-inner.layer-domain  { border-color: rgba(253,186,116,.28); background: rgba(253,186,116,.06); }
+    .chain-node-inner.layer-shortcut { border-color: rgba(196,181,253,.28); background: rgba(196,181,253,.06); }
+    .chain-node-inner.layer-discovery { border-color: rgba(253,230,138,.28); background: rgba(253,230,138,.06); }
+    .chain-node-inner.layer-owner  { border-color: rgba(134,239,172,.28); background: rgba(134,239,172,.06); }
+
+    .chain-layer-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 4px;
+    }
+
+    .layer-domain  .chain-layer-label { color: #fdba74; }
+    .layer-shortcut .chain-layer-label { color: #c4b5fd; }
+    .layer-discovery .chain-layer-label { color: var(--warn); }
+    .layer-owner  .chain-layer-label { color: var(--good); }
+
+    .chain-value {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .chain-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      line-height: 1.4;
+    }
+
+    .chain-arrow {
+      padding: 2px 0 2px 18px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .registry-entry {
+      background: rgba(3,7,18,.46);
+      border: 1px solid rgba(125,211,252,.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+      margin-top: 12px;
+    }
+
+    .registry-entry .rk { color: var(--accent); }
+    .registry-entry .rv { color: var(--text); }
+    .registry-entry .rc { color: var(--muted); }
   </style>
 </head>
 <body>
@@ -1386,7 +1465,7 @@
         <a class="help-link" href="sip-intellisense-help.html" target="_blank" rel="noopener noreferrer">&#10067; Help</a>
       </div>
       <p class="subtitle">
-        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, resolver-assisted shortcut binding, semantic synonyms, and broad semantic facets. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, click an owner-bound result to rewrite the string into a canonical owner-qualified identity, or save a discovered result as your personal shortcut.
+        This self-contained mockup demonstrates SIP Semantic IntelliSense, owner-bound resolution, shortcut SIP aliases, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, domain alias resolution chains, and the global shortcut registry model. Click a discovery segment to continue exploring, click a shortcut expansion to replace a short SIP with a longer semantic path, click an owner-bound result to rewrite the string into a canonical owner-qualified identity, or save a discovered result as your personal shortcut. Use <em>Try domain alias chain</em> to see how a domain name bridges into SIP, or <em>Try global shortcut @games/lasca</em> to see namespace-steward-governed discovery shortcuts.
       </p>
     </header>
 
@@ -1460,6 +1539,8 @@
             <button id="resourceTypeBBtn">Try Option B — owner-implicit</button>
             <button id="resourceTypeCBtn">Try Option C — namespace intent</button>
             <button id="playIntentBtn">Try @play.games.</button>
+            <button id="domainAliasBtn">Try domain alias chain</button>
+            <button id="globalShortcutBtn">Try global shortcut @games/lasca</button>
             <button id="demoBtn" class="primary">Run guided demo</button>
             <button id="metadataBtn">Toggle metadata</button>
             <button id="addFavoriteBtn" class="fav-btn">&#9734; Favorite</button>
@@ -1536,6 +1617,69 @@
         <div class="card">
           <div class="card-header">
             <div class="card-title">
+              <strong>Identity Layers</strong>
+              <span>Four-layer resolution chain from domain alias to canonical SIP.</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chain">
+              <div class="chain-node">
+                <div class="chain-node-inner layer-domain">
+                  <div class="chain-layer-label">Layer 1 &mdash; Domain Alias</div>
+                  <div class="chain-value">lasca.stackworks.games</div>
+                  <div class="chain-desc">Web entry point. Not a SIP string. Does not begin with&nbsp;@. Resolved via <code>/.well-known/sip.json</code>.</div>
+                </div>
+              </div>
+              <div class="chain-arrow">&#8595;</div>
+              <div class="chain-node">
+                <div class="chain-node-inner layer-shortcut">
+                  <div class="chain-layer-label">Layer 2 &mdash; SIP Shortcut</div>
+                  <div class="chain-value">@stackworks/lasca</div>
+                  <div class="chain-desc">Owner-bound shortcut. Begins with @. Human-friendly. Registered in the owner namespace.</div>
+                </div>
+              </div>
+              <div class="chain-arrow">&#8595;</div>
+              <div class="chain-node">
+                <div class="chain-node-inner layer-discovery">
+                  <div class="chain-layer-label">Layer 3 &mdash; Discovery Path</div>
+                  <div class="chain-value">@games.strategy.abstract.capture.leaping.stacking.lasca</div>
+                  <div class="chain-desc">Semantic discovery path. Concept-level identity. Not owner-bound.</div>
+                </div>
+              </div>
+              <div class="chain-arrow">&#8595;</div>
+              <div class="chain-node">
+                <div class="chain-node-inner layer-owner">
+                  <div class="chain-layer-label">Layer 4 &mdash; Canonical Owner-Bound SIP</div>
+                  <div class="chain-value">@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca</div>
+                  <div class="chain-desc">Permanent. Machine-verifiable. Not dependent on any domain name.</div>
+                </div>
+              </div>
+            </div>
+
+            <p style="margin:12px 0 6px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;">Global Registry Entry Example</p>
+            <div class="registry-entry">
+              <span class="rk">&quot;shortcut&quot;</span><span class="rc">: </span><span class="rv">&quot;@games/lasca&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;resolvesTo&quot;</span><span class="rc">: </span><span class="rv">&quot;@games.strategy.abstract.capture.leaping.stacking.lasca&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;namespace&quot;</span><span class="rc">: </span><span class="rv">&quot;@games&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;steward&quot;</span><span class="rc">: </span><span class="rv">&quot;SIP Games Namespace Registry&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;status&quot;</span><span class="rc">: </span><span class="rv">&quot;accepted&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;type&quot;</span><span class="rc">: </span><span class="rv">&quot;semantic-discovery-shortcut&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;signature&quot;</span><span class="rc">: </span><span class="rv">&quot;&hellip;&quot;</span>
+            </div>
+
+            <p style="margin:12px 0 6px;font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;">Domain Manifest Example</p>
+            <div class="registry-entry">
+              <span class="rk">&quot;sipManifest&quot;</span><span class="rc">: </span><span class="rv">&quot;1.0&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;domain&quot;</span><span class="rc">: </span><span class="rv">&quot;stackworks.games&quot;</span><span class="rc">,</span><br>
+              <span class="rk">&quot;aliases&quot;</span><span class="rc">: [{ </span><span class="rk">&quot;alias&quot;</span><span class="rc">: </span><span class="rv">&quot;@stackworks/lasca&quot;</span><span class="rc">, </span><span class="rk">&quot;fingerprint&quot;</span><span class="rc">: </span><span class="rv">&quot;7K3Q-9M2A&quot;</span><span class="rc"> }],</span><br>
+              <span class="rk">&quot;signedBy&quot;</span><span class="rc">: </span><span class="rv">&quot;@owner/edbecnel&quot;</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
               <strong>Selection history</strong>
               <span>Tracks what the mockup did.</span>
             </div>
@@ -1548,7 +1692,7 @@
     </section>
 
     <footer>
-      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, owner-bound clickable links, copyable URL previews, and Favorites bookmarking. No external libraries, fonts, network requests, or build tools required.
+      Standalone HTML mockup. Supports semantic discovery selection, shortcut SIP expansion, resolver-assisted shortcut binding, semantic synonyms, broad semantic facets, owner-bound clickable links, copyable URL previews, Favorites bookmarking, domain alias resolution chains, and the Global Shortcut Registry model. No external libraries, fonts, network requests, or build tools required.
     </footer>
   </main>
 
@@ -2074,6 +2218,102 @@
       ]
     };
 
+    // ── Domain-based discovery aliases (not SIP strings — no @ prefix) ───────
+    // These are web entry points that bridge into SIP via /.well-known/sip.json
+    const domainAliases = {
+      'stackworks.games/lasca': {
+        domain: 'stackworks.games',
+        resolvesTo: '@stackworks.games.lasca',
+        canonical: '@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca',
+        destination: 'https://stackworks.games/lasca',
+        manifestUrl: 'https://stackworks.games/.well-known/sip.json',
+        fingerprint: '7K3Q-9M2A'
+      },
+      'lasca.stackworks.games': {
+        domain: 'lasca.stackworks.games',
+        resolvesTo: '@stackworks.games.lasca',
+        canonical: '@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca',
+        destination: 'https://stackworks.games/lasca',
+        manifestUrl: 'https://stackworks.games/.well-known/sip.json',
+        fingerprint: '7K3Q-9M2A'
+      },
+      'stackworks.games/damasca': {
+        domain: 'stackworks.games',
+        resolvesTo: '@stackworks.games.damasca',
+        canonical: '@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/damasca',
+        destination: 'https://stackworks.games/damasca',
+        manifestUrl: 'https://stackworks.games/.well-known/sip.json',
+        fingerprint: '8R4P-1N3B'
+      },
+      'boardgamegeek.com/boardgame/6862': {
+        domain: 'boardgamegeek.com',
+        resolvesTo: '@boardgamegeek.games.boardgames.lasca',
+        canonical: '@boardgamegeek.games.strategy.abstract.capture.leaping.columns.lasca',
+        destination: 'https://boardgamegeek.com/boardgame/6862/laska',
+        manifestUrl: 'https://boardgamegeek.com/.well-known/sip.json',
+        fingerprint: '3T7W-6C8D'
+      }
+    };
+
+    // ── Global Shortcut Registry examples ────────────────────────────────────
+    // Signed registry entries accepted by a namespace steward, not a private owner.
+    const globalRegistryExamples = [
+      {
+        shortcut: '@games/lasca',
+        resolvesTo: '@games.strategy.abstract.capture.leaping.stacking.lasca',
+        status: 'accepted',
+        namespace: '@games',
+        type: 'semantic-discovery-shortcut',
+        description: 'Lasca / Laska family of stacking capture board games',
+        steward: 'SIP Games Namespace Registry',
+        created: '2026-06-01',
+        version: '1.0'
+      },
+      {
+        shortcut: '@games/laska',
+        resolvesTo: '@games.strategy.abstract.capture.leaping.stacking.lasca',
+        status: 'accepted',
+        namespace: '@games',
+        type: 'semantic-discovery-shortcut',
+        description: 'Synonym for @games/lasca (alternate spelling)',
+        steward: 'SIP Games Namespace Registry',
+        created: '2026-06-01',
+        version: '1.0'
+      },
+      {
+        shortcut: '@games/chess',
+        resolvesTo: '@games.strategy.abstract.capture.displacement.chess',
+        status: 'accepted',
+        namespace: '@games',
+        type: 'semantic-discovery-shortcut',
+        description: 'Chess — displacement-capture abstract strategy game',
+        steward: 'SIP Games Namespace Registry',
+        created: '2026-06-01',
+        version: '1.0'
+      },
+      {
+        shortcut: '@games/checkers',
+        resolvesTo: '@games.strategy.abstract.capture.leaping.checkers',
+        status: 'accepted',
+        namespace: '@games',
+        type: 'semantic-discovery-shortcut',
+        description: 'Checkers / Draughts family of leaping capture games',
+        steward: 'SIP Games Namespace Registry',
+        created: '2026-06-01',
+        version: '1.0'
+      },
+      {
+        shortcut: '@games/go',
+        resolvesTo: '@games.strategy.abstract.territory.enclosure.go',
+        status: 'accepted',
+        namespace: '@games',
+        type: 'semantic-discovery-shortcut',
+        description: 'Go — territory enclosure abstract strategy game',
+        steward: 'SIP Games Namespace Registry',
+        created: '2026-06-01',
+        version: '1.0'
+      }
+    ];
 
     const synonymEquivalents = {
       'games.strategy.abstract.capture.leaping.columns': [
@@ -3142,21 +3382,12 @@
     // Runtime-only personal shortcuts for the mockup. In a real SIP resolver,
     // this could live in a browser profile, AI assistant memory, organizational
     // profile, or trusted local resolver context.
-    // Pre-populated with one sample so "My shortcuts" is non-empty on first load,
-    // illustrating what a user-defined shortcut looks like.
-    const personalShortcutBindings = {
-      '@games.lasca': {
-        shortcut: '@games.lasca',
-        label: 'StackWorks — Lasca',
-        sip: '@stackworks.games.strategy.abstract.capture.leaping.columns.lasca',
-        destination: 'https://stackworks.games/lasca',
-        owner: 'stackworks',
-        trust: 'Verified',
-        note: 'Sample shortcut — compresses the full Lasca canonical path.',
-        isOwnerBound: true,
-        createdBy: 'you@example.com'
-      }
-    };
+    // Starts empty: @games.lasca is a global discovery shortcut governed by the
+    // @games namespace steward and must not be pre-bound to any owner. To see
+    // personal shortcut binding in action, use "Try shortcut binding setup" and
+    // save an owner candidate. @stackworks.games.lasca is the owner-bound form
+    // and is registered in boundDestinations — not here.
+    const personalShortcutBindings = {};
 
     // The current user's identity, used as the author of exported shortcut packages.
     // In a real SIP resolver this would come from a browser profile or federated
@@ -4097,7 +4328,10 @@
     function renderSuggestions() {
       const value = normalize(input.value);
       const key = discoveryKey(value);
-      const shortcutItems = shortcutAliases[key] || shortcutAliases[currentKey(value)] || [];
+      // Prefer the full current key (preserves owner prefix) so that owner-bound
+      // shortcuts like @stackworks.games.lasca resolve to their own entry rather
+      // than falling through to the discovery entry at games.lasca.
+      const shortcutItems = shortcutAliases[currentKey(value)] || shortcutAliases[key] || [];
       const synonymItems = getSynonymItemsForPath(key);
       const facetItems = broadSemanticFacets[key] || [];
       const discoveryItems = value.endsWith('.')
@@ -4800,6 +5034,43 @@
     document.getElementById('playIntentBtn').addEventListener('click', () => {
       input.value = '@play.games.';
       addHistory('Play-intent path', 'Entered the @play. intent prefix with games. Intermediate nodes mirror @games.* exactly. At leaf game-name nodes, playing qualifiers (play-online, play-local, play-vs-ai, find-opponents, join-lobby) replace reference qualifiers (rules, history, variants, tutorials).', input.value);
+      input.focus();
+      render();
+    });
+    document.getElementById('domainAliasBtn').addEventListener('click', () => {
+      // Load the owner-bound shortcut that the domain alias resolves into.
+      // The domain alias itself (lasca.stackworks.games) is not a SIP string —
+      // it does not begin with @ — so the input shows the SIP layer it bridges to.
+      const alias = domainAliases['lasca.stackworks.games'];
+      input.value = alias.resolvesTo;
+      addHistory(
+        'Domain alias chain: lasca.stackworks.games',
+        'Domain alias \u201clasca.stackworks.games\u201d is NOT a SIP string (no @). ' +
+        'It resolves via the domain\u2019s /.well-known/sip.json manifest to the SIP ' +
+        'owner-bound shortcut ' + alias.resolvesTo + ', which in turn expands to the ' +
+        'canonical identity: ' + alias.canonical + '. ' +
+        'The full chain is: domain alias \u2192 SIP shortcut \u2192 semantic discovery path \u2192 owner-bound canonical SIP. ' +
+        'Fingerprint: ' + alias.fingerprint,
+        alias.resolvesTo
+      );
+      input.focus();
+      render();
+    });
+    document.getElementById('globalShortcutBtn').addEventListener('click', () => {
+      // @games/lasca is a globally registered discovery shortcut (slash notation).
+      // In the dot-notation used by this mockup it corresponds to @games.lasca.
+      // Show the registered discovery shortcut expansion.
+      const reg = globalRegistryExamples.find(r => r.shortcut === '@games/lasca');
+      input.value = '@games.lasca';
+      addHistory(
+        'Global shortcut: @games/lasca',
+        'The global shortcut @games/lasca is a public, owner-neutral shortcut registered by the ' +
+        reg.steward + '. It resolves to the semantic discovery path ' + reg.resolvesTo + '. ' +
+        'This is distinct from the owner-bound shortcut @stackworks/lasca, which resolves to a specific ' +
+        'StackWorks-owned record. Global shortcuts are approved through a namespace steward process; ' +
+        'first-come, first-served registration does NOT apply to public semantic concepts.',
+        '@games.lasca'
+      );
       input.focus();
       render();
     });

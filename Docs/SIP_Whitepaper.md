@@ -3881,3 +3881,464 @@ The distinction between resource types is not encoded in SIP's core path grammar
 This means resource-type awareness can be layered into any existing SIP implementation at any time by adding bindings, without changing the underlying resolver, grammar, or identity format.
 
 ---
+
+# Global Shortcut Registry, Namespace Stewardship, and Domain Aliases
+
+## The Long-Path Problem
+
+A major adoption challenge for SIP is the length of the full owner-bound SIP identity string.
+
+A fully descriptive owner-bound SIP identity may be long in order to be precise, portable, and machine-verifiable. For example:
+
+```text
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+```
+
+This kind of identifier is useful for machines, registries, verification, and long-term ownership tracking. However, it is not practical as the public-facing name that people are expected to type, remember, print, share, or market.
+
+SIP therefore needs a naming model that gives humans short, memorable identifiers while preserving the long canonical SIP identity underneath.
+
+The solution is to separate the human-friendly SIP shortcut from the canonical owner-bound SIP identity.
+
+The full owner-bound SIP path should be treated like a cryptographic or canonical backend identity. It is the permanent truth, but it should not be the primary human interface.
+
+---
+
+## Three Layers of SIP Identity
+
+SIP supports three distinct layers of identity:
+
+1. **Canonical owner-bound SIP identity** — the full permanent machine-verifiable record
+2. **SIP shortcut string** — a compact `@`-prefixed human-friendly alias
+3. **Domain-based discovery alias** — a familiar web-style entry point that bridges into SIP
+
+These layers are related but they are not the same thing.
+
+### Layer 1 — Canonical Owner-Bound SIP Identity
+
+The canonical owner-bound SIP identity is the full permanent identity used internally by resolvers, software, registries, and verification systems.
+
+Example:
+
+```text
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+```
+
+This identity is permanent, owner-bound, machine-verifiable, portable, and explicit. It is suitable for long-term registry records and is not dependent on a domain name. SIP software should ultimately resolve to and verify this form.
+
+However, most users should rarely need to see or type this full string.
+
+### Layer 2 — SIP Shortcut Strings
+
+A SIP shortcut string is a shorter SIP-native identifier that begins with `@`.
+
+Examples:
+
+```text
+@stackworks/lasca
+@games/lasca
+@edbecnel/lasca
+```
+
+These are SIP strings because they begin with `@`. A shortcut string is a human-friendly SIP identifier that exists to make SIP practical for everyday use.
+
+### Layer 3 — Domain-Based Discovery Aliases
+
+The following are **not** SIP strings:
+
+```text
+stackworks.games/lasca
+lasca.stackworks.games
+```
+
+They do not begin with `@`, so they are not SIP shortcut strings. They are better described as **domain-based discovery aliases** or **web entry points into SIP resolution**.
+
+A domain alias can point into SIP, but it is not itself the SIP identity.
+
+Example resolution chain:
+
+```text
+lasca.stackworks.games
+        ↓
+@stackworks/lasca
+        ↓
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+```
+
+The domain name serves as a familiar web-facing bridge. The SIP string remains the actual SIP identity layer.
+
+---
+
+## SIP Strings Begin with @
+
+A core convention for SIP is:
+
+```text
+SIP strings begin with @.
+Domain aliases do not.
+```
+
+A URI wrapper such as `sip:stackworks.games/lasca` should generally be avoided because `sip:` is already strongly associated with the existing internet telephony Session Initiation Protocol. If a URI wrapper is needed, alternatives such as `sipi:` or `sid:` may be considered. However, the cleanest primary rule remains that SIP strings begin with `@` and domain aliases do not.
+
+---
+
+## Three Kinds of SIP Shortcuts
+
+SIP formally distinguishes at least three shortcut types:
+
+### Global Semantic Shortcuts
+
+Global semantic shortcuts are public, owner-neutral shortcuts.
+
+Examples:
+
+```text
+@games/lasca
+@games/chess
+@games/checkers
+@music/snare-drum
+@recipes/jambalaya
+```
+
+These resolve to semantic discovery paths, not directly to one owner.
+
+Example:
+
+```text
+@games/lasca
+        ↓
+@games.strategy.abstract.capture.leaping.stacking.lasca
+```
+
+Global semantic shortcuts should be controlled by recognized namespace stewards or registry processes, not by private individuals or companies.
+
+### Owner or Brand Shortcuts
+
+Owner or brand shortcuts are controlled by a verified owner, person, organization, project, or brand.
+
+Examples:
+
+```text
+@stackworks/lasca
+@edbecnel/recipes/jambalaya
+```
+
+These resolve to owner-bound SIP identities.
+
+Example:
+
+```text
+@stackworks/lasca
+        ↓
+@owner/edbecnel/stackworks/games/lasca
+```
+
+### Local or Private Shortcuts
+
+Local or private shortcuts are user-defined or organization-defined aliases.
+
+Examples:
+
+```text
+@my/lasca
+@favorites/jambalaya
+@test/game1
+```
+
+These are useful inside a local workspace, application, or personal knowledge base. They are not globally authoritative unless registered through the global SIP shortcut system.
+
+---
+
+## Global SIP Shortcut Registry
+
+SIP should define a formal registry layer called the **SIP Global Shortcut Registry**.
+
+This registry defines accepted shortcut paths such as:
+
+```text
+@games/lasca
+@games/chess
+@games/checkers
+@music/snare-drum
+@recipes/jambalaya
+```
+
+Each shortcut is a signed registry entry, not merely a piece of text.
+
+Example registry record:
+
+```json
+{
+  "shortcut": "@games/lasca",
+  "resolvesTo": "@games.strategy.abstract.capture.leaping.stacking.lasca",
+  "status": "accepted",
+  "namespace": "@games",
+  "type": "semantic-discovery-shortcut",
+  "description": "Lasca / Laska family of stacking capture board games",
+  "steward": "SIP Games Namespace Registry",
+  "created": "2026-06-01",
+  "version": "1.0",
+  "signature": "..."
+}
+```
+
+This makes the shortcut auditable, verifiable, and stable.
+
+---
+
+## Namespace Stewardship
+
+Major public semantic namespaces should be managed by recognized namespace stewards or working groups rather than private individuals or companies.
+
+Examples of public namespaces and their stewardship model:
+
+```text
+@games     →  SIP Games Namespace Registry
+@music     →  SIP Music Namespace Registry
+@recipes   →  SIP Recipes Namespace Registry
+@books     →  SIP Books Namespace Registry
+@software  →  SIP Software Namespace Registry
+@people    →  SIP People Namespace Registry
+@places    →  SIP Places Namespace Registry
+@products  →  SIP Products Namespace Registry
+```
+
+The `@games` namespace steward would be responsible for reviewing and approving global shortcuts inside that namespace. Therefore `@games/lasca` would be approved by the `@games` namespace authority.
+
+By contrast, `@stackworks/lasca` would be controlled by StackWorks. Those are different authority models.
+
+---
+
+## First Use Should Not Automatically Win
+
+SIP should avoid domain-name-style squatting.
+
+If someone attempts to register `@games/chess`, that person should not own the public semantic concept of chess. They may own something like `@somecompany/chess` or `@owner/somecompany/games/chess`.
+
+But the global semantic shortcut `@games/chess` should be treated as a public controlled vocabulary entry, not private property.
+
+Global semantic shortcuts should not be allocated by simple first-come, first-served registration.
+
+---
+
+## Acceptance Process for Global Shortcuts
+
+A global SIP shortcut should go through a process similar to the following:
+
+```text
+1. Proposal
+2. Public review
+3. Conflict check
+4. Semantic path assignment
+5. Shortcut approval
+6. Signed registry publication
+7. Versioned updates over time
+```
+
+For example, a proposal for `@games/lasca` would trigger review of questions such as:
+
+- Is "Lasca" the common name? Is it ambiguous?
+- Does it conflict with another game, product, person, or brand?
+- Should the shortcut be `@games/lasca` or `@games/laska`?
+- What full discovery path should it resolve to?
+- Are there known synonyms?
+
+The registry may then approve:
+
+```text
+@games/lasca  →  @games.strategy.abstract.capture.leaping.stacking.lasca
+```
+
+It may also approve synonyms:
+
+```text
+@games/laska  →  @games.strategy.abstract.capture.leaping.stacking.lasca
+```
+
+This gives SIP a stable, curated, globally meaningful shortcut system.
+
+---
+
+## Signed Registry Entries
+
+A shortcut should not be trusted merely because it appears in text. It must be backed by a signed registry entry.
+
+A signed shortcut record should include:
+
+```text
+shortcut
+canonical discovery path
+namespace
+status
+description
+steward
+version
+creation date
+signature
+```
+
+The signature ensures that a resolver can verify that the shortcut record came from the accepted namespace authority or registry.
+
+---
+
+## Bootstrap Strategy
+
+At first, SIP does not need a complex distributed registry. It could begin with a simple official registry file such as:
+
+```text
+sip-shortcuts.json
+```
+
+or:
+
+```text
+registry.sip/.well-known/global-shortcuts.json
+```
+
+The important requirements are that registry entries should be:
+
+```text
+public
+versioned
+signed
+auditable
+not silently changeable
+```
+
+Over time, the registry could become distributed, mirrored, cryptographically signed, or governed by multiple independent stewards.
+
+---
+
+## Domain Discovery Manifests
+
+Domain names can participate in SIP as discovery entry points.
+
+For example, `stackworks.games/lasca` could resolve to `@stackworks/lasca`, which then resolves to:
+
+```text
+@owner/edbecnel/stackworks/games/lasca
+```
+
+A domain publishes a SIP manifest at a conventional metadata location:
+
+```text
+https://stackworks.games/.well-known/sip.json
+```
+
+Example manifest:
+
+```json
+{
+  "sipManifest": "1.0",
+  "domain": "stackworks.games",
+  "aliases": [
+    {
+      "alias": "@stackworks/lasca",
+      "canonical": "@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca",
+      "title": "Lasca",
+      "type": "game.ruleset",
+      "fingerprint": "7K3Q-9M2A"
+    }
+  ],
+  "signedBy": "@owner/edbecnel",
+  "signature": "..."
+}
+```
+
+This lets ordinary domains participate in SIP without becoming the root identity. The domain is a doorway; the SIP identity remains the verified canonical record.
+
+---
+
+## Recommended User-Facing Display
+
+Most users should not see the full canonical SIP string unless they expand details.
+
+A collapsed user interface might show:
+
+```text
+Lasca
+Verified by StackWorks
+Shortcut: @stackworks/lasca
+Fingerprint: 7K3Q-9M2A
+```
+
+An expanded technical view might show:
+
+```text
+Canonical SIP:
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+
+Discovery Path:
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+Global Shortcut:
+@games/lasca
+
+Owner Shortcut:
+@stackworks/lasca
+```
+
+This keeps the everyday interface short while preserving full technical transparency.
+
+---
+
+## Full Resolution Chain
+
+The complete Lasca resolution model:
+
+```text
+User-facing global shortcut:
+@games/lasca
+
+        ↓  (global shortcut registry)
+
+@games.strategy.abstract.capture.leaping.stacking.lasca
+
+        ↓  (discovery finds verified owner records)
+
+@stackworks/lasca
+        ↓
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+```
+
+A domain bridge may also enter the chain:
+
+```text
+lasca.stackworks.games
+        ↓  (domain manifest)
+
+@stackworks/lasca
+        ↓
+
+@owner/edbecnel/stackworks/games/strategy/abstract/capture/leaping/stacking/lasca
+```
+
+The layered model in summary:
+
+```text
+Domain alias
+        ↓
+SIP shortcut string
+        ↓
+Semantic discovery path
+        ↓
+Owner-bound canonical SIP identity
+```
+
+---
+
+## Core Rules
+
+```text
+1. SIP strings begin with @.
+2. Domain aliases do not begin with @ and are not SIP strings.
+3. Global semantic shortcuts resolve to discovery paths, not directly to private owners.
+4. Owner or brand shortcuts resolve to owner-bound records.
+5. Global shortcuts must be accepted through a registry or namespace steward process.
+6. First use should not automatically win for public semantic concepts.
+7. Shortcut records should be signed, public, versioned, and auditable.
+```
+
+This makes SIP practical for humans while preserving the deeper semantic and ownership guarantees that make SIP valuable for AI-native identity resolution.
+
+---
