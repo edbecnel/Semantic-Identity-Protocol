@@ -4339,8 +4339,17 @@
         : [];
       const ownerItems = isBoundIdentity(value) ? [] : getOwnerCandidatesForPath(key);
       const personalBinding = getPersonalBinding(value);
+      // Personal shortcuts whose key starts with the current typed prefix (e.g. @games.go when typing @games.)
+      const matchingPersonalShortcuts = value.endsWith('.')
+        ? Object.values(personalShortcutBindings).filter((b) => {
+            const k = normalize(b.shortcut);
+            if (!k.startsWith(value)) return false;
+            const remainder = k.slice(value.length);
+            return remainder.length > 0 && !remainder.includes('.');
+          })
+        : [];
       flatSuggestions = [];
-      activeFlatIndex = Math.min(activeFlatIndex, shortcutItems.length + synonymItems.length + facetItems.length + discoveryItems.length + ownerItems.length - 1);
+      activeFlatIndex = Math.min(activeFlatIndex, matchingPersonalShortcuts.length + shortcutItems.length + synonymItems.length + facetItems.length + discoveryItems.length + ownerItems.length - 1);
 
       let html = `
         <div class="panel-top">
@@ -4366,6 +4375,24 @@
           </div>
         `;
         html += suggestionGroupHtml('Saved personal shortcut binding', 'user context', itemsHtml);
+      }
+
+      if (matchingPersonalShortcuts.length) {
+        const itemsHtml = matchingPersonalShortcuts.map((binding) => {
+          const flatIndex = flatSuggestions.length;
+          flatSuggestions.push({ type: 'personalShortcutPath', value: binding });
+          const segment = normalize(binding.shortcut).slice(value.length);
+          return `
+            <div class="suggestion ${flatIndex === activeFlatIndex ? 'active' : ''}" data-flat-index="${flatIndex}" role="option" tabindex="0">
+              <div class="suggestion-main"><code>${escapeHtml(segment)}</code><span class="badge personal">saved shortcut</span></div>
+              <div class="suggestion-sub">${escapeHtml(binding.shortcut)} \u2192 ${escapeHtml(binding.sip)}${binding.destination ? ` \u2192 ${escapeHtml(binding.destination)}` : ''}</div>
+              <div class="metadata ${showMetadata ? 'show' : ''}">
+                Personal shortcut. Selecting expands to the full SIP path.
+              </div>
+            </div>
+          `;
+        }).join('');
+        html += suggestionGroupHtml('Saved personal shortcuts', 'personal', itemsHtml);
       }
 
       if (shortcutItems.length) {
@@ -4575,6 +4602,7 @@
       if (item.type === 'discovery') completeSegment(item.value);
       if (item.type === 'owner') selectOwner(item.value);
       if (item.type === 'personalBinding') expandPersonalShortcutBinding(item.value);
+      if (item.type === 'personalShortcutPath') expandPersonalShortcutBinding(item.value);
       if (item.type === 'deadend-revert') { input.value = item.value; render(); }
     }
 

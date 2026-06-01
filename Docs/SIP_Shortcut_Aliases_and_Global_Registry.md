@@ -393,6 +393,56 @@ They are not globally authoritative unless registered through the global SIP sho
 
 A local shortcut may be convenient, but it should not be confused with a globally accepted SIP shortcut.
 
+### Personal Shortcut IntelliSense Behavior
+
+When a user types a SIP path in a SIP-aware interface, the semantic IntelliSense panel surfaces personal
+shortcuts in context. The rule is: **a personal shortcut appears as a suggestion only when the typed prefix
+is the direct parent of the shortcut's final segment.**
+
+**Rule**
+
+A personal shortcut with key `S` is shown as a suggestion when:
+
+```text
+typed_prefix ends with '.'
+AND S starts with typed_prefix
+AND S[len(typed_prefix)..] contains no '.'
+```
+
+In other words, the shortcut must be exactly one segment deeper than what has been typed.
+
+**Examples**
+
+Given two personal shortcuts saved by the user:
+
+```text
+@games.go            →  @games.strategy.abstract.territory.enclosure.go
+@games.enclosure.go  →  @games.strategy.abstract.territory.enclosure.go
+```
+
+| User types           | Suggestion shown | Reason                                                   |
+|----------------------|------------------|----------------------------------------------------------|
+| `@games.`            | `go`             | remainder is `go` — no dot, direct child ✓               |
+| `@games.`            | ~~`enclosure`~~  | remainder is `enclosure.go` — contains a dot, not shown  |
+| `@games.enclosure.`  | `go`             | remainder is `go` — no dot, direct child ✓               |
+
+**Why intermediate segments are not synthesized**
+
+When the user saves `@games.enclosure.go`, the intermediate segment `enclosure` is not a registered
+personal shortcut — it is merely part of the shortcut's key. Surfacing `enclosure` at `@games.` would
+imply that `@games.enclosure` is a known or meaningful path in the user's personal context, which it is
+not. This would blur the distinction between the real semantic discovery tree and user-defined aliases.
+
+The interface therefore never invents intermediate nodes. Only the exact shortcut key appears, and only
+when the user has typed up to its immediate parent prefix.
+
+**Interaction with the semantic discovery tree**
+
+Personal shortcut suggestions appear in their own "Saved personal shortcuts" group in the IntelliSense
+panel, visually distinct from the built-in semantic tree continuations. Selecting a personal shortcut
+expands the input directly to the shortcut's full canonical SIP path — it does not navigate through
+intermediate discovery segments.
+
 ---
 
 ## 15. The Governance Problem
