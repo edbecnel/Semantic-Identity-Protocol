@@ -3777,6 +3777,42 @@ is interpreted as:
 
 Parentheses may be used to override default precedence explicitly.
 
+## Position-Constrained Keywords
+
+Search terms may be pinned to a specific segment position within the SIP path, allowing queries that express structural constraints rather than arbitrary substring matches.
+
+Three position qualifiers are defined:
+
+| Syntax | Meaning |
+|--------|---------|
+| `^keyword` | The keyword must appear at position 0 — the first segment of the SIP path. |
+| `keyword$` | The keyword must appear at the last segment of the SIP path. |
+| `keyword:N` | The keyword must appear at segment position N, where N is a zero-based integer. |
+
+Segment positions are counted left to right in the SIP path after the leading `@` is stripped. For example, in `@games.strategy.abstract.capture`, `games` is at position 0, `strategy` at position 1, `abstract` at position 2, and `capture` at position 3.
+
+Position qualifiers compose with all boolean operators, including `!`:
+
+    ^games & lasca$
+
+Matches only SIPs whose first segment is `games` and whose last segment is `lasca`.
+
+    chess:1 & lasca
+
+Matches SIPs where the second segment (position 1) is `chess` and the path also contains `lasca` anywhere.
+
+    ^games & !play$
+
+Matches SIPs that start with `games` but do not end with `play`.
+
+    lasca & !rules$
+
+Matches SIPs containing `lasca` anywhere, excluding those whose final segment is `rules`.
+
+Position-constrained terms participate in synonym expansion in the same way as unconstrained terms. If the keyword at the specified position is a registered synonym for another term, matching succeeds.
+
+If the specified position does not exist within a given SIP path (for example, position 5 in a three-segment path), the positional match evaluates to false for that path.
+
 ## Synonym-Aware Matching
 
 Semantic path search automatically expands query terms to their registered synonyms before matching.

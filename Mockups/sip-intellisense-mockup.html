@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -1530,7 +1530,7 @@
       <div class="card-body">
         <div class="search-input-row">
           <div class="sip-search-wrap">
-            <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  chess, checkers  chess & columns  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
+            <input id="sipSearch" class="sip-search-input" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. chess | checkers  ^games &amp; lasca$  chess:1 &amp; lasca  (chess | checkers) + columns" aria-label="Search SIPs" aria-controls="searchResults" />
             <button id="sipSearchClear" aria-label="Clear search" title="Clear search">&#x2715;</button>
           </div>
           <label class="search-bound-label" title="Only show SIPs bound to a destination">
@@ -1546,7 +1546,7 @@
             Personal shortcuts
           </label>
         </div>
-        <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>!</code> = NOT &nbsp;·&nbsp; <code>( )</code> for grouping</div>
+        <div class="search-syntax-hint">Spaces, <code>|</code> or <code>,</code> = OR &nbsp;·&nbsp; <code>&amp;</code> or <code>+</code> = AND &nbsp;·&nbsp; <code>!</code> = NOT &nbsp;·&nbsp; <code>( )</code> for grouping &nbsp;·&nbsp; <code>^term</code> = first segment &nbsp;·&nbsp; <code>term$</code> = last segment &nbsp;·&nbsp; <code>term:N</code> = segment at position N (0-based)</div>
         <div id="searchResults" class="search-results" role="listbox" aria-label="Search results" hidden></div>
       </div>
     </div>
@@ -4730,7 +4730,25 @@
         if (ch === ')')               { raw.push({ type: 'RPAREN' }); i++; continue; }
         const start = i;
         while (i < query.length && !/[\s|,&+()![\]{}]/.test(query[i])) i++;
-        if (i > start) raw.push({ type: 'TERM', value: query.slice(start, i).toLowerCase() });
+        if (i > start) {
+          let termVal = query.slice(start, i).toLowerCase();
+          let termPos = undefined;
+          if (termVal.startsWith('^')) {
+            termPos = 0;
+            termVal = termVal.slice(1);
+          } else if (termVal.endsWith('$')) {
+            termPos = 'last';
+            termVal = termVal.slice(0, -1);
+          } else {
+            const colonMatch = termVal.match(/^(.+):(\d+)$/);
+            if (colonMatch) { termPos = parseInt(colonMatch[2], 10); termVal = colonMatch[1]; }
+          }
+          if (termVal) {
+            const tok = { type: 'TERM', value: termVal };
+            if (termPos !== undefined) tok.position = termPos;
+            raw.push(tok);
+          }
+        }
       }
       // Convert SPACE to implicit OR when it sits between two value tokens
       const tokens = [];
@@ -4786,7 +4804,7 @@
           if (peek().type === 'RPAREN') consume();
           return expr;
         }
-        if (t.type === 'TERM') { consume(); return { op: 'TERM', value: t.value }; }
+        if (t.type === 'TERM') { consume(); return t.position !== undefined ? { op: 'TERM', value: t.value, position: t.position } : { op: 'TERM', value: t.value }; }
         return null;
       }
       return parseOr();
@@ -4845,17 +4863,27 @@
       return set;
     }
 
-    function evalQuery(node, text) {
+    function evalQuery(node, text, segments) {
       if (!node) return true;
       if (node.op === 'TERM') {
-        if (text.includes(node.value)) return true;
-        const syns = synonymMap.get(node.value);
+        const val = node.value;
+        if (node.position !== undefined && segments) {
+          const pos = node.position;
+          const seg = pos === 'last' ? segments[segments.length - 1] : segments[pos];
+          if (!seg) return false;
+          if (seg.includes(val)) return true;
+          const syns = synonymMap.get(val);
+          if (syns) { for (const s of syns) { if (seg.includes(s)) return true; } }
+          return false;
+        }
+        if (text.includes(val)) return true;
+        const syns = synonymMap.get(val);
         if (syns) { for (const s of syns) { if (text.includes(s)) return true; } }
         return false;
       }
-      if (node.op === 'NOT') return !evalQuery(node.operand, text);
-      if (node.op === 'AND') return evalQuery(node.left, text) && evalQuery(node.right, text);
-      if (node.op === 'OR')  return evalQuery(node.left, text) || evalQuery(node.right, text);
+      if (node.op === 'NOT') return !evalQuery(node.operand, text, segments);
+      if (node.op === 'AND') return evalQuery(node.left, text, segments) && evalQuery(node.right, text, segments);
+      if (node.op === 'OR')  return evalQuery(node.left, text, segments) || evalQuery(node.right, text, segments);
       return true;
     }
     // ─────────────────────────────────────────────────────────────────────────
@@ -4871,7 +4899,8 @@
       }));
       return [...sipIndex, ...personal].filter((item) => {
         const text = (item.sip + ' ' + item.label + ' ' + (item.resolvedSip || '')).toLowerCase();
-        return evalQuery(ast, text);
+        const segments = item.sip.replace(/^@/, '').toLowerCase().split('.');
+        return evalQuery(ast, text, segments);
       }).sort((a, b) => {
         const aBound = a.destination ? 0 : 1;
         const bBound = b.destination ? 0 : 1;

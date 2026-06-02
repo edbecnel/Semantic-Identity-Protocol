@@ -840,6 +840,34 @@
         </tbody>
       </table>
 
+      <h3>Position-constrained keywords</h3>
+      <p>You can pin a keyword to a specific segment position in the SIP path, rather than matching it anywhere in the string.</p>
+      <table class="badge-table">
+        <tbody>
+          <tr><td><code>^games</code></td><td>The keyword <em>games</em> must be the <strong>first</strong> segment of the SIP path (position 0).</td></tr>
+          <tr><td><code>lasca$</code></td><td>The keyword <em>lasca</em> must be the <strong>last</strong> segment of the SIP path.</td></tr>
+          <tr><td><code>strategy:1</code></td><td>The keyword <em>strategy</em> must be at segment position <strong>1</strong> (0-based). So the path must look like <code>@X.strategy.…</code></td></tr>
+        </tbody>
+      </table>
+      <p>Position qualifiers compose freely with all other operators, including <code>!</code>:</p>
+
+      <div class="example-block">
+        <div class="example-query">^games &amp; lasca$</div>
+        <div class="example-desc">First segment is <em>games</em> AND last segment is <em>lasca</em>.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">chess:1 &amp; lasca</div>
+        <div class="example-desc">Second segment is <em>chess</em> (0-based position 1) AND the path contains <em>lasca</em> anywhere.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">^games &amp; !play:0</div>
+        <div class="example-desc">First segment is <em>games</em> AND first segment is not <em>play</em> — effectively restricts to pure <code>@games.*</code> paths and excludes <code>@play.*</code> paths.</div>
+      </div>
+      <div class="example-block">
+        <div class="example-query">lasca &amp; !rules$</div>
+        <div class="example-desc">Contains <em>lasca</em> but does not end with <em>rules</em>.</div>
+      </div>
+
       <div class="example-block">
         <div class="example-query">chess | checkers</div>
         <div class="example-desc">Finds all SIPs that mention chess or checkers.</div>
