@@ -412,6 +412,40 @@
         <li><strong>Broad semantic facet</strong> — A cross-cutting mechanic (e.g. <code>stacking</code>) that matches several narrower branches rather than a single canonical path.</li>
         <li><strong>Personal shortcut binding</strong> — A user-saved shortcut that resolves within this session to a specific owner-bound SIP.</li>
       </ul>
+
+      <h3>Typing a <code>sipi:</code> URI (portable chat-safe form)</h3>
+      <p>Many environments intercept the <code>@</code> character for their own purposes — chat apps such as Messenger and Signal use it to trigger person-mentions, and AI interfaces use it to open context pickers. In those contexts, typing a raw SIP address starting with <code>@</code> is not possible.</p>
+      <p>SIP defines <code>sipi:</code> (<strong>SIP Identity</strong>) as its portable URI scheme for these situations. Two forms are accepted:</p>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;margin:10px 0 14px;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--line);">
+            <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;">Form</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;">Example</th>
+            <th style="text-align:left;padding:6px 10px;color:var(--muted);font-weight:600;">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--line);">
+            <td style="padding:6px 10px;"><code>sipi:</code> implicit</td>
+            <td style="padding:6px 10px;"><code>sipi:amazon.cloud.aws</code></td>
+            <td style="padding:6px 10px;">Recommended for hand-typing in chat. Safe from the first keystroke — no <code>@</code> is typed at all.</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 10px;"><code>sipi:@</code> explicit</td>
+            <td style="padding:6px 10px;"><code>sipi:@amazon.cloud.aws</code></td>
+            <td style="padding:6px 10px;">Retains the visual <code>@</code> connection to the native SIP notation. Intended for display, documentation, and SIP-aware tools — not expected for hand-typed chat input.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Both forms are fully equivalent to the native <code>@</code> form. When you type or paste either <code>sipi:</code> form into this mockup, the input field is immediately normalized to the canonical <code>@</code> form and a <strong>raw input echo</strong> appears beneath the field.</p>
+
+      <h3>Raw input echo</h3>
+      <p>When the input is rewritten — either because you typed a <code>sipi:</code> form or because the app expanded a shortcut or selected a suggestion — a small line appears below the input row showing:</p>
+      <ul>
+        <li><strong>as entered:</strong> the exact string you originally typed (highlighted in amber when it was a <code>sipi:</code> form)</li>
+        <li><strong>→ normalized to:</strong> the canonical <code>@</code> form the resolver is acting on (shown only when the two differ)</li>
+      </ul>
+      <p>The echo persists as you continue editing the normalized value, so you always have a reference to what you originally entered. It clears when the app performs a new rewrite (expansion, suggestion selection, or reset).</p>
     </section>
 
     <!-- 3. Suggestion types -->
@@ -957,6 +991,10 @@
       </div>
 
       <div class="glossary-item">
+        <div class="glossary-term">sipi: — SIP Identity URI scheme</div>
+        <div class="glossary-def">The portable URI scheme for SIP addresses, used in contexts where the native <code>@</code> prefix character would be intercepted (chat apps, AI interfaces, etc.). <strong>sipi:</strong> stands for <em>SIP Identity</em> — the <code>i</code> distinguishes it from <code>sip:</code>, which is already reserved for VoIP (RFC&nbsp;3261). Two forms are accepted and treated as identical: <code>sipi:amazon.cloud.aws</code> (implicit — recommended for hand-typing) and <code>sipi:@amazon.cloud.aws</code> (explicit — retains the visual <code>@</code> for display and documentation). Both normalize to <code>@amazon.cloud.aws</code>.</div>
+      </div>
+      <div class="glossary-item">
         <div class="glossary-term">SIP — Semantic Identity Path</div>
         <div class="glossary-def">A dot-separated, human-readable string prefixed with <code>@</code> that encodes the identity of a concept through a chain of semantic categories. Example: <code>@games.strategy.abstract.capture.leaping.columns.lasca</code>.</div>
       </div>
@@ -1075,7 +1113,7 @@
     </section>
 
     <footer>
-      Help file for the SIP IntelliSense standalone mockup. Covers all features including identity layers, global shortcut registry, domain discovery manifests, and demo scenarios. No external libraries or network requests.
+      Help file for the SIP IntelliSense standalone mockup. Covers all features including identity layers, global shortcut registry, domain discovery manifests, <code>sipi:</code> portable URI scheme, raw input echo, and demo scenarios. No external libraries or network requests.
     </footer>
 
   </main>
