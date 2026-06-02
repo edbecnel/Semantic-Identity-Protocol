@@ -325,6 +325,83 @@ Examples:
 
 These are semantic concepts, not DNS ownership layers.
 
+# URI Scheme and Portable Notation
+
+## The Problem: The `@` Sigil in Foreign Contexts
+
+The native SIP sigil is `@`. In SIP-aware environments — browsers, AI assistants, SIP-enabled apps — this is the correct and preferred prefix:
+
+```
+@amazon.cloud.aws
+@games/lasca
+@owner/edbecnel/stackworks/games/lasca
+```
+
+However, many environments intercept `@` for their own semantic purposes. In Messenger, Signal, WhatsApp, and similar chat platforms, `@` triggers person-mention autocompletion. In AI assistant interfaces such as GitHub Copilot, `@` opens a context or file picker. In these environments, a user attempting to hand-type a SIP address loses control of the input at the very first keystroke.
+
+This is not a fringe edge case. Sharing SIP addresses in chat and messaging is a primary adoption surface. The protocol must have a defined, safe notation for these environments.
+
+## The `sipi:` URI Scheme
+
+**`sipi:`** stands for **SIP Identity**. The `i` suffix distinguishes it from the existing `sip:` scheme and reinforces that the URI carries a semantic *identity* — not a location. A `sipi:` URI names what something *is*, just as `@` does in native SIP notation.
+
+SIP defines `sipi:` as its registered URI scheme for use in all contexts where the native `@` prefix character cannot be used safely.
+
+> Note: `sip:` is already reserved for the Session Initiation Protocol (VoIP) under RFC 3261 and cannot be used.
+
+The `sipi:` scheme enables SIP addresses to be expressed as standard URI strings. This integrates with infrastructure that already understands URIs:
+
+* Chat applications auto-linkify registered URI schemes, making `sipi:` addresses tappable
+* Mobile operating systems (iOS, Android) support protocol handler registration, allowing a SIP resolver app to claim `sipi:` and open automatically
+* Browsers support `registerProtocolHandler()`, allowing a SIP browser extension to intercept `sipi:` links natively
+* IANA provides a provisional URI scheme registration process (RFC 7595), giving `sipi:` a path to formal standardization
+
+## Two Accepted Forms
+
+The `sipi:` scheme accepts two forms, both of which are semantically equivalent:
+
+**Form 1 — Implicit sigil (recommended for hand-typed input):**
+
+```
+sipi:amazon.cloud.aws
+sipi:games/lasca
+sipi:owner/edbecnel/stackworks/games/lasca
+```
+
+The `@` is not present. It is structurally implied by the `sipi:` prefix. This form is safe to type from the first character in any chat environment because `s` carries no special interception meaning. This is the recommended form for users typing a SIP address into a context they do not control.
+
+**Form 2 — Explicit sigil (for display and documentation):**
+
+```
+sipi:@amazon.cloud.aws
+sipi:@games/lasca
+sipi:@owner/edbecnel/stackworks/games/lasca
+```
+
+The `@` is retained immediately after the colon. This form is not expected to be typed by hand in chat contexts, since `@` after `:` may still be parsed by some applications. However, it is useful in documentation, display surfaces, and any context where the visual connection to the native SIP `@` sigil should be preserved explicitly. Chat providers and SIP-aware tools may choose to render this form when displaying a SIP address to a user.
+
+Both forms resolve identically. A SIP parser receiving either form strips the `sipi:` prefix (and optional `@`) and treats the remainder as a standard SIP path.
+
+## Canonical Round-Trip Rule
+
+```
+sipi:amazon.cloud.aws   ↔   @amazon.cloud.aws
+sipi:@amazon.cloud.aws  ↔   @amazon.cloud.aws
+```
+
+Any SIP resolver, parser, or application MUST accept both `sipi:` forms as fully equivalent to the native `@` form.
+
+## Notation Summary
+
+| Context | Form | Example | Notes |
+|---|---|---|---|
+| SIP-aware app, browser, AI assistant | Native | `@amazon.cloud.aws` | Preferred wherever `@` is safe |
+| Hand-typed in chat (Messenger, Signal, etc.) | `sipi:` implicit | `sipi:amazon.cloud.aws` | Safe from first keystroke |
+| Pasted or displayed in chat | `sipi:` implicit | `sipi:amazon.cloud.aws` | Tappable if scheme is registered |
+| Documentation, display with sigil intent | `sipi:` explicit | `sipi:@amazon.cloud.aws` | Preserves visual `@` connection |
+| Shortcut path | `sipi:` implicit | `sipi:games/lasca` | Works for all shortcut tiers |
+| Full owner-bound canonical | `sipi:` implicit | `sipi:owner/edbecnel/stackworks/games/lasca` | Machine-verifiable form |
+
 # Resolution Model
 
 ## Exact Resolution
