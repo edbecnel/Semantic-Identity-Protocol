@@ -15,3 +15,5 @@ that expands to `@games.strategy.abstract.capture.leaping.columns.lasca` and ret
 that resolves deterministically to their specific record. `@my/lasca` is a **local personal shortcut** stored
 in the user's trusted context only. This layering ensures that short, memorable paths remain a shared public
 vocabulary while owner identity and user preferences each have their own distinct, non-competing layer.
+
+Global shortcuts and JSON-LD-based SIP identity assertions are complementary adoption paths. See the [JSON-LD Integration Architecture annex](SIP_JSON-LD_Integration_Architecture.md).

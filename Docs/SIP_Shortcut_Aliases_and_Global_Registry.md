@@ -712,6 +712,8 @@ Over time, the registry could become distributed, mirrored, cryptographically si
 
 Domain names can still be useful as discovery entry points.
 
+At adoption Level 2 and above (see [Progressive SIP Adoption Model](SIP_Whitepaper.md#progressive-sip-adoption-model) in the whitepaper), publishers may also embed SIP identity **assertions** in existing `application/ld+json` blocks on their sites. These published assertions are parallel to, not a replacement for, domain discovery manifests. Both are non-privileged discovery surfaces. See also the [JSON-LD Integration Architecture annex](SIP_JSON-LD_Integration_Architecture.md).
+
 For example:
 
 ```text

@@ -136,5 +136,6 @@ SIP doesn't replace the web. It makes the web semantically legible — for human
 ## Explore further
 
 - **[Whitepaper](Docs/SIP_Whitepaper.md)** — Full architecture, protocol design, governance model, trust and consensus model, resolver specification, semantic aliasing, challenges, and roadmap.
+- **[JSON-LD Integration Architecture](Docs/SIP_JSON-LD_Integration_Architecture.md)** — How SIP complements JSON-LD, RDF, and Linked Data; representation-independent identity; proposed SIP JSON-LD Profile; progressive adoption model.
 - **[Interactive Mockup](Mockups/sip-intellisense-mockup.html)** — A self-contained browser demo of SIP Semantic IntelliSense: type a semantic path, explore suggestions, resolve to owner-bound identities, save shortcuts, share and import shortcut collections, and manage your shortcut library.
 - **[Mockup Help](Mockups/sip-intellisense-help.html)** — Full guide to every feature in the mockup.

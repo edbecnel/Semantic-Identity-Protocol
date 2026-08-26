@@ -21,6 +21,7 @@ Instead, SIP introduces a semantic identity overlay above existing web infrastru
 * Consensus-driven semantic resolution
 * Reputation-backed trust systems
 * Semantic identity monitoring and management
+* Representation-independent semantic identity with standards-based interoperability through JSON-LD, RDF, and the Linked Data ecosystem
 
 Example semantic identities:
 
@@ -287,6 +288,30 @@ SIP therefore includes:
 * notifications
 * health monitoring
 
+## Principle 8 — Representation Independence
+
+A SIP semantic identity MUST remain independent of any particular serialization, document format, database representation, knowledge-graph technology, or transport protocol used to describe, store, exchange, or resolve it.
+
+Semantic identity, identifier, resolver, and representation are conceptually distinct. JSON-LD, RDF/Turtle, SIP manifests, resolver records, APIs, and future formats may all carry SIP information — but none of them is the identity itself. See [Semantic Web and JSON-LD Interoperability](#semantic-web-and-json-ld-interoperability) and the [JSON-LD Integration Architecture annex](SIP_JSON-LD_Integration_Architecture.md).
+
+## Principle 9 — Standards Reuse
+
+SIP SHOULD reuse established Semantic Web and Linked Data standards where they adequately satisfy SIP requirements.
+
+SIP should not redefine existing semantic properties when established vocabularies already express them adequately. SIP-specific innovation should concentrate on semantic identity, not on reinventing mature serialization or graph mechanisms.
+
+## Principle 10 — Non-Dependency
+
+No single representation format or discovery mechanism is required for SIP participation.
+
+SIP crawlers, resolvers, and publishers MUST remain capable of discovering and investigating semantic identities from resources that do not publish SIP-aware structured metadata. SIP-aware JSON-LD, ordinary JSON-LD, manifests, registries, RDF, APIs, natural-language content, and AI-assisted analysis are all valid evidence sources — none is mandatory.
+
+## Principle 11 — Explicit Assertions Over Inference
+
+Where available, explicit identity assertions, authority, context, and provenance MUST be distinguishable from identities inferred by a crawler, resolver, or AI system.
+
+A published equivalence claim is an assertion by its publisher — not automatic canonical truth. See [Published Assertions vs Accepted Identity](#published-assertions-vs-accepted-identity) and [Semantic Claims vs Semantic Authority](#semantic-claims-vs-semantic-authority).
+
 # Semantic Identity Syntax
 
 ## Basic Syntax
@@ -520,6 +545,341 @@ Resolvers rank results using:
 * verification confidence
 * semantic relevance
 
+# Semantic Web and JSON-LD Interoperability
+
+SIP defines semantic identity independently of representation. JSON-LD is an existing standards-based representation and discovery mechanism through which SIP identity assertions and metadata may be published and exchanged.
+
+JSON-LD and SIP are complementary, not mutually exclusive. JSON-LD can provide a standards-based representation and discovery mechanism for SIP semantic identity, while SIP adds explicit identity semantics that ordinary JSON-LD does not establish by itself.
+
+SIP should not attempt to replace JSON-LD, RDF, or the broader Linked Data ecosystem. Instead, SIP should investigate defining a standards-compliant **SIP vocabulary, JSON-LD context, and SIP JSON-LD Profile** that allows publishers to expose stronger semantic-identity information to SIP crawlers and other SIP-aware software.
+
+Full research detail is in the [JSON-LD Integration Architecture annex](SIP_JSON-LD_Integration_Architecture.md).
+
+## SIP and JSON-LD — Complementary Roles
+
+JSON-LD (JSON for Linked Data) is a W3C standard for expressing Linked Data using JSON. It provides mechanisms such as `@id`, `@type`, `@context`, linked relationships between identified resources, and mapping JSON structures into the RDF graph model using globally meaningful IRIs.
+
+JSON-LD primarily addresses:
+
+> **How can data be expressed so that its semantics and relationships can be interpreted consistently across systems?**
+
+SIP addresses a related but more fundamental problem:
+
+> **What semantic thing are we actually referring to, how is that semantic identity established, and how can independent systems determine that they are referring to the same semantic identity?**
+
+A useful conceptual layering is:
+
+```text
+             SIP
+              |
+              | establishes / communicates identity
+              v
+      Semantic Entity / Concept
+              |
+              | can be represented as
+              v
+           JSON-LD
+              |
+              v
+             RDF
+              |
+              v
+       Knowledge Graph
+```
+
+JSON-LD can become one representation of SIP information without defining SIP itself.
+
+## Fundamental Difference — The Equivalence Problem
+
+JSON-LD can identify resources, but it does not by itself solve the entire semantic identity problem.
+
+For example:
+
+```text
+System A: https://example-a.org/concept/roux
+System B: https://example-b.org/culinary/roux
+System C: urn:uuid:8921.../roux
+```
+
+JSON-LD can represent all three resources and relationships between them. However, the harder question remains:
+
+> **Do these identifiers refer to the same semantic identity?**
+
+Additional questions include: Who asserts equivalence? What evidence supports the assertion? Under what semantic context are they equivalent? Is the equivalence exact, partial, contextual, or disputed? Which authority established the identity? How is the identity resolved? How does the identity survive movement between repositories or systems? How should competing identity assertions coexist?
+
+These are identity-protocol and governance questions rather than serialization questions. This is a primary area in which SIP can extend beyond JSON-LD/RDF.
+
+## Coexistence With Semantic Web Standards
+
+SIP should be explicitly designed to coexist with:
+
+* JSON-LD
+* RDF
+* Schema.org
+* OWL
+* SHACL
+* SKOS
+* SPARQL
+* URI/IRI infrastructure
+* provenance vocabularies and standards
+* other Semantic Web / Linked Data technologies
+
+SIP concentrates its innovation on semantic identity while reusing mature standards wherever possible. SIP extends the Linked Data ecosystem; it does not compete with it.
+
+## Representation Independence in Practice
+
+SIP maintains strict separation among:
+
+1. semantic identity
+2. identifier
+3. authority/namespace
+4. resolver
+5. representation
+
+```text
+Semantic Identity
+        |
+        v
+Identifier
+        |
+        v
+Locator / Resolver
+        |
+        v
+Representation
+```
+
+A SIP identity might be represented through JSON-LD, RDF/Turtle, a database, a graph database, XML, a domain-specific format, an API, a SIP manifest, or a future representation not yet defined.
+
+JSON-LD is a **first-class, recommended Web interoperability profile** for publishing and exchanging SIP identity assertions — but it is **never the required or privileged representation** of SIP semantic identity. SIP manifests, resolver records, RDF/Turtle, APIs, and future formats remain equally valid representation surfaces.
+
+## RDF/JSON-LD Concepts for SIP Reuse
+
+SIP should perform a systematic architectural review of mature concepts already available in the RDF/Linked Data ecosystem before defining overlapping mechanisms.
+
+### Contexts
+
+JSON-LD's `@context` mechanism allows publishers to establish what document terms mean. SIP should investigate whether JSON-LD contexts can be used directly or extended through a SIP vocabulary to communicate semantic domain, identity scope, vocabulary, contextual interpretation, namespace, and identity authority.
+
+### Globally Meaningful Identifiers
+
+RDF and Linked Data's use of IRIs provides an important architectural precedent. SIP identity should not become unnecessarily coupled to one repository, database, URL layout, or implementation.
+
+### Vocabulary Reuse and Minimalism
+
+SIP should not redefine existing semantic properties when established vocabularies already express them adequately. Existing vocabulary terms may already handle concepts such as name, description, creator, date, language, license, general resource types, some provenance information, and some equivalence relationships.
+
+SIP-specific vocabulary should focus on concepts for which SIP provides distinct semantics — potentially including semantic identity, canonical identity, identity authority, identity scope, identity equivalence, contextual equivalence, identity lineage, identity assertion, identity resolution, identity status, and discovery metadata. Existing RDF, OWL, SKOS, Schema.org, and other vocabularies MUST be evaluated before SIP defines equivalents.
+
+### Graph-Oriented Relationships
+
+RDF models knowledge as relationships among identified resources rather than forcing information into a single hierarchical document structure. SIP identity and relationship architecture should avoid assumptions that identities exist only within one parent/child hierarchy.
+
+### Statements About Statements
+
+SIP will need to distinguish a relationship from an assertion that the relationship exists. RDF work involving reification, named graphs, provenance, and newer mechanisms for statements about statements should be reviewed before SIP invents its own model. This area may be especially important for distributed and potentially conflicting semantic identity claims.
+
+### Validation
+
+SIP will eventually need formal answers to questions such as: What constitutes a valid SIP identity? Which properties are required? Which relationships are legal? Which assertions contradict one another? SHACL and related RDF validation mechanisms should be studied. SIP does not necessarily have to adopt SHACL as its internal validation technology, but its design experience should be considered before creating a separate validation system.
+
+## Published Assertions vs Accepted Identity
+
+SIP MUST distinguish between **published identity assertions** and **accepted canonical identity knowledge**.
+
+A **published identity assertion** is what a publisher, provider, or authority claims. For example, a `sip:equivalentIdentity` property (non-normative placeholder) published in a website's `application/ld+json` block means that the publisher asserts the equivalence — it does NOT automatically mean SIP has accepted that equivalence as canonical truth.
+
+**Accepted canonical identity knowledge** is what SIP resolvers, registries, and consensus mechanisms trust enough to affect resolution, ranking, display, or deterministic behavior.
+
+All identity assertions SHOULD preserve:
+
+* assertion source
+* asserting authority
+* provenance
+* semantic context
+* confidence or status
+* dispute state where applicable
+
+This distinction aligns with [Semantic Claims vs Semantic Authority](#semantic-claims-vs-semantic-authority). AI inference, crawler heuristics, and publisher assertions are all evidence — but only verified, consensus-backed knowledge should drive authoritative resolution.
+
+## SIP JSON-LD Profile — Architectural Requirements
+
+A major architectural opportunity is to define a **SIP-aware JSON-LD convention/profile** — a proposed SIP vocabulary, published JSON-LD context, and SIP JSON-LD Profile specification. This remains research, not normative standard.
+
+Ordinary JSON-LD already provides `@id`, `@type`, `@context`, and linked relationships. A SIP vocabulary could add explicit semantics for identity namespace/authority, semantic context, canonical/equivalent identity assertions, provenance, confidence/status, and resolution/discovery information.
+
+### Do Not Fork JSON-LD
+
+SIP should **not** attempt to modify the JSON-LD standard itself. JSON-LD is deliberately vocabulary-extensible. SIP should first determine whether its requirements can be satisfied through a SIP vocabulary, a published SIP JSON-LD context, a SIP JSON-LD Profile, existing RDF vocabularies, and existing provenance/equivalence mechanisms.
+
+### Graceful Degradation
+
+SIP-aware JSON-LD SHOULD remain standards-compliant JSON-LD and SHOULD remain usable by non-SIP JSON-LD/RDF processors. A generic JSON-LD processor can still understand the RDF graph and generic relationships. A SIP-aware processor can additionally interpret semantic identity, identity authority, contextual identity, equivalence assertions, canonical status, provenance, and resolution information.
+
+### Illustrative Example (Non-Normative)
+
+The following example is conceptual only. Property names, URI schemes, namespaces, and semantics MUST NOT be considered normative.
+
+```json
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "sip": "https://example.org/sip/vocab/"
+  },
+  "@id": "https://example.org/knowledge/roux",
+  "@type": "schema:DefinedTerm",
+  "schema:name": "Roux",
+  "sip:identity": "sip:culinary:technique:roux",
+  "sip:context": "sip:context:culinary",
+  "sip:identityAuthority": "sip:authority:example",
+  "sip:identityStatus": "canonical",
+  "sip:equivalentIdentity": [
+    "https://example.org/external-identity/roux"
+  ]
+}
+```
+
+A normal JSON-LD/RDF processor should still be able to process this as Linked Data. A SIP-aware processor could understand the additional SIP semantics. The `sip:equivalentIdentity` values represent **publisher assertions**, not automatically accepted canonical equivalence.
+
+## SIP Crawlers and Structured Metadata
+
+SIP crawlers should be designed to exploit existing structured metadata whenever it is available.
+
+A crawler encountering:
+
+```html
+<script type="application/ld+json">
+...
+</script>
+```
+
+could use existing structured information to help determine what entities are present, their types, existing identifiers, vocabulary context, relationships, external references, candidate semantic identity, and potential equivalence relationships.
+
+Ordinary JSON-LD might allow a crawler to infer: "This page describes an entity called Roux."
+
+SIP-aware JSON-LD could communicate something substantially stronger: "The publisher explicitly asserts that this resource represents semantic identity X, within semantic context Y, according to authority Z, and claims specified relationships or equivalence with identities A and B."
+
+SIP crawlers SHOULD recognize and preferentially use explicit SIP-aware structured metadata when available, but MUST remain capable of discovering candidate semantic identities from resources that do not publish SIP metadata.
+
+Potential crawler inputs include:
+
+* SIP-aware JSON-LD
+* ordinary JSON-LD
+* RDF
+* HTML metadata
+* linked documents
+* SIP manifests (`/.well-known/sip.json`, `/.well-known/semantic-identities.json`)
+* APIs
+* resolver and registry records
+* structured databases
+* natural-language content
+* AI-assisted semantic analysis
+
+## Crawler Evidence Precedence — Open Research
+
+SIP crawlers may receive identity evidence from many sources simultaneously. Future SIP architecture MUST define how these sources are weighted, reconciled, verified, and promoted into accepted identity knowledge.
+
+This includes questions such as:
+
+* When a publisher assertion conflicts with resolver consensus, which prevails?
+* How should evidence from ordinary JSON-LD be distinguished from SIP-aware assertions?
+* What verification is required before a published assertion affects resolution?
+* How should AI-inferred identity relate to explicit publisher claims?
+
+SIP intentionally does not specify precedence rules prematurely. See [Open Questions](#open-questions) and Documentation Roadmap item 21.
+
+## Progressive SIP Adoption Model
+
+SIP-aware JSON-LD could provide a practical progressive adoption strategy:
+
+```text
+Level 0 — Ordinary Web Content
+       |
+       v
+Level 1 — Existing JSON-LD
+       |
+       v
+Level 2 — JSON-LD + SIP Identity Assertions
+       |
+       v
+Level 3 — Resolvable SIP Identities
+       |
+       v
+Level 4 — Full SIP Participant
+```
+
+**Level 0 — Ordinary Web Content:** The publisher provides normal human-oriented content. SIP crawlers may need semantic analysis and AI inference to discover candidate identities.
+
+**Level 1 — Existing JSON-LD:** The publisher already exposes structured semantic information. SIP crawlers can use identifiers, types, contexts, and relationships to improve identity discovery.
+
+**Level 2 — JSON-LD + SIP Identity Assertions:** The publisher adopts the proposed SIP vocabulary/profile. Semantic identity becomes explicitly machine discoverable as published assertions.
+
+**Level 3 — Resolvable SIP Identities:** The publisher provides mechanisms through which SIP identities and their metadata can be resolved.
+
+**Level 4 — Full SIP Participant:** The organization participates more deeply in the SIP ecosystem, potentially including identity publication, resolution, assertions, equivalence assertions, provenance, governance, federation, identity lifecycle management, and canonical knowledge integration.
+
+A publisher should not necessarily have to redesign its entire information architecture to begin participating in SIP. A website, documentation platform, knowledge base, or standards organization could initially add SIP properties to JSON-LD it already publishes, then later adopt richer SIP infrastructure.
+
+## Candidate SIP Vocabulary Areas
+
+The following are candidates for investigation, not approved vocabulary terms:
+
+**Identity:** semantic identity, canonical identity, identity identifier, identity namespace, identity authority, identity owner/issuer where appropriate.
+
+**Context:** semantic context, domain, scope, interpretation context, contextual identity.
+
+**Relationships:** equivalent identity, exact identity, contextual equivalence, broader/narrower identity, related identity, derived identity, superseded identity. Existing RDF, OWL, SKOS, Schema.org, and other vocabularies MUST be evaluated before SIP defines equivalents.
+
+**Assertions:** asserted by, assertion authority, assertion date, evidence, confidence, verification status, dispute status.
+
+**Resolution:** resolver, identity metadata endpoint, canonical representation, alternate representation, discovery endpoint.
+
+**Lifecycle:** created, active, deprecated, superseded, merged, split, disputed, retired.
+
+## SIP's Distinct Value Beyond JSON-LD
+
+SIP should avoid becoming merely another RDF vocabulary. Its distinct purpose should remain centered on semantic identity.
+
+JSON-LD/RDF provides strong machinery for expressing `A -> relationship -> B`. SIP must address questions such as: What exactly is A? Who established A? What makes A distinct from B? When are A and B equivalent? Is that equivalence universal or contextual? Who has authority to make that assertion? How can another system discover A? How does another system resolve A? How does identity survive movement between systems? How are competing identity assertions represented? How can AI systems know that different descriptions refer to the same semantic entity?
+
+## Standards Research Required
+
+Before SIP's identity representation and assertion models are finalized, conduct a focused standards comparison covering at least: JSON-LD, RDF, RDF 1.2 developments, URI/IRI architecture, Schema.org, OWL, SKOS, SHACL, SPARQL where relevant, W3C provenance mechanisms / PROV, named graphs and RDF assertion/reification mechanisms, decentralized identifiers (DIDs) for comparison of identifier/resolution concepts, and existing identity/equivalence predicates and their semantics.
+
+The purpose is to determine: What can SIP reuse? What can SIP profile? What can SIP extend? What is genuinely missing? Where does SIP provide unique value?
+
+Only after these questions are answered should SIP introduce overlapping standards mechanisms.
+
+## Architectural Opportunity
+
+JSON-LD can serve as one of SIP's bridges from today's Web into a semantic-identity-aware Web.
+
+Instead of requiring every publisher to deploy new SIP-specific infrastructure immediately, SIP can exploit the structured semantic infrastructure that already exists:
+
+```text
+Existing Web
+    |
+    v
+Existing structured metadata
+    |
+    v
+JSON-LD / RDF
+    |
+    v
+SIP-aware JSON-LD (published assertions)
+    |
+    v
+Explicit Semantic Identity
+    |
+    v
+Resolvable / Federated SIP Identity
+    |
+    v
+Semantic-Identity-Aware Web
+```
+
+This potentially affects SIP crawler architecture, discovery architecture, identity representation, identity resolution, vocabulary design, provenance, equivalence, federation, AI-assisted identity discovery, publisher integration, and adoption strategy.
+
 # Resolver Architecture
 
 ## Resolver Responsibilities
@@ -630,6 +990,14 @@ Semantic identities provide:
 * owner meaning
 
 This is significantly more useful for AI systems than traditional domains.
+
+## Structured Metadata and Identity Evidence
+
+AI systems and SIP crawlers may receive identity evidence from multiple sources: SIP-aware JSON-LD, ordinary JSON-LD, RDF, HTML metadata, SIP manifests, resolver and registry records, APIs, natural-language content, and AI inference.
+
+SIP-aware systems MUST distinguish **published identity assertions** (what a publisher or provider claims) from **inferred identity** (what a crawler or AI deduces) and from **accepted canonical identity knowledge** (what resolvers trust enough to affect resolution). See [Semantic Web and JSON-LD Interoperability](#semantic-web-and-json-ld-interoperability) and [Crawler Evidence Precedence — Open Research](#crawler-evidence-precedence--open-research).
+
+Where explicit publisher assertions are available, they SHOULD be treated as higher-value evidence than unqualified inference — but publisher assertions alone do not constitute accepted canonical truth without verification and consensus.
 
 # Browser and Application Integration
 
@@ -951,6 +1319,9 @@ Topics:
 * categories
 * ownership metadata
 * health metadata
+* representation format mappings (JSON-LD, RDF, manifests, APIs)
+* identity assertion metadata (source, authority, provenance, context, status)
+* proposed SIP JSON-LD Profile mapping (research)
 
 ## 9. SIP Dashboard and Management UX
 
@@ -1026,6 +1397,9 @@ Topics:
 * signatures
 * verification
 * synchronization
+* relationship to JSON-LD as a parallel, non-privileged discovery representation
+
+SIP manifests and SIP-aware JSON-LD on publisher sites are both valid surfaces for publishing identity assertions. Neither format is required or privileged over the other. See [Semantic Web and JSON-LD Interoperability](#semantic-web-and-json-ld-interoperability).
 
 ## 14. SIP API Reference
 
@@ -1093,6 +1467,54 @@ Topics:
 * enterprise opportunities
 * hosting opportunities
 
+## 19. SIP JSON-LD Profile Specification
+
+Purpose:
+
+* define proposed SIP vocabulary, JSON-LD context, and publication conventions
+
+Status:
+
+* research — vocabulary and URI forms are not yet normative
+
+Topics:
+
+* SIP vocabulary design
+* JSON-LD context publication
+* profile conformance rules
+* graceful degradation with generic JSON-LD processors
+* published assertion semantics
+
+## 20. Semantic Web Standards Research Report
+
+Purpose:
+
+* determine what SIP can reuse, profile, extend, or must invent
+
+Topics:
+
+* JSON-LD, RDF, RDF 1.2, Schema.org, OWL, SKOS, SHACL, SPARQL
+* PROV and named-graph/reification mechanisms
+* DID identifier/resolution comparison
+* existing identity/equivalence predicates
+
+## 21. Crawler Evidence Precedence and Trust Model
+
+Purpose:
+
+* define how crawlers weight, reconcile, verify, and promote identity evidence
+
+Status:
+
+* open research
+
+Topics:
+
+* evidence source taxonomy (JSON-LD, manifests, registries, RDF, APIs, NL, AI inference)
+* assertion vs inference vs accepted knowledge
+* verification and promotion into canonical identity knowledge
+* conflict resolution between competing evidence sources
+
 # Conclusion
 
 SIP proposes:
@@ -1103,6 +1525,10 @@ SIP proposes:
 * federated semantic identity providers
 * consensus-driven trust
 * stable meaning independent of URLs
+* representation-independent semantic identity
+* JSON-LD as a recommended, non-privileged interchange profile for published identity assertions
+* progressive adoption from existing structured metadata to full SIP participation
+* published identity assertions distinguished from accepted canonical identity knowledge
 
 SIP does not replace the web.
 
@@ -1330,9 +1756,11 @@ AI systems may assist with ranking and discovery, but verified mappings remain a
 
 ## Competing and Related Systems
 
-SIP overlaps conceptually with several existing technologies and standards including: - DNS - search engines - ActivityPub - Mastodon federation - ENS (Ethereum Name Service) - Handshake - Namecoin - package manager namespaces - knowledge graphs - OAuth identity systems
+SIP overlaps conceptually with several existing technologies and standards including: - DNS - search engines - ActivityPub - Mastodon federation - ENS (Ethereum Name Service) - Handshake - Namecoin - package manager namespaces - knowledge graphs - OAuth identity systems - JSON-LD - RDF - Schema.org - OWL - SKOS - SHACL - SPARQL
 
 SIP differs by focusing specifically on: - semantic identity - AI-native navigation - federated meaning resolution - consensus-driven trust - stable meaning independent of URLs - non-scarce semantic hierarchy
+
+SIP defines semantic identity independently of representation. JSON-LD, RDF, and the broader Linked Data ecosystem are complementary technologies through which SIP identity assertions and metadata may be published and exchanged. SIP extends these standards; it does not replace them.
 
 without requiring blockchain ownership models or centralized identity monopolies.
 
@@ -1356,7 +1784,7 @@ SIP therefore requires: - edge caching - resolver optimization - federation inde
 
 ## Open Questions
 
-Several long-term questions remain intentionally open for ecosystem evolution: - How should resolver neutrality be standardized? - How should provider reputation be calculated? - What governance body should oversee SIP standards? - How should semantic abuse be moderated? - How should privacy-preserving resolution operate? - How should semantic ranking transparency be handled? - How should enterprise and institutional verification evolve?
+Several long-term questions remain intentionally open for ecosystem evolution: - How should resolver neutrality be standardized? - How should provider reputation be calculated? - What governance body should oversee SIP standards? - How should semantic abuse be moderated? - How should privacy-preserving resolution operate? - How should semantic ranking transparency be handled? - How should enterprise and institutional verification evolve? - How should SIP crawlers weight, reconcile, verify, and promote identity evidence from competing sources (JSON-LD, manifests, registries, RDF, APIs, natural-language content, AI inference)? - How should published identity assertions be promoted into accepted canonical identity knowledge? - What RDF reification or named-graph model best represents conflicting identity assertions? - When should the proposed SIP JSON-LD vocabulary be finalized, pending standards comparison?
 
 SIP intentionally treats these areas as ongoing ecosystem and standards challenges rather than assuming all issues are permanently solved in the initial protocol design.
 
