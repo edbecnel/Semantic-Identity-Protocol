@@ -1,3 +1,8 @@
 # Temporary debug/scratch files
 extracted-script.js
+
+# Obsidian
 .obsidian/
+
+# macOS
+.DS_Store
